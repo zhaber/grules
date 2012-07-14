@@ -1,0 +1,8 @@
+.classpath
+.project
+/bin
+/.gradle
+/.groovy
+/.externalToolBuilders
+/.settings
+/lib/*
