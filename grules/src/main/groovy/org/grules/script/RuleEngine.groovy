@@ -1,8 +1,9 @@
 package org.grules.script
 
+import groovyx.gpars.GParsExecutorsPool
+import groovyx.gpars.GParsExecutorsPoolUtil
+
 import java.util.concurrent.ExecutionException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 import org.codehaus.groovy.runtime.InvokerInvocationException
 import org.grules.GrulesLogger
@@ -20,14 +21,12 @@ import com.google.inject.Inject
 class RuleEngine {
 
 	private final Config config
-	private final ExecutorService executorService
 	private final RulesScriptFactory rulesScriptFactory
 
 	@Inject
 	RuleEngine(Config config, RulesScriptFactory rulesScriptFactory) {
 		this.config = config
 		this.rulesScriptFactory = rulesScriptFactory
-		executorService = Executors.newFixedThreadPool(config.threadPoolSize)
 	}
 
 	/**
@@ -71,7 +70,9 @@ class RuleEngine {
 		  Map<String, Map<String,Object>> parameters) {
 		RulesScript script = rulesScriptFactory.newInstanceMain(scriptClass, parameters)
     try {
-			executorService.submit{runScript(script)}.get()
+			GParsExecutorsPool.withPool {
+			  GParsExecutorsPoolUtil.callAsync{runScript(script)}.get()
+			}
 		} catch (ExecutionException e) {
 			throw e.cause
 		} catch (InvokerInvocationException e) {

@@ -31,7 +31,7 @@ repositories {
 
 def groovyArtifacts = ['org.codehaus.groovy:groovy-all:1.8.6', 'asm:asm:3.3.1']
 def commonArtifacts = ['joda-time:joda-time:2.1+', 'com.google.inject:guice:3.0', 'com.google.guava:guava:11.0.2+', 
-	                     'org.apache.tomcat:servlet-api:6.0.35+']
+	                     'org.apache.tomcat:servlet-api:6.0.35+', 'org.codehaus.gpars:gpars:0.12']
 def testArtifacts = ['org.spockframework:spock-core:0.6-groovy-1.8', 'org.objenesis:objenesis:1.2']
 
 task jarLocalAst(type: Jar, dependsOn: [compileLocal_astGroovy]) {
