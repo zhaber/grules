@@ -63,7 +63,7 @@ class RulesASTTransformationTest extends Specification {
 			(a || b) && c >> d || e >> (f || g) >> h && i || j >> ~(k && !l)
 		})
 	}
-		
+	
 	def "Object method calls are not included in rules"() {
 		setup:
 			List<BlockStatement> blockStatements = builder.buildFromCode(phase) {
@@ -82,7 +82,6 @@ class RulesASTTransformationTest extends Specification {
 			astTransformation.visitStatements(blockStatements[0].statements).isEmpty()
 	}
 
-	
 	def "Methods called on arrays are treated as rules"() {
 		setup:
 			List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
@@ -151,7 +150,7 @@ class RulesASTTransformationTest extends Specification {
 				a || b
 			})
 			List infixExpression = RulesASTTransformation.convertToInfixExpression(ruleExpression)
-			int p = 0
+			def p = 0
 		expect:
 			checkVariable(infixExpression[p++], a)
 			checkToken(infixExpression[p++], LOGICAL_OR)
@@ -164,7 +163,7 @@ class RulesASTTransformationTest extends Specification {
 				!a || !(b && c)
 			})
 			List infixExpression = RulesASTTransformation.convertToInfixExpression(ruleExpression)
-			int p = 0
+			def p = 0
 		expect:
 		  checkToken(infixExpression[p++], NOT)
 		  checkVariable(infixExpression[p++], a)
@@ -194,7 +193,7 @@ class RulesASTTransformationTest extends Specification {
 				(a || b) && c
 			})
 			List infixExpression = RulesASTTransformation.convertToInfixExpression(ruleExpression)
-			int p = 0
+			def p = 0
 		expect:
 		  checkToken(infixExpression[p++], LEFT_PARENTHESIS)
 			checkVariable(infixExpression[p++], a)
@@ -211,7 +210,7 @@ class RulesASTTransformationTest extends Specification {
 				(a && b) || c
 			})
 			List infixExpression = RulesASTTransformation.convertToInfixExpression(ruleExpression)
-			int p = 0
+			def p = 0
 		expect:
 			checkVariable(infixExpression[p++], a)
 			checkToken(infixExpression[p++], LOGICAL_AND)
@@ -265,7 +264,7 @@ class RulesASTTransformationTest extends Specification {
 			})
 			def infixExpression = RulesASTTransformation.convertToInfixExpression(ruleExpression)
 			def postfixExpression = RulesASTTransformation.infixToPostfixExpression(infixExpression)
-			int p = 0
+			def p = 0
 		expect:
 		  checkVariable(postfixExpression[p++], a)
 		  checkToken(postfixExpression[p++], NOT)
@@ -276,7 +275,7 @@ class RulesASTTransformationTest extends Specification {
 		setup:
 			def infixExpression = RulesASTTransformation.convertToInfixExpression(complexRuleExpression)
 			def postfixExpression = RulesASTTransformation.infixToPostfixExpression(infixExpression)
-			int p = 0
+			def p = 0
 		expect:
 			checkVariable(postfixExpression[p++], a)
 			checkVariable(postfixExpression[p++], b)

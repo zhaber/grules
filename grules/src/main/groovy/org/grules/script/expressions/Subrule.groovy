@@ -2,6 +2,7 @@ package org.grules.script.expressions
 
 import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
+import org.grules.functions.ConverterBooleanResult
 
 /**
  * A subrule expression (parts of a rule between ">>" operators). 
@@ -27,8 +28,10 @@ class Subrule {
 			  throw new ValidationException()
 			}
 			value
-		} else { 
-			applicationResult
+		} else if (applicationResult instanceof ConverterBooleanResult) {
+		  (applicationResult as ConverterBooleanResult).value
+	  } else {
+		  applicationResult
 	  }
 	}
 }

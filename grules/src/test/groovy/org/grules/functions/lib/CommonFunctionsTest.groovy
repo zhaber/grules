@@ -1,6 +1,7 @@
 package org.grules.functions.lib
 
 import org.grules.ValidationException
+import org.grules.functions.ConverterBooleanResult
 
 import spock.lang.Specification
 
@@ -24,12 +25,27 @@ class CommonFunctionsTest extends Specification {
 	
 	def "Even/odd check"() {
 		expect:
-		  commonFuns.isOdd(a) == oddness
-			commonFuns.isEven(a) == !oddness
+		  commonFuns.isOdd(value) == oddness
+			commonFuns.isEven(value) == !oddness
 		where:
-		  a  | oddness 
-			1  | true   
-			0  | false  
-			-1 | true
+		  value | oddness 
+			  1   | true   
+			  0   | false  
+			 -1   | true
+	}
+	
+	def "to boolean converter"() {
+		expect:
+		  (commonFuns.toBoolean(value) as ConverterBooleanResult).value == booleanValue
+		where:
+		  value | booleanValue
+		   ''   | false
+		   '0'  | true
+	      0   | false
+	}
+	
+	def "inverse converter"() {
+		expect:
+			(commonFuns.inverse(false) as ConverterBooleanResult).value
 	}
 }

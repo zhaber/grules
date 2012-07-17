@@ -1,11 +1,13 @@
 package org.grules.ast
 
 import groovy.inspect.swingui.AstNodeToScriptVisitor
+
+import java.lang.reflect.Method
+
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.ModuleNode
-import org.codehaus.groovy.ast.Parameter
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
@@ -27,17 +29,12 @@ import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
 import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.grules.GroovyConstants
-import org.grules.script.RulesScriptAPI
-import org.grules.script.expressions.FunctionTerm
-import org.grules.script.expressions.SubrulesSeqWrapper
-
-import java.lang.reflect.Method
-
-import com.sun.org.apache.xalan.internal.xsltc.compiler.ArgumentList
-
 import org.grules.functions.lib.CommonFunctions
 import org.grules.functions.lib.DateFunctions
 import org.grules.functions.lib.StringFunctions
+import org.grules.script.RulesScriptAPI
+import org.grules.script.expressions.FunctionTerm
+import org.grules.script.expressions.SubrulesSeqWrapper
 
 /**
  * Transformations of an abstract syntax tree for rules scripts.
@@ -79,7 +76,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
 	}
 	
 	@Override
-	void visitModule(ModuleNode moduleNode, ClassNode classNode) {
+	void visitModule(ModuleNode moduleNode, node) {
 		List<Statement> statements = moduleNode.statementBlock.statements
 		List<ExpressionStatement> rules = visitStatements(statements)
 		rules.each { ExpressionStatement ruleExpressionStatement ->
@@ -145,7 +142,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
 		ruleApplicationExpression
 	}
 	
-	private static int fetchOperatorPrecedence(Token token) {
+	private static Integer fetchOperatorPrecedence(Token token) {
 		switch (token.type) {
 		  case Types.LEFT_PARENTHESIS: return 0
 			case Types.RIGHT_PARENTHESIS: return 1
@@ -245,7 +242,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
 	}
 	
 	private static List convertInnerExpressionsToInfix(Expression expression, Token operation) {
-		int operationPrecedence = GrulesASTUtils.fetchPrecedence(operation)
+		Integer operationPrecedence = GrulesASTUtils.fetchPrecedence(operation)
 		if (expression instanceof BinaryExpression) {
 			BinaryExpression binaryExpression = expression
 			List leftExpression = convertToInfixExpression(binaryExpression.leftExpression, operationPrecedence)
@@ -299,19 +296,20 @@ class RulesASTTransformation extends GrulesASTTransformation {
 	private static Expression wrapInClosures(Expression expression) {
 		if (expression instanceof MethodCallExpression) {
 			MethodCallExpression methodCallExpression = expression
-			List<Expression> expressions = [IT_VARIABLE] + (methodCallExpression.arguments as ArgumentListExpression).expressions
+			List<Expression> arguments = (methodCallExpression.arguments as ArgumentListExpression).expressions
+			arguments = [IT_VARIABLE] + arguments 
 			Expression method = methodCallExpression.method
-			MethodCallExpression closureMethodCallExpression = GrulesASTBuilder.createMethodCall(method, expressions)
-			ClosureExpression closure = GrulesASTBuilder.createSingleExpressionClosure(closureMethodCallExpression)
+			MethodCallExpression closureMethodCallExpression = GrulesASTFactory.createMethodCall(method, arguments)
+			Expression closure = GrulesASTFactory.createSingleExpressionClosure(closureMethodCallExpression)
 			Writer stringWriter = new StringWriter()
 			AstNodeToScriptVisitor stringAstNodeToScriptVisitor = new AstNodeToScriptVisitor(stringWriter)
 			method.visit(stringAstNodeToScriptVisitor)
-			GrulesASTBuilder.createConstructor(FunctionTerm, [closure, new ConstantExpression(stringWriter.toString())])
+			GrulesASTFactory.createConstructorCall(FunctionTerm, [closure, new ConstantExpression(stringWriter.toString())])
 		} else if (expression instanceof VariableExpression) {
 			String variableName = (expression as VariableExpression).name 
-			MethodCallExpression closureMethodCallExpression = GrulesASTBuilder.createMethodCall(variableName, [IT_VARIABLE])
-			ClosureExpression closure = GrulesASTBuilder.createSingleExpressionClosure(closureMethodCallExpression)
-			GrulesASTBuilder.createConstructor(FunctionTerm, [closure, new ConstantExpression(variableName)])
+			MethodCallExpression closureMethodCallExpression = GrulesASTFactory.createMethodCall(variableName, [IT_VARIABLE])
+			ClosureExpression closure = GrulesASTFactory.createSingleExpressionClosure(closureMethodCallExpression)
+			GrulesASTFactory.createConstructorCall(FunctionTerm, [closure, new ConstantExpression(variableName)])
 		} else 	if (expression instanceof BinaryExpression) {
 			BinaryExpression binaryExpression = expression
   	  Expression leftExpression = wrapInClosures(binaryExpression.leftExpression)
@@ -518,14 +516,14 @@ class RulesASTTransformation extends GrulesASTTransformation {
 	private static MethodCallExpression createRuleApplicationExpression(MethodCallExpression methodCallExpression,
 	    Expression rule) {
 		Expression objectExpression = methodCallExpression.objectExpression
-		ClosureExpression ruleClosureExpression = GrulesASTBuilder.createSingleExpressionClosure(rule)
+		ClosureExpression ruleClosureExpression = GrulesASTFactory.createSingleExpressionClosure(rule)
 		if (objectExpression == VariableExpression.THIS_EXPRESSION) {
 			Expression parameterExpression = methodCallExpression.method
 			List<Expression> arguments = [parameterExpression, ruleClosureExpression]
-			GrulesASTBuilder.createMethodCall(RulesScriptAPI.&applyRuleToRequiredParameter, arguments)
+			GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToRequiredParameter, arguments)
 		} else if (objectExpression instanceof ListExpression) {
 			List<Expression> arguments = [objectExpression, ruleClosureExpression]
-			GrulesASTBuilder.createMethodCall(RulesScriptAPI.&applyRuleToParametersGroup, arguments)
+			GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToParametersGroup, arguments)
 		} else if (objectExpression instanceof BinaryExpression) {
 		  BinaryExpression binaryExpression = objectExpression
 			List<Expression> arguments = []
@@ -536,7 +534,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
 			}
 			Expression defaultValue = binaryExpression.rightExpression
 			arguments += [ruleClosureExpression, defaultValue]
-			GrulesASTBuilder.createMethodCall(RulesScriptAPI.&applyRuleToOptionalParameter, arguments)
+			GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToOptionalParameter, arguments)
 		} else {
 		  throw new IllegalStateException(objectExpression.class)
 		}
@@ -544,9 +542,9 @@ class RulesASTTransformation extends GrulesASTTransformation {
 
 	private void visitLabel(List<Statement> statements, ExpressionStatement statement) {
 		if (statement.statementLabel != null) {
-			int groupLabelStatementIndex = statements.indexOf(statement)
+			Integer groupLabelStatementIndex = statements.indexOf(statement)
 			log('Creating method call for group', statement.statementLabel)
-			MethodCallExpression changeGroupMethodCall = GrulesASTBuilder.createMethodCall(
+			MethodCallExpression changeGroupMethodCall = GrulesASTFactory.createMethodCall(
 			    RulesScriptAPI.&changeGroup, [new ConstantExpression(statement.statementLabel)])
 			statements.add(groupLabelStatementIndex, new ExpressionStatement(changeGroupMethodCall))
 			log('Added method call', (RulesScriptAPI.&changeGroup as MethodClosure).method + 
@@ -582,7 +580,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
 			Expression leftExpression = addSequenceWrapper(binaryExpression.leftExpression)
 			new BinaryExpression(leftExpression, binaryExpression.operation, binaryExpression.rightExpression)
 		} else {
-			GrulesASTBuilder.createStaticMethodCall(SubrulesSeqWrapper, SubrulesSeqWrapper.&wrap, [expression])
+			GrulesASTFactory.createStaticMethodCall(SubrulesSeqWrapper, SubrulesSeqWrapper.&wrap, [expression])
 		} 
 	}
 }

@@ -3,6 +3,7 @@ package org.grules.ast
 import groovy.inspect.swingui.AstNodeToScriptVisitor
 
 import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.ModuleNode
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.codehaus.groovy.transform.ASTTransformation
@@ -18,11 +19,17 @@ abstract class GrulesASTTransformation implements ASTTransformation {
 	  logger = new GrulesASTTransformationLogger((className.split('\\.') as List).last())
 	}
 	
-	void visit(ModuleNode moduleNode, ClassNode classNode) {
+	void visit(ModuleNode moduleNode, node) {
 		try {
-		  visitModule(moduleNode, classNode)
+		  visitModule(moduleNode, node)
 		  AstNodeToScriptVisitor astNodeToScriptVisitor = new AstNodeToScriptVisitor(logger.writer)
-			astNodeToScriptVisitor.visitClass(classNode)
+			switch (node.class) {
+				case ClassNode: astNodeToScriptVisitor.visitClass(node)
+				                 break
+    		case MethodNode: astNodeToScriptVisitor.visitMethod(node)
+												 break
+			}
+			
 		} catch (Throwable exception) {
 			StringWriter stringWriter = new StringWriter()
 		  Throwable sanitizedException = StackTraceUtils.deepSanitize(exception)
@@ -33,7 +40,7 @@ abstract class GrulesASTTransformation implements ASTTransformation {
 		}
 	}
 	
-	abstract void visitModule(ModuleNode moduleNode, ClassNode classNode) 
+	abstract void visitModule(ModuleNode moduleNode, node) 
 	
 	void log(message) {
 		logger.write(message.toString())

@@ -10,7 +10,7 @@ import org.grules.ast.Functions
  */
 @Functions
 class DateFunctions {
-	static final int MAX_AGE = 120
+	static final Integer MAX_AGE = 120
 	
 	boolean isAfter(Date value, Date date) {
 		value.after(date)

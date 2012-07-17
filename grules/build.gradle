@@ -2,6 +2,8 @@ apply plugin: 'groovy'
 apply plugin: 'codenarc'
 apply plugin: 'eclipse'
 
+defaultTasks 'build'
+
 buildDir = 'bin'
 
 sourceSets {
@@ -42,17 +44,21 @@ task jarLocalAst(type: Jar, dependsOn: [compileLocal_astGroovy]) {
 dependencies {
   groovy groovyArtifacts
   local_astCompile groovyArtifacts
+  compile commonArtifacts
 	compile files(project.localAstLibPath) {
 		builtBy 'jarLocalAst'
 	}
   testCompile testArtifacts
 	test_integrationCompile groovyArtifacts, commonArtifacts, testArtifacts
 	test_scriptsCompile groovyArtifacts, commonArtifacts
-  compile commonArtifacts
+	test_scriptsCompile files(project.localAstLibPath) {
+		builtBy 'jarLocalAst'
+	}
 }
 
 compileLocal_astGroovy.dependsOn clean
 compileGroovy.dependsOn jarLocalAst
+compileTestGroovy.dependsOn processTestResources
 compileTest_scriptsGroovy.dependsOn processResources, compileTestGroovy
 compileTest_integrationGroovy.dependsOn compileTest_scriptsGroovy, processTest_integrationResources
 

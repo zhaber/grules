@@ -12,7 +12,7 @@ class GrulesASTUtils {
 	/**
 	 * Returns token precedence.
 	 */
-  static int fetchPrecedence(Token token) {
+  static Integer fetchPrecedence(Token token) {
 		Types.getPrecedence(token.type, true)
 	}
 	
@@ -20,8 +20,8 @@ class GrulesASTUtils {
 	 * Returns a token object for operation used in the specified expression on the most top level. 
 	 */
 	static Token fetchOperationToken(Expression expression) {
-		int lineNumber = expression.lineNumber
-		int columnNumber = expression.columnNumber
+		Integer lineNumber = expression.lineNumber
+		Integer columnNumber = expression.columnNumber
 		if (expression instanceof BinaryExpression) {
 			(expression as BinaryExpression).operation
 		} else if (expression instanceof NotExpression) {

@@ -54,7 +54,21 @@ class SubrulesSeqTest extends Specification{
 		then:
 			ValidationException e = thrown(ValidationException)
 		expect:
-		  e.errorProperties.message == ERROR_MSG 
+		  e.errorProperties.message == ERROR_MSG
+	}
+	
+	def "saves subrule index"() {
+		setup:
+			def subrulesSeq = new SubrulesSeq()
+			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties())
+			subrulesSeq.add(newIsIntegerValidator())
+			subrulesSeq.add(failingSubrule)
+		when:
+			subrulesSeq.apply(VALID_INTEGER_STRING)
+		then:
+			ValidationException e = thrown(ValidationException)
+		expect:
+			e.errorProperties.subruleIndex == 1
 	}
 	
 	def "Apply subrule that does not contain error action"() {

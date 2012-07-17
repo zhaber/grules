@@ -15,7 +15,7 @@ import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.ExpressionStatement
 import org.codehaus.groovy.runtime.MethodClosure
 
-class GrulesASTBuilder {
+class GrulesASTFactory {
 	/**
 	 * Creates an instance method call that calls the given method closure.
 	 *
@@ -39,7 +39,7 @@ class GrulesASTBuilder {
 	}
 	
 	/**
-	 * Creates an instance method call based method represented by the given expression.
+	 * Creates an instance method call based the method represented by the given expression.
 	 *
 	 * @param methodExpression
 	 * @param arguments
@@ -47,7 +47,7 @@ class GrulesASTBuilder {
 	 */
 	static MethodCallExpression createMethodCall(Expression methodExpression,	 List<Expression> arguments) {
 		ArgumentListExpression argumentsExpression = new ArgumentListExpression(arguments)
-		new MethodCallExpression (VariableExpression.THIS_EXPRESSION, methodExpression, argumentsExpression)
+		new MethodCallExpression(VariableExpression.THIS_EXPRESSION, methodExpression, argumentsExpression)
 	}
 	
 	/**
@@ -72,17 +72,17 @@ class GrulesASTBuilder {
 	 * @param arguments constructor arguments
 	 * @return constructor call expression
 	 */
-	static ConstructorCallExpression createConstructor(Class clazz, List<Expression> arguments) {
+	static ConstructorCallExpression createConstructorCall(Class clazz, List<Expression> arguments) {
 		ArgumentListExpression argumentsExpression = new ArgumentListExpression(arguments)
 		new ConstructorCallExpression(ClassHelper.make(clazz), argumentsExpression)
 	}
-	
+
 	/**
 	 * Creates closure with a single expression.
 	 */
 	static ClosureExpression createSingleExpressionClosure(Expression expression) {
-		BlockStatement ruleBlockStatement = new BlockStatement([new ExpressionStatement(expression)], new VariableScope())
-		new ClosureExpression(new Parameter[0], ruleBlockStatement)
+		BlockStatement blockStatement = new BlockStatement([new ExpressionStatement(expression)], new VariableScope())
+		new ClosureExpression(new Parameter[0], blockStatement)
 	}
-
+	
 }

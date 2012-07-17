@@ -16,11 +16,12 @@ class SubrulesSeq {
 	 */
 	def apply(originalValue) {
 		def value = originalValue
-		for (Subrule subrule : subrules) {
+		for (Integer i = 0; i < subrules.size; i++) {
+			Subrule subrule = subrules[i]
 		  try {
 			  value = subrule.apply(value)
 			}	catch (ValidationException e) {
-		  	int subruleWithValidaitonExceptionIndex = subrules.findIndexOf(subrules.indexOf(subrule)) {
+		  	Integer subruleWithValidaitonExceptionIndex = subrules.findIndexOf(i) {
 		  		Subrule nextSubrule -> 
 		  		nextSubrule.errorProperties.hasAction()
   	  	}
@@ -28,6 +29,7 @@ class SubrulesSeq {
 					e.addProperties(subrules[subruleWithValidaitonExceptionIndex].errorProperties)
 		  	} 
 				e.errorProperties.value = originalValue
+				e.errorProperties.subruleIndex = i
 				throw e
 			}  
 		}

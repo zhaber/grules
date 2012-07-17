@@ -5,6 +5,8 @@ class ValidationErrorProperties {
 	final static String REDIRECT_URL_ERROR_PROPERTY = 'url'
 	final static String MESSAGE_ERROR_PROPERTY = 'msg'
 	final static String VALUE_ERROR_PROPERTY = 'value'
+	final static String SUBRULE_INDEX = 'subruleIndex'
+	final static String FUNCTION_NAME = 'functionName'
 
 	private final Map<String, Object> errorProperties
 
@@ -41,7 +43,6 @@ class ValidationErrorProperties {
 		errorProperties.containsKey(errorProperty)
 	}
 
-	
 	/**
 	 * An error message that has to be shown on validation error event.
 	 */
@@ -101,8 +102,22 @@ class ValidationErrorProperties {
 	/**
 	 * Sets value of an invalid property.
 	 */
-	String setValue(value) {
+	void setValue(value) {
 		errorProperties[VALUE_ERROR_PROPERTY] = value
+	}
+
+	/**
+	 * An index of a failed subrule.
+	 */
+	Integer getSubruleIndex() {
+		errorProperties[SUBRULE_INDEX]
+	}
+
+	/**
+	 * Sets an index of a failed subrule.
+	 */
+	void setSubruleIndex(Integer subruleIndex) {
+		errorProperties[SUBRULE_INDEX] = subruleIndex
 	}
 	
 	/**

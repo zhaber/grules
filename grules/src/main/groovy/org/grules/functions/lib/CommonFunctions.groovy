@@ -2,6 +2,7 @@ package org.grules.functions.lib
 
 import org.grules.ValidationException
 import org.grules.functions.PrimitiveTypesConverters
+import org.grules.ast.Converter
 import org.grules.ast.Functions
 
 /**
@@ -24,6 +25,11 @@ class CommonFunctions {
 
 	def nop(value) {
 		value
+	}
+	
+	@Converter
+	Boolean inverse(Boolean value) {
+		!value
 	}
 
 	boolean isAny(List values, Closure validator) {
@@ -97,6 +103,11 @@ class CommonFunctions {
 
 	BigDecimal toBigDecimal(String value) {
 		PrimitiveTypesConverters.toBigDecimal(value)
+	}
+	
+	@Converter
+	Boolean toBoolean(value) {
+		value ? true : false
 	}
 
 	BigDecimal toNaturalBigDecimal(String value) {

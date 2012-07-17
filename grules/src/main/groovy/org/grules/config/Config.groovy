@@ -23,7 +23,7 @@ class Config {
 	}
 
 	/** Thread pool size for running rules scripts. */
-	int getThreadPoolSize() {
+	Integer getThreadPoolSize() {
 		parameters[THREAD_POOL_SIZE_PARAMETER_NAME]
 	}
 
