@@ -14,7 +14,6 @@ class ConfigFactory {
 	private static final Map<String, Object> DEFATULT_CONFIG = [
 		(Config.NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME): OnValidationEventAction.IGNORE,
 		(Config.DEFAULT_GROUP_PARAMETER_NAME): HttpRequestParametersGroup.PARAMETERS.name(),
-		(Config.THREAD_POOL_SIZE_PARAMETER_NAME): 10,
 		(Config.LOG_LEVEL_PARAMETER_NAME): Level.FINE,
 		(Config.GROUPS_PARAMETER_NAME): HttpRequestParametersGroup.values()*.name(),
 		(Config.TYPE_CHECKED_FUNCTIONS_PARAMETER_NAME): true,

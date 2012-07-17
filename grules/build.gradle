@@ -13,6 +13,10 @@ sourceSets {
 	test_integration
 }
 
+configurations {
+	excludedClasspathJars
+}
+
 project.ext {
 	localAstLibName = "${name}-local-ast"
 	srcLibName = "${name}-src"
@@ -54,6 +58,7 @@ dependencies {
 	test_scriptsCompile files(project.localAstLibPath) {
 		builtBy 'jarLocalAst'
 	}
+	excludedClasspathJars files(project.localAstLibPath)
 }
 
 compileLocal_astGroovy.dependsOn clean
@@ -61,6 +66,10 @@ compileGroovy.dependsOn jarLocalAst
 compileTestGroovy.dependsOn processTestResources
 compileTest_scriptsGroovy.dependsOn processResources, compileTestGroovy
 compileTest_integrationGroovy.dependsOn compileTest_scriptsGroovy, processTest_integrationResources
+
+compileTest_integrationGroovy.doLast {
+	project.delete project.localAstLibPath
+}
 
 task jar(type: Jar, overwrite: true, dependsOn: [cleanJar, processResources, compileGroovy]) {
 	destinationDir = file(project.buildLibDir)
@@ -91,12 +100,15 @@ task initProject << {
 
 codenarcTest_scripts.configFile = file(project.codenarcScriptsConfigPath)
 
+eclipse {
+	classpath {
+		minusConfigurations += configurations.excludedClasspathJars
+	}
+}
+
 task initEclipseProject(dependsOn: [initProject, eclipseClasspath]) << {}
 
 build.dependsOn = [testAll, check, jarSource, jar]
-build.doLast {
-	project.delete project.localAstLibPath
-}
 
 task wrapper(type: Wrapper) {
 	gradleVersion = '1.0'

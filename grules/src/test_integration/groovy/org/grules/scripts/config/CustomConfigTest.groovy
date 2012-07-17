@@ -12,7 +12,7 @@ class CustomConfigTest extends Specification {
 		setup:
 	  	def config = ConfigFactory.createConfig(CustomConfig)
 		expect:
-		  config.threadPoolSize == OVERRIDDEN_THREAD_POOL_SIZE
+		  config.logLevel == CONFIG_LOG_LEVEL
 		  config.notValidatedParametersAction == NOT_VALIDATED_PARAMETERS_ACTION
 	}
 	
@@ -20,6 +20,6 @@ class CustomConfigTest extends Specification {
 		setup:
 		  def config = ConfigFactory.createConfig()
 		expect: 
-		  config.threadPoolSize == OVERRIDDEN_THREAD_POOL_SIZE
+		  config.logLevel == CONFIG_LOG_LEVEL
 	}
 }

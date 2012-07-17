@@ -1,5 +1,7 @@
 package org.grules
 
+import java.util.logging.Level
+
 import org.grules.config.Config
 import org.grules.config.ConfigFactory
 import org.grules.http.HttpRequestParametersGroup
@@ -31,6 +33,6 @@ class TestScriptEntities {
 	static final SUBRULES_SEQ_NAME = 'subrulesSeqName'
 	static final GROUP = DEFAULT_CONFIG.defaultGroup
 	static final GROUP_AUX = HttpRequestParametersGroup.GET.name()
-	static final OVERRIDDEN_THREAD_POOL_SIZE = DEFAULT_CONFIG.threadPoolSize + 1
+	static final CONFIG_LOG_LEVEL = Level.INFO
   static final NOT_VALIDATED_PARAMETERS_ACTION = DEFAULT_CONFIG.notValidatedParametersAction
 }

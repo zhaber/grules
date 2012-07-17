@@ -11,7 +11,6 @@ class Config {
 	private final Map<String, Object> parameters
 	static final String NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME = 'notValidatedParametersAction'
 	static final String DEFAULT_GROUP_PARAMETER_NAME = 'defaultGroup'
-	static final String THREAD_POOL_SIZE_PARAMETER_NAME = 'threadPoolSize'
 	static final String LOG_LEVEL_PARAMETER_NAME = 'logLevel'
 	static final String LOGGER_HANDLER_PARAMETER_NAME = 'loggerHandler'
 	static final String GROUPS_PARAMETER_NAME = 'groups'
@@ -20,11 +19,6 @@ class Config {
 
 	Config(Map<String, Object> properties) {
 		this.parameters = properties
-	}
-
-	/** Thread pool size for running rules scripts. */
-	Integer getThreadPoolSize() {
-		parameters[THREAD_POOL_SIZE_PARAMETER_NAME]
 	}
 
 	/** Group to use when no group is specified. */
