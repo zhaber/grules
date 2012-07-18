@@ -35,7 +35,7 @@ repositories {
 
 def groovyArtifacts = ['org.codehaus.groovy:groovy-all:1.8.6', 'asm:asm:3.3.1']
 def commonArtifacts = ['joda-time:joda-time:2.1+', 'com.google.inject:guice:3.0', 'com.google.guava:guava:11.0.2+', 
-	                     'org.apache.tomcat:servlet-api:6.0.35+', 'org.codehaus.gpars:gpars:0.12']
+	                     'org.apache.tomcat:servlet-api:6.0.35+', 'org.codehaus.gpars:gpars:0.12+']
 def testArtifacts = ['org.spockframework:spock-core:0.6-groovy-1.8', 'org.objenesis:objenesis:1.2']
 
 task jarLocalAst(type: Jar, dependsOn: [compileLocal_astGroovy]) {
@@ -67,10 +67,6 @@ compileTestGroovy.dependsOn processTestResources
 compileTest_scriptsGroovy.dependsOn processResources, compileTestGroovy
 compileTest_integrationGroovy.dependsOn compileTest_scriptsGroovy, processTest_integrationResources
 
-compileTest_integrationGroovy.doLast {
-	project.delete project.localAstLibPath
-}
-
 task jar(type: Jar, overwrite: true, dependsOn: [cleanJar, processResources, compileGroovy]) {
 	destinationDir = file(project.buildLibDir)
 	from buildDir, zipTree(project.localAstLibPath)
@@ -87,7 +83,9 @@ task jarSource(type: Jar, overwrite: true) {
 	from sourceSets.main.groovy, sourceSets.main.resources, sourceSets.local_ast.groovy 
 }
 
-task compileAll(dependsOn: [compileGroovy, compileTestGroovy, compileTest_integrationGroovy]) << {}
+task compileAll(dependsOn: [compileGroovy, compileTestGroovy, compileTest_integrationGroovy]) << {
+	project.delete project.localAstLibPath
+}
 
 task testAll(type: Test) {
 	dependsOn compileAll

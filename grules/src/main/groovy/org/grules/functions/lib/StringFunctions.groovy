@@ -10,7 +10,7 @@ class StringFunctions {
 	
 	String capitalize(String value) {
 		//Groovy 2.0: StringGroovyMethods.capitalize(value) 
-		value.capitalize(value)
+		value.capitalize()
 	}
 
 	boolean contains(String value, String substring) {
@@ -29,7 +29,7 @@ class StringFunctions {
 		value ==~ /[a-zA-Z0-9]*/
 	}
 
-	boolean isLength(String value, Integer length) {
+	boolean isLengthEq(String value, Integer length) {
 		value.length() == length
 	}
 

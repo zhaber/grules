@@ -50,7 +50,7 @@ class SubrulesSeqTest extends Specification{
 			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties(ERROR_MSG))
 			subrulesSeq.add(failingSubrule)
 		when:
-			subrulesSeq.apply(INVALID_PARAMETER)
+			subrulesSeq.apply(INVALID_PARAMETER_VALUE)
 		then:
 			ValidationException e = thrown(ValidationException)
 		expect:
@@ -77,7 +77,7 @@ class SubrulesSeqTest extends Specification{
 			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties())
 			subrulesSeq.add(failingSubrule)
 		when:
-			subrulesSeq.apply(INVALID_PARAMETER)
+			subrulesSeq.apply(INVALID_PARAMETER_VALUE)
 		then:
 			ValidationException e = thrown(ValidationException)
 		expect:
@@ -92,7 +92,7 @@ class SubrulesSeqTest extends Specification{
 			subrulesSeq.add(failingSubrule)
 			subrulesSeq.add(nextSubrule)
 		when:
-			subrulesSeq.apply(INVALID_PARAMETER)
+			subrulesSeq.apply(INVALID_PARAMETER_VALUE)
 		then:
 			ValidationException e = thrown(ValidationException)
 		expect:
@@ -104,7 +104,7 @@ class SubrulesSeqTest extends Specification{
 		  def subrulesSeq = new SubrulesSeq()
 		  subrulesSeq.add(newIsIntegerValidator())
 		when:
-		  subrulesSeq.apply(INVALID_PARAMETER)
+		  subrulesSeq.apply(INVALID_PARAMETER_VALUE)
 		then:
 		  thrown(ValidationException)
 	}

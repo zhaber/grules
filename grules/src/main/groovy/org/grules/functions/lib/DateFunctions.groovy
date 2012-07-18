@@ -1,8 +1,8 @@
+
 package org.grules.functions.lib
 
-import org.grules.functions.PrimitiveTypesConverters
-import org.joda.time.DateTime
 import org.grules.ast.Functions
+import org.joda.time.DateTime
 
 
 /**
@@ -10,8 +10,8 @@ import org.grules.ast.Functions
  */
 @Functions
 class DateFunctions {
-	static final Integer MAX_AGE = 120
-	
+	static final Integer MAX_HUMAN_AGE_YEARS = 120
+
 	boolean isAfter(Date value, Date date) {
 		value.after(date)
 	}
@@ -19,7 +19,7 @@ class DateFunctions {
 	boolean isAfterNow(Date value) {
 		value.after(new Date())
 	}
-	
+
 	boolean isBefore(Date value, Date date) {
 		value.before(date)
 	}
@@ -27,21 +27,16 @@ class DateFunctions {
 	boolean isBeforeNow(Date value) {
 		value.before(new Date())
 	}
-	
+
 	boolean isBirthDateAlive(Date value) {
 		DateTime dateTimeValue = new DateTime(value)
-		// Make the second operand a constant after the elixir of immortality is discovered
-		dateTimeValue.isAfter((new DateTime()).minusYears(MAX_AGE))
+		DateTime minBirthDate = DateTime.now().minusYears(MAX_HUMAN_AGE_YEARS)
+		dateTimeValue.isAfter(minBirthDate) && dateTimeValue.isBeforeNow()
 	}
 
 	boolean isBirthYearAlive(Integer value) {
-		DateTime now = new DateTime()
-		DateTime dateTimeValue = now.withYear(value)
-		dateTimeValue.isAfter(now.minusYears(MAX_AGE))
-	}
-	
-	Date toDate(String value, String pattern, Locale locale = Locale.default) {
-		PrimitiveTypesConverters.toDate(value, pattern, locale)
+		DateTime dateTimeValue = DateTime.now().withYear(value)
+		isBirthDateAlive(dateTimeValue.toDate())
 	}
 
 }

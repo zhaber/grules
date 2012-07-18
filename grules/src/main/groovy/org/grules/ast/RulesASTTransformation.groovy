@@ -32,6 +32,7 @@ import org.grules.GroovyConstants
 import org.grules.functions.lib.CommonFunctions
 import org.grules.functions.lib.DateFunctions
 import org.grules.functions.lib.StringFunctions
+import org.grules.functions.lib.TypeFunctions
 import org.grules.script.RulesScriptAPI
 import org.grules.script.expressions.FunctionTerm
 import org.grules.script.expressions.SubrulesSeqWrapper
@@ -51,7 +52,7 @@ import org.grules.script.expressions.SubrulesSeqWrapper
 class RulesASTTransformation extends GrulesASTTransformation {
 
 	private static final VariableExpression IT_VARIABLE = new VariableExpression(GroovyConstants.IT_NAME)
-	private static final List<Class> IMPORT_CLASSES = [CommonFunctions, DateFunctions, StringFunctions]
+	private static final List<Class> IMPORT_CLASSES = [CommonFunctions, DateFunctions, StringFunctions, TypeFunctions]
 	private static final String RULES_SUFFIX = 'Grules'
 	
 	/** 

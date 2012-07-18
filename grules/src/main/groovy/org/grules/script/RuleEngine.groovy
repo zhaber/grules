@@ -5,7 +5,6 @@ import groovyx.gpars.GParsExecutorsPoolUtil
 
 import java.util.concurrent.ExecutionException
 
-import org.codehaus.groovy.runtime.InvokerInvocationException
 import org.grules.GrulesLogger
 import org.grules.ValidationErrorProperties
 import org.grules.config.Config
@@ -75,9 +74,7 @@ class RuleEngine {
 			}
 		} catch (ExecutionException e) {
 			throw e.cause
-		} catch (InvokerInvocationException e) {
-			throw e.cause
-		}		
+		} 	
 		script
 	}
 

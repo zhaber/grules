@@ -60,7 +60,7 @@ class ParametersTest extends Specification {
 	
 	def "If rule dependens on invalid parameter it is saved as with missing dependency"() {
 		setup:
-		  def parameters = [(PARAMETER_NAME): INVALID_PARAMETER, (PARAMETER_NAME_AUX): PARAMETER_VALUE]
+		  def parameters = [(PARAMETER_NAME): INVALID_PARAMETER_VALUE, (PARAMETER_NAME_AUX): PARAMETER_VALUE]
 			RulesScriptResult result = Grules.applyRules(InvalidDependencyParameterGrules, parameters)
 		expect:
 			PARAMETER_NAME_AUX in result.parametersWithMissingDependency

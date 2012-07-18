@@ -11,7 +11,7 @@ import org.grules.config.Config
 class RulesBinding extends Binding {
 	
 	private static final String DIRTY_VALUE_PREFIX = '$'
-	private static final String RESOURCES_VARIABLE = 'r'
+	private static final String RESOURCES_VARIABLE = 'm'
 	private static final Config CONFIG = GrulesInjector.config
 	private static final Set<String> GROUPS = CONFIG.groups
 	private static final Map<String, String> MESSAGES = GrulesInjector.messagesResourceBundle.messages

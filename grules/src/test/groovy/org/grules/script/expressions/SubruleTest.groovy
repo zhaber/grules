@@ -25,7 +25,7 @@ class SubruleTest extends Specification{
 		  def validatorTerm = newIsIntegerValidator()
 		  def subrule = SubrulesFactory.create(validatorTerm, new ValidationErrorProperties())
 		when:
-		  subrule.apply(INVALID_PARAMETER)
+		  subrule.apply(INVALID_PARAMETER_VALUE)
 		then:
 		  thrown(ValidationException)
 	}
@@ -45,7 +45,7 @@ class SubruleTest extends Specification{
 		  def converterTerm = newToIntConverter()
 		  def subrule = SubrulesFactory.create(converterTerm, new ValidationErrorProperties())
 		when:
-		  subrule.apply(INVALID_PARAMETER)
+		  subrule.apply(INVALID_PARAMETER_VALUE)
 		then:
 		  thrown(ValidationException)
 	}

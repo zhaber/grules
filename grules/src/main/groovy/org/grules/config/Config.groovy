@@ -14,8 +14,7 @@ class Config {
 	static final String LOG_LEVEL_PARAMETER_NAME = 'logLevel'
 	static final String LOGGER_HANDLER_PARAMETER_NAME = 'loggerHandler'
 	static final String GROUPS_PARAMETER_NAME = 'groups'
-	static final String TYPE_CHECKED_FUNCTIONS_PARAMETER_NAME = 'typeCheckedFunctions'
-	static final String RESOURCE_BUNDLE_PATH_PARAMETER_NAME = 'resourceBundlePath'
+	static final String RESOURCE_BUNDLE_PARAMETER_NAME = 'resourceBundlePath'
 
 	Config(Map<String, Object> properties) {
 		this.parameters = properties
@@ -50,14 +49,9 @@ class Config {
 		parameters[NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME]
 	}
 	
-	/** Indicates if functions must be statically type checked. */
-	boolean getFunctionsTypeChecked() {
-		parameters[TYPE_CHECKED_FUNCTIONS_PARAMETER_NAME]
-	}
-	
 	/** Resource bundle for error messages. */
 	String getResourceBundlePath() {
-		parameters[RESOURCE_BUNDLE_PATH_PARAMETER_NAME]
+		parameters[RESOURCE_BUNDLE_PARAMETER_NAME]
 	}
 	
 	/** Returns all configuration parameters as a string. */

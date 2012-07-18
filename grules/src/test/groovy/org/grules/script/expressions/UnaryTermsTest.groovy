@@ -14,7 +14,7 @@ class UnaryTermsTest extends Specification {
 		setup:
 		  def term = new NotTerm(newIsIntegerValidator()) 
 		expect:
-		  term.apply(INVALID_PARAMETER)
+		  term.apply(INVALID_PARAMETER_VALUE)
 	}
 	
 	def "Not operator throws exception if term is tilde term"() {

@@ -20,7 +20,7 @@ class CombinedTest extends Specification {
 				id: VALID_INTEGER_STRING, 
 				closure: PARAMETER_VALUE, 
 				equalToWithDefaultValue: PARAMETER_VALUE,
-				invalidParameter: INVALID_PARAMETER]
+				invalidParameter: INVALID_PARAMETER_VALUE]
 		  RulesScriptResult scriptResult = Grules.applyRules(CombinedGrules, parameters)
 		expect:
 		  scriptResult.cleanParameters['id'] == VALID_INTEGER

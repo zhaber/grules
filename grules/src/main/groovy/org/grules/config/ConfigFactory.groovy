@@ -16,9 +16,8 @@ class ConfigFactory {
 		(Config.DEFAULT_GROUP_PARAMETER_NAME): HttpRequestParametersGroup.PARAMETERS.name(),
 		(Config.LOG_LEVEL_PARAMETER_NAME): Level.FINE,
 		(Config.GROUPS_PARAMETER_NAME): HttpRequestParametersGroup.values()*.name(),
-		(Config.TYPE_CHECKED_FUNCTIONS_PARAMETER_NAME): true,
 		(Config.LOGGER_HANDLER_PARAMETER_NAME): new StdoutConsoleHandler(),
-		(Config.RESOURCE_BUNDLE_PATH_PARAMETER_NAME): 'messages']
+		(Config.RESOURCE_BUNDLE_PARAMETER_NAME): 'messages']
 
 	/**
 	 * Creates a grules configuration object based on the provided script file.  
