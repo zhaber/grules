@@ -10,14 +10,46 @@ import org.grules.ast.Functions
 @Functions
 class CommonFunctions {
 	
-	Number abs(Number value) {
-		Number result = Math.abs(value)
+	Integer abs(Integer value) {
+		Integer result = Math.abs(value)
+		if (result < 0) {
+			throw new NumberFormatException()
+		}
+		result
+	}
+	
+	Long abs(Long value) {
+		Long result = Math.abs(value)
+		if (result < 0) {
+			throw new NumberFormatException()
+		}
+		result
+	}
+	
+	Float abs(Float value) {
+		Float result = Math.abs(value)
+		if (result < 0) {
+			throw new NumberFormatException()
+		}
+		result
+	}
+	
+	Double abs(Double value) {
+		Double result = Math.abs(value)
 		if (result < 0) {
 			throw new NumberFormatException()
 		}
 		result
 	}
 
+  Number add(Number value, Number number) {
+		value + number
+	}
+
+	Number div(Number value, Number number) {
+		value / number
+	}
+	
 	boolean eq(value1, value2) {
 		value1 == value2
 	}
@@ -65,6 +97,14 @@ class CommonFunctions {
 		}
 	}
 
+	Number mod(Long value, Long number) {
+		value % number
+	}
+	
+	Number mult(Number value, Number number) {
+		value * number
+	}
+	
 	def nop(value) {
 		value
 	}
