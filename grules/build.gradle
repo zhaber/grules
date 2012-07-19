@@ -22,11 +22,9 @@ configurations {
 }
 
 project.ext {
-	localAstLibName = "${name}-local-ast"
 	srcLibName = "${name}-src"
 	buildLibDir = 'lib'
 	configDir = 'config'
-	localAstLibPath = "$buildLibDir/${localAstLibName}.jar"
 	codenarcConfigPath = "$configDir/codenarc.groovy"
 	codenarcScriptsConfigPath = "$configDir/codenarc_scripts.groovy"
 }
@@ -42,54 +40,40 @@ def commonArtifacts = ['joda-time:joda-time:2.1+', 'com.google.inject:guice:3.0'
 	                     'org.apache.tomcat:servlet-api:6.0.35+', 'org.codehaus.gpars:gpars:0.12+']
 def testArtifacts = ['org.spockframework:spock-core:0.6-groovy-1.8', 'org.objenesis:objenesis:1.2']
 
-task jarLocalAst(type: Jar, dependsOn: [compileLocal_astGroovy]) {
-	baseName = project.localAstLibName
-	destinationDir = file(project.project.buildLibDir)
-	from buildDir
-	exclude 'tmp'
-}
-
 dependencies {
   groovy groovyArtifacts
   local_astCompile groovyArtifacts
   compile commonArtifacts
-	compile files(project.localAstLibPath) {
-		builtBy 'jarLocalAst'
-	}
   testCompile testArtifacts
 	test_integrationCompile groovyArtifacts, commonArtifacts, testArtifacts
 	test_scriptsCompile groovyArtifacts, commonArtifacts
-	test_scriptsCompile files(project.localAstLibPath) {
-		builtBy 'jarLocalAst'
-	}
-	excludedClasspathJars files(project.localAstLibPath)
+}
+
+task jar(type: Jar, overwrite: true) {
+	destinationDir = file(project.buildLibDir)
+	from buildDir
+	excludes=['tmp']
 }
 
 compileLocal_astGroovy.dependsOn clean
-compileGroovy.dependsOn jarLocalAst
-compileTestGroovy.dependsOn processTestResources
+compileGroovy.dependsOn compileLocal_astGroovy 
+compileTestGroovy.dependsOn jar
 compileTest_scriptsGroovy.dependsOn processResources, compileTestGroovy
 compileTest_integrationGroovy.dependsOn compileTest_scriptsGroovy, processTest_integrationResources
 
-task jar(type: Jar, overwrite: true, dependsOn: [cleanJar, processResources, compileGroovy]) {
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
 	destinationDir = file(project.buildLibDir)
-	from buildDir, zipTree(project.localAstLibPath)
-	exclude 'tmp'
+	from sourceSets.main.allSource
 }
 
 tasks.withType(CodeNarc).all { codeNarcTask ->
-  codeNarcTask.configFile = file(project.codenarcConfigPath)
+	codeNarcTask.configFile = file(project.codenarcConfigPath)
 }
 
-task jarSource(type: Jar, overwrite: true) {
-	baseName = project.srcLibName
-	destinationDir = file(project.buildLibDir)
-	from sourceSets.main.groovy, sourceSets.main.resources, sourceSets.local_ast.groovy 
-}
+codenarcTest_scripts.configFile = file(project.codenarcScriptsConfigPath)
 
-task compileAll(dependsOn: [compileGroovy, compileTestGroovy, compileTest_integrationGroovy]) << {
-	project.delete project.localAstLibPath
-}
+task compileAll(dependsOn: [compileGroovy, compileTestGroovy, compileTest_integrationGroovy]) << {}
 
 task testAll(type: Test) {
 	dependsOn compileAll
@@ -100,24 +84,17 @@ task initProject << {
 	sourceSets*.allSource.srcDirs.flatten().each {if (it.name != 'java') it.mkdirs()}
 }
 
-codenarcTest_scripts.configFile = file(project.codenarcScriptsConfigPath)
-
-eclipse {
-	classpath {
-		minusConfigurations += configurations.excludedClasspathJars
-	}
-}
-
 task initEclipseProject(dependsOn: [initProject, eclipseClasspath]) << {}
 
-build.dependsOn = [testAll, check, jarSource, jar]
+build.dependsOn = [testAll, check, sourcesJar, jar]
 
 task wrapper(type: Wrapper) {
 	gradleVersion = '1.0'
 }
 
 artifacts {
-	archives jar, jarSource
+	archives jar 	
+	archives sourcesJar
 }
 
 signing {

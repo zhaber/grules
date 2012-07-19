@@ -47,6 +47,9 @@ class CommonFunctions {
 	}
 
 	Number div(Number value, Number number) {
+		if (number == 0) {
+			throw new ValidationException('Division by zero')
+		}
 		value / number
 	}
 	
@@ -107,5 +110,9 @@ class CommonFunctions {
 	
 	def nop(value) {
 		value
+	}
+	
+	def pow(Double value, Double number) {
+		Math.pow(value, number)
 	}
 }

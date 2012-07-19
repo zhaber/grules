@@ -16,6 +16,23 @@ class CommonFunctionsTest extends Specification {
 		  commonFunctions.abs(-1) == 1 
 	}
 	
+	def "add"() {
+		expect:
+			commonFunctions.add(1, 2) == 3
+	}
+
+	def "div"() {
+		expect:
+			commonFunctions.div(0.2, 2) == 0.1
+	}
+	
+	def "division by zero"() {
+		when:
+			commonFunctions.div(1, 0)
+		then:
+		  thrown(ValidationException)
+	}
+		
 	def "eq"() {
 		expect:
 			commonFunctions.eq(PARAMETER_VALUE, PARAMETER_VALUE)
@@ -77,9 +94,24 @@ class CommonFunctionsTest extends Specification {
 			e.errorProperties.hasErrorProperty(PasswordStrength.simpleName)
 	}
 
+	def "mod"() {
+		expect:
+			commonFunctions.mod(5, 2) == 1
+	}
+	
+	def "mult"() {
+		expect:
+			commonFunctions.mult(0.1, 2) == 0.2
+	}
+
 	def "nop"() {
 		expect:
 			commonFunctions.nop(PARAMETER_VALUE) == PARAMETER_VALUE
+	}
+	
+	def "pow"() {
+		expect:
+		  commonFunctions.pow(0.5, 2) == 0.25
 	}
 
 }
