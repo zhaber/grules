@@ -11,7 +11,7 @@ class IncludeTest extends Specification {
 	
 	def "Scripts can be included in each other"() {
 		setup:
-	  	RulesScriptResult scriptResult = Grules.applyRules(IncludeMainGrules, (PARAMETER_NAME): PARAMETER_VALUE)
+	  	RulesScriptResult scriptResult = Grules.applyRules(IncludeMainGrules, [(PARAMETER_NAME): PARAMETER_VALUE])
 		expect:
 		  scriptResult.cleanParameters[PARAMETER_NAME] == PARAMETER_VALUE
 	}

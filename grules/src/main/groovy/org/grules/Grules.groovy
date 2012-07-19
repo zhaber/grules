@@ -20,19 +20,13 @@ class Grules {
 	 * </code>
 	 * @param rulesScript rules script class
 	 * @param parameters input parameters
-	 * @param functions additional functions
+	 * @param environment custom functions and variables
 	 * @return result of rules application
 	 */
-	static RulesScriptGroupResult applyGroupRules(Map<String, Map<String, Object>> parameters, 
-		  Class<? extends Script> rulesScript, Map<String, Closure> functions = [:]) {
-		Closure<RulesScriptGroupResult> preprocessor = newGroupRulesApplicator(rulesScript, functions)
-		preprocessor(parameters)
-	}
-	
-  /** See {@link #applyGroupRules(Map, Class)*/		
 	static RulesScriptGroupResult applyGroupRules(Class<? extends Script> rulesScript, 
-			Map<String, Map<String, Object>> parameters, Map<String, Closure> functions = [:]) {
-		applyGroupRules(parameters, rulesScript, functions)
+			Map<String, Map<String, Object>> parameters, Map<String, Object> environment = [:]) {
+		Closure<RulesScriptGroupResult> preprocessor = newGroupRulesApplicator(rulesScript, environment)
+		preprocessor(parameters)
 	}
 
 	/**
@@ -43,19 +37,13 @@ class Grules {
 	 * </code>
 	 * @param rulesScript rules script class
 	 * @param parameters input parameters
-	 * @param functions additional functions
+	 * @param environment custom functions and variables
 	 * @return result of rules application
 	 */
-	static RulesScriptResult applyRules(Map<String, Object> parameters, Class<? extends Script> rulesScript, 
-		  Map<String, Closure> functions = [:]) {
-		Closure<RulesScriptResult> preprocessor = newRulesApplicator(rulesScript, functions)
-		preprocessor(parameters)
-	}
-	
-	/** See {@link #applyRules(Map, Class) */
 	static RulesScriptResult applyRules(Class<? extends Script> rulesScript, Map<String, Object> parameters, 
-		  Map<String, Closure> functions = [:]) {
-		applyRules(parameters, rulesScript, functions)
+		  Map<String, Object> environment = [:]) {
+		Closure<RulesScriptResult> preprocessor = newRulesApplicator(rulesScript, environment)
+		preprocessor(parameters)
 	}
 
 	/**
@@ -66,12 +54,12 @@ class Grules {
 	 * RulesScriptGroupResult result2 = test(GET: [id: 2])
 	 * </code>
 	 * @param rulesScript rules script class
-	 * @param functions additional functions
+	 * @param environment custom functions and variables
 	 * @return closure that runs the script
 	 */
   static Closure<RulesScriptGroupResult> newGroupRulesApplicator(Class<? extends Script> rulesScript, 
-		  Map<String, Closure> functions = [:]) {
-	  GrulesInjector.ruleEngine.newGroupExecutor(rulesScript, functions)
+		  Map<String, Object> environment = [:]) {
+	  GrulesInjector.ruleEngine.newGroupExecutor(rulesScript, environment)
   }
 
   /**
@@ -82,12 +70,12 @@ class Grules {
 	 * RulesScriptResult result2 = test(id: 2)
 	 *
 	 * @param rulesScript rules script class
-	 * @param functions additional functions
+	 * @param environment custom functions and variables
 	 * @return closure that runs the script
 	 */
   static Closure<RulesScriptResult> newRulesApplicator(Class<? extends Script> rulesScript, 
-		  Map<String, Closure> functions = [:]) {
-	  GrulesInjector.ruleEngine.newExecutor(rulesScript, functions)
+		  Map<String, Object> environment = [:]) {
+	  GrulesInjector.ruleEngine.newExecutor(rulesScript, environment)
   }
 
 	/**

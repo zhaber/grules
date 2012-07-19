@@ -257,5 +257,4 @@ class RuleExpressionFormTransformerTest extends Specification {
 		checkVariable((kAndNotL.rightExpression as NotExpression).expression, l)
 	}
 
-
 }

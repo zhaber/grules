@@ -32,10 +32,10 @@ class RuleEngine {
 	 * Creates a closure that applies a rules script to given parameters values. Parameters is a map where keys are 
 	 * parameters names and values are parameters values (<code>Map&lt;String, Object></code>)
 	 */
-	Closure<RulesScriptResult> newExecutor(Class<? extends Script> rulesScriptClass, Map<String, Closure> functions) {
+	Closure<RulesScriptResult> newExecutor(Class<? extends Script> rulesScriptClass, Map<String, Object> environment) {
     String defaultGroup = config.defaultGroup
 		return { Map<String, Object> parameters ->
-			RulesScript script = runMainScript(rulesScriptClass, [(defaultGroup): parameters], functions)
+			RulesScript script = runMainScript(rulesScriptClass, [(defaultGroup): parameters], environment)
 			RulesScriptResult scriptResult = RulesScriptResultFetcher.fetchResult(script, defaultGroup, parameters)
 			checkMissingFlatParameters(scriptResult.notValidatedParameters)
 			scriptResult
@@ -49,14 +49,14 @@ class RuleEngine {
 	 * </code>)
 	 */
 	Closure<RulesScriptGroupResult> newGroupExecutor(Class<? extends Script> rulesScriptClass, 
-		  Map<String, Closure> functions) {
+		  Map<String, Object> environment) {
 		return {Map<String, Map<String, Object>> parameters ->
 			parameters.each {String group, groupParameters ->
 				if (!config.groups.contains(group)) {
 					throw new InvalidGroupException(group)
 				}
 			}
-			RulesScript script = runMainScript(rulesScriptClass, parameters, functions)
+			RulesScript script = runMainScript(rulesScriptClass, parameters, environment)
 			RulesScriptGroupResult scriptResult = RulesScriptResultFetcher.fetchGroupResult(script, parameters)
 			checkMissingGroupParameters(scriptResult.notValidatedParameters)
 			scriptResult
@@ -67,8 +67,8 @@ class RuleEngine {
 	 * Runs a main rules script that includes all others.
 	 */
 	private RulesScript runMainScript(Class<? extends Script> scriptClass, 
-		  Map<String, Map<String,Object>> parameters, Map<String, Closure> functions) {
-		RulesScript script = rulesScriptFactory.newInstanceMain(scriptClass, parameters, functions)
+		  Map<String, Map<String,Object>> parameters, Map<String, Object> environment) {
+		RulesScript script = rulesScriptFactory.newInstanceMain(scriptClass, parameters, environment)
     try {
 			GParsExecutorsPool.withPool {
 			  GParsExecutorsPoolUtil.callAsync{runScript(script)}.get()

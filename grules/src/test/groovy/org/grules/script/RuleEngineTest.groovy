@@ -36,7 +36,7 @@ class RuleEngineTest extends Specification {
 		RuleEngine ruleEngine = new RuleEngine(GrulesInjector.config, new RulesScriptFactory() {
 			@Override
 			RulesScript newInstanceMain(Class<? extends Script> scriptClass, Map<String, Map<String, Object>> parameters, 
-		      Map<String, Closure> functions) {
+		      Map<String, Object> environment) {
 				rulesScript
 			}
 		})
@@ -53,7 +53,7 @@ class RuleEngineTest extends Specification {
 	
 	def "Create new preprocessor for default group"() {
 		setup:
-			RulesScriptResult result = Grules.applyRules(TestRulesScript, (PARAMETER_NAME): PARAMETER_VALUE)
+			RulesScriptResult result = Grules.applyRules(TestRulesScript, [(PARAMETER_NAME): PARAMETER_VALUE])
 		expect:
 			result.cleanParameters == [(PARAMETER_NAME): PARAMETER_VALUE]
 	}

@@ -74,7 +74,7 @@ class RulesBinding extends Binding {
 	 * Adds variables for direct access to parameters of the group <code>group</code>, i.e. that a group prefix can be 
 	 * omitted.
 	 */
-	void addGroupDirectParametersVariables(String group) {
+	void addGroupParametersVariables(String group) {
 		variables << variables[group]
 	}
 
@@ -84,7 +84,7 @@ class RulesBinding extends Binding {
 	 * @param parameters input parameters
 	 * @param missingPropertyClosure closure called when some parameter is missing
 	 */
-	void addGroupsVariables(Map<String, Map<String, Object>> parameters, Closure<Object> missingPropertyClosure) {
+	void addParameters(Map<String, Map<String, Object>> parameters, Closure<Object> missingPropertyClosure) {
 		variables << GROUPS.collectEntries {
 			String group ->
 			Map<String, Object> dirtyParametersValuesVariables
@@ -103,8 +103,8 @@ class RulesBinding extends Binding {
 		}
 	}
 	
-	void addFunctions(Map<String, Closure> functions) {
-		variables << functions
+	void addCustomVariables(Map<String, Object> customVariables) {
+		variables << customVariables
 	}
 			
 	private static String normalizeParameterName(String parameterName) {

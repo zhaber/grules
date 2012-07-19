@@ -169,18 +169,18 @@ class RulesScriptTest extends Specification {
 			thrown(InvalidDependencyParameterException)
 	}
 
-	def "propertyMissing throws UnprocessedParameterException for absent parameter"() {
+	def "propertyMissing throws MissingPropertyException for absent parameter"() {
 		when:
 			script.propertyMissing(MISSING_PROPERTY_NAME)
 		then:
-			thrown(UnprocessedParameterException)
+			thrown(MissingPropertyException)
 	}
 
-	def "propertyMissing throws UnprocessedParameterException for non existing parameter in group"() {
+	def "propertyMissing throws MissingPropertyException for non existing parameter in group"() {
 		when:
 		  script.propertyMissing(MISSING_PROPERTY_NAME, GROUP)
 		then:
-		  thrown(UnprocessedParameterException)
+		  thrown(MissingPropertyException)
 	}
 	
 	def "propertyMissing throws MissingParameterException for dirty value of non existing parameter in group"() {
@@ -197,11 +197,11 @@ class RulesScriptTest extends Specification {
 		  thrown(MissingParameterException)
 	}
 	
-	def "Reading parameter clean value from empty group causes MissingParameterException"() {
+	def "Reading parameter clean value from empty group causes MissingPropertyException"() {
 		when:
 			(script.variables[GROUP_AUX] as Map).get(MISSING_PROPERTY_NAME)
 		then:
-			thrown(UnprocessedParameterException)
+			thrown(MissingPropertyException)
 	}
 	
 	def "Non empty missing request parameters"() {
@@ -237,11 +237,11 @@ class RulesScriptTest extends Specification {
 		  script.variables.containsKey(RulesBinding.toDirtyParameterName(PARAMETER_NAME)) 
 	} 
 	
-	def "MissingParameterException is thrown if group variables is missing"() {
+	def "MissingPropertyException is thrown if group variables is missing"() {
 		when:
 		  script.variables[GROUP][PARAMETER_NAME_AUX]
 		then:
-		  thrown(UnprocessedParameterException)
+		  thrown(MissingPropertyException)
 	}
 	
 	def "After applying rules direct parameters variables from last group are removed"() {

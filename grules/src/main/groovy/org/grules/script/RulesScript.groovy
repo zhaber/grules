@@ -49,14 +49,14 @@ class RulesScript implements RulesScriptAPI {
 	 * @param parameters input parameters
 	 */
 	void initMain(Script script, Map<String, Map<String, Object>> parameters, 
-		  Map<String, Closure> functions) {
+		  Map<String, Object> environment) {
 		init(script)
 		this.parentScripts = []
 		missingRequiredParameters = [:].withDefault {[] as Set<String>}
 		invalidParameters = [:].withDefault {[:] as Map<String, ValidationErrorProperties>}
 		parametersWithMissingDependency = [:].withDefault {[] as Set<String>}
-		variablesBinding.addGroupsVariables(parameters, this.&propertyMissing)
-		variablesBinding.addFunctions(functions)
+		variablesBinding.addParameters(parameters, this.&propertyMissing)
+		variablesBinding.addCustomVariables(environment)
 		changeGroup(currentGroup)
 	}
 	
@@ -94,7 +94,7 @@ class RulesScript implements RulesScriptAPI {
 			throw new InvalidGroupException(group)
 		}
 		currentGroup = group
-		variablesBinding.addGroupDirectParametersVariables(currentGroup)
+		variablesBinding.addGroupParametersVariables(currentGroup)
 	}
 	
 	/**
@@ -123,7 +123,7 @@ class RulesScript implements RulesScriptAPI {
 		variablesBinding.removeGroupDirectParametersVariables(currentGroup)
 		RULE_ENGINE.runIncludedScript(includedScriptClass, scriptsChain, variablesBinding, missingRequiredParameters, 
 			  invalidParameters, parametersWithMissingDependency)
-		variablesBinding.addGroupDirectParametersVariables(currentGroup)
+		variablesBinding.addGroupParametersVariables(currentGroup)
 	}
 	
 	/**
@@ -225,7 +225,7 @@ class RulesScript implements RulesScriptAPI {
 	  } else if (isProcessedParameter(group, name)) {
 		  throw new InvalidDependencyParameterException() 
 	  } else {
-		  throw new UnprocessedParameterException(group + '.' + name)
+		  throw new MissingPropertyException(name)
 		}
 	}
 	
