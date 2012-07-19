@@ -10,6 +10,7 @@ class TestScriptEntities {
 	private static final Config DEFAULT_CONFIG = new ConfigFactory().createDefaultConfig()
 
 	static final FALSE_PARAMETER = []
+	static final ADDITIONAL_FUNCTION = 'additionalFunction'
 	static final PARAMETER_NAME = 'parameterName'
 	static final PARAMETER_NAME_AUX = 'parameterNameAux'
 	static final PARAMETER_VALUE = 'parameterValue'

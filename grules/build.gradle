@@ -7,7 +7,6 @@ defaultTasks 'build'
 buildDir = 'bin'
 
 sourceSets {
-	functions
 	local_ast
 	test_scripts
 	test_integration

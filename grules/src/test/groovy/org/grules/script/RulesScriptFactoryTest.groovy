@@ -3,7 +3,6 @@ package org.grules.script
 import static org.grules.TestScriptEntities.*
 
 import org.grules.EmptyRulesScript
-import org.grules.TestScriptFactory
 
 import spock.lang.Specification
 
@@ -11,7 +10,7 @@ class RulesScriptFactoryTest extends Specification {
 	
 	def "Created scripts are of a right class"() {
 		setup:
-			def script = TestScriptFactory.newEmptyRulesScript()
+			def script = (new RulesScriptFactory()).newInstanceMain(EmptyRulesScript, [:], [:])
 	  when:
 		  script as EmptyRulesScript
 		then:
@@ -19,5 +18,4 @@ class RulesScriptFactoryTest extends Specification {
 		expect:
 			script instanceof RulesScript
 	}
-
 }

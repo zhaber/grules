@@ -43,18 +43,20 @@ class RulesScript implements RulesScriptAPI {
 	}
 	
 	/**
-	* Initialize a main rules script that includes all others.
-	* 
-	* @param script main script
-	* @param parameters input parameters
-	*/
-	void initMain(Script script, Map<String, Map<String, Object>> parameters) {
+	 * Initialize a main rules script that includes all others.
+	 * 
+	 * @param script main script
+	 * @param parameters input parameters
+	 */
+	void initMain(Script script, Map<String, Map<String, Object>> parameters, 
+		  Map<String, Closure> functions) {
 		init(script)
 		this.parentScripts = []
 		missingRequiredParameters = [:].withDefault {[] as Set<String>}
 		invalidParameters = [:].withDefault {[:] as Map<String, ValidationErrorProperties>}
 		parametersWithMissingDependency = [:].withDefault {[] as Set<String>}
 		variablesBinding.addGroupsVariables(parameters, this.&propertyMissing)
+		variablesBinding.addFunctions(functions)
 		changeGroup(currentGroup)
 	}
 	

@@ -13,7 +13,9 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.ExpressionStatement
+import org.codehaus.groovy.ast.stmt.Statement
 import org.codehaus.groovy.runtime.MethodClosure
+import org.grules.GroovyConstants
 
 class GrulesASTFactory {
 	/**
@@ -80,9 +82,24 @@ class GrulesASTFactory {
 	/**
 	 * Creates closure with a single expression.
 	 */
-	static ClosureExpression createSingleExpressionClosure(Expression expression) {
+	static ClosureExpression createClosureExpression(Expression expression) {
 		BlockStatement blockStatement = new BlockStatement([new ExpressionStatement(expression)], new VariableScope())
 		new ClosureExpression(new Parameter[0], blockStatement)
 	}
 	
+	static 	ClosureExpression createClosureExpression(BlockStatement blockStatement) {
+		VariableScope closureVariableScope = blockStatement.scope.copy()
+		closureVariableScope.parent = blockStatement.scope
+		List<Statement> statements = blockStatement.statements
+		VariableScope closureBlockVariableScope = closureVariableScope.copy()
+		closureBlockVariableScope.parent = closureVariableScope
+		BlockStatement closureBlockStatement = new BlockStatement(statements, closureBlockVariableScope)
+		ClosureExpression closureExpression = new ClosureExpression(new Parameter[0], closureBlockStatement)
+		closureExpression.variableScope = closureVariableScope
+		closureExpression
+	}
+	
+	static 	VariableExpression createItVariable() {
+		new VariableExpression(GroovyConstants.IT_NAME)
+	}
 }

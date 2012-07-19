@@ -25,6 +25,23 @@ class RuleEngineTest extends Specification {
 	def setup() {
 		rulesScript = Mock()
 	}
+	
+	RuleEngine createRuleEngineWithValidationErrorAction() {
+		def config = ConfigFactory.createDefaultConfig()
+		config.parameters.put(Config.NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME, OnValidationEventAction.ERROR)
+		new RuleEngine(config, new RulesScriptFactory())
+	}
+
+	def runMainScript() {
+		RuleEngine ruleEngine = new RuleEngine(GrulesInjector.config, new RulesScriptFactory() {
+			@Override
+			RulesScript newInstanceMain(Class<? extends Script> scriptClass, Map<String, Map<String, Object>> parameters, 
+		      Map<String, Closure> functions) {
+				rulesScript
+			}
+		})
+		ruleEngine.runMainScript(Script, [:], [:])
+	}
 
 	def "Create new preprocessor for grouped parameters"() {
 		setup:
@@ -41,15 +58,9 @@ class RuleEngineTest extends Specification {
 			result.cleanParameters == [(PARAMETER_NAME): PARAMETER_VALUE]
 	}
 
-	private RuleEngine getRuleEngineForNotValidatedParametersException() {
-		def config = ConfigFactory.createDefaultConfig()
-		config.parameters.put(Config.NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME, OnValidationEventAction.ERROR)
-		new RuleEngine(config, new RulesScriptFactory())
-	}
-
 	def "NotValidatedParametersException is thrown when there is parameter without rule (for non-grouped parameters)"() {
 		setup:
-			def preprocessor = ruleEngineForNotValidatedParametersException.newExecutor(EmptyRulesScript)
+			def preprocessor = createRuleEngineWithValidationErrorAction().newExecutor(EmptyRulesScript, [:])
 		when:
 	  	preprocessor((PARAMETER_NAME): PARAMETER_VALUE)
 		then:
@@ -59,7 +70,7 @@ class RuleEngineTest extends Specification {
 	
 	def "NotValidatedParametersException is thrown when there is parameter without rule (for grouped parameters)"() {
 		setup:
-			def preprocessor = ruleEngineForNotValidatedParametersException.newGroupExecutor(EmptyRulesScript)
+			def preprocessor = createRuleEngineWithValidationErrorAction().newGroupExecutor(EmptyRulesScript, [:])
 		when:
 			preprocessor((GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]) 
 		then:
@@ -67,18 +78,9 @@ class RuleEngineTest extends Specification {
 			e.parameters.containsKey(GROUP)
 	}
 	
-	private RuleEngine getRuleEngineForRunMainScript() {
-		new RuleEngine(GrulesInjector.config, new RulesScriptFactory() {
-			@Override
-			RulesScript newInstanceMain(Class<? extends Script> scriptClass, Map<String, Map<String, Object>> parameters) {
-				rulesScript
-			}
-		})
-	}
-	
 	def "runMainScript runs the scriptClass"() {
 		when:
-  	  ruleEngineForRunMainScript.runMainScript(Script, [:])
+  	  runMainScript()
 		then:
 		  1 * rulesScript.applyRules()
 	}
@@ -87,7 +89,7 @@ class RuleEngineTest extends Specification {
 		setup:
 		  rulesScript.applyRules() >> {newValidatorClosureTerm() | newValidatorClosureTerm()}
 		when:
-		  ruleEngineForRunMainScript.runMainScript(Script, [:])
+		  runMainScript()
 		then:
 		  notThrown(MissingMethodException)
 	}
@@ -96,7 +98,7 @@ class RuleEngineTest extends Specification {
 		setup:
 		  rulesScript.applyRules() >> {newValidationTerm()['']}
 		when:
-		  ruleEngineForRunMainScript.runMainScript(Script, [:])
+		  runMainScript()
 		then:
 		  notThrown(MissingMethodException)
 	}
@@ -105,7 +107,7 @@ class RuleEngineTest extends Specification {
 		setup:
 		  rulesScript.applyRules() >> {newValidationTerm() | newValidationTerm()}
 		when:
-		  ruleEngineForRunMainScript.runMainScript(Script, [:])
+		  runMainScript()
 		then:
 		  notThrown(MissingMethodException)
 	}
@@ -114,7 +116,7 @@ class RuleEngineTest extends Specification {
 		setup:
 		  rulesScript.applyRules() >> {{->} | {->}}
 		when:
-		  ruleEngineForRunMainScript.runMainScript(Script, [:])
+		  runMainScript()
 		then:
 		  notThrown(MissingMethodException)
 	} 

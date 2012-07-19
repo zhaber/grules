@@ -35,7 +35,7 @@ class RulesScriptTest extends Specification {
 	def setup() {
 		GrulesLogger.turnOff()
 		script = new RulesScript()
-		script.initMain(new EmptyRulesScript(), [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]])
+		script.initMain(new EmptyRulesScript(), [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]], [:])
 	}
 
 	def "Initializing sets variables for dirty values"() {

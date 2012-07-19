@@ -54,5 +54,5 @@ class GrulesASTUtils {
 			false
 		}
 	}
-
+  
 }

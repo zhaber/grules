@@ -14,10 +14,11 @@ class RulesScriptFactory {
 	 * @param parameters input parameters
 	 * @return rules script
 	 */
-	RulesScript newInstanceMain(Class<? extends Script> scriptClass, Map<String, Map<String, Object>> parameters) {
+	RulesScript newInstanceMain(Class<? extends Script> scriptClass, Map<String, Map<String, Object>> parameters, 
+		  Map<String, Closure> functions) {
 		Script script = newScriptInstance(scriptClass)
 		RulesScript rulesScript = script as RulesScript
-		rulesScript.initMain(script, parameters)
+		rulesScript.initMain(script, parameters, functions)
 		rulesScript
 	}
 

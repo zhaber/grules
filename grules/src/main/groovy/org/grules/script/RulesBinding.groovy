@@ -102,6 +102,10 @@ class RulesBinding extends Binding {
 			}]
 		}
 	}
+	
+	void addFunctions(Map<String, Closure> functions) {
+		variables << functions
+	}
 			
 	private static String normalizeParameterName(String parameterName) {
 		parameterName.isEmpty() ? '' : parameterName[0].toLowerCase() + parameterName[1..-1]
