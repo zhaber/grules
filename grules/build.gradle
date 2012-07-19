@@ -1,10 +1,15 @@
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 defaultTasks 'build'
 
 buildDir = 'bin'
+
+group = 'org.grules'
+version = '0.1'
 
 sourceSets {
 	local_ast
@@ -109,4 +114,62 @@ build.dependsOn = [testAll, check, jarSource, jar]
 
 task wrapper(type: Wrapper) {
 	gradleVersion = '1.0'
+}
+
+artifacts {
+	archives jar, jarSource
+}
+
+signing {
+	sign configurations.archives
+}
+
+uploadArchives {
+	repositories {
+			mavenDeployer {
+					beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+					repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+						authentication(userName: sonatypeUsername, password: sonatypePassword)
+					}
+					pom.project {
+						 name 'Grules'
+						 packaging 'jar'
+						 description 'Grules is a rule engine implemented in Groovy'
+						 url 'http://grules.org'
+
+						 scm {
+								 url 'scm:git@github.com:zhaber/grules.git'
+								 connection 'scm:git@github.com:zhaber/grules.git'
+								 developerConnection 'scm:git@github.com:zhaber/grules.git'
+						 }
+
+						 licenses {
+								 license {
+										 name 'GNU Lesser General Public License v3.0'
+										 url 'http://www.gnu.org/licenses/lgpl.html'
+										 distribution 'repo'
+								 }
+						 }
+
+						 developers {
+								 developer {
+										 id 'zhaber'
+										 name 'Vitalii Fedorenko'
+								 }
+						 }
+				 }
+
+				 pom.withXml { XmlProvider xmlProvider ->
+						 def xml = xmlProvider.asString()
+						 def pomXml = new XmlParser().parse(new ByteArrayInputStream(xml.toString().bytes))
+						 pomXml.version[0] + { packaging('jar') }
+						 def newXml = new StringWriter()
+						 def printer = new XmlNodePrinter(new PrintWriter(newXml))
+						 printer.preserveWhitespace = true
+						 printer.print(pomXml)
+						 xml.setLength(0)
+						 xml.append(newXml.toString())
+				 }
+			}
+	}
 }
