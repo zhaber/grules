@@ -17,6 +17,11 @@ abstract class GrulesASTTransformation implements ASTTransformation {
 	private GrulesASTTransformationLogger logger
 	private GroovyClassVisitor astNodeLoggerVisitor
 	
+	/**
+	 * Initializes a transformation class.
+	 * 
+	 * @param className a name of the transformed class
+	 */
 	protected void init(String className) {
 	  logger = new GrulesASTTransformationLogger((className.split('\\.') as List).last())
 		astNodeLoggerVisitor = new AstNodeToScriptVisitor(logger.writer)
@@ -24,6 +29,9 @@ abstract class GrulesASTTransformation implements ASTTransformation {
 	
 	/**
 	 * Visits the module node and applies AST transformations.
+	 * 
+	 * @param moduleNode a module node
+	 * @param node a transformed node
 	 */
 	protected void visit(ModuleNode moduleNode, node) {
 		try {
@@ -39,14 +47,6 @@ abstract class GrulesASTTransformation implements ASTTransformation {
 		}
 	}
 	
-	private void logSource(ClassNode node) {
-		astNodeLoggerVisitor.visitClass(node)
-	}
-	
-	private void logSource(MethodNode node) {
-		astNodeLoggerVisitor.visitMethod(node)
-	}
-
 	abstract protected void visitModule(ModuleNode moduleNode, node) 
 	
 	/**
@@ -70,5 +70,13 @@ abstract class GrulesASTTransformation implements ASTTransformation {
 	private void close() {
 		log('\nTransformation complete')
 		logger.close()
+	}
+	
+	private void logSource(ClassNode node) {
+		astNodeLoggerVisitor.visitClass(node)
+	}
+	
+	private void logSource(MethodNode node) {
+		astNodeLoggerVisitor.visitMethod(node)
 	}
 }

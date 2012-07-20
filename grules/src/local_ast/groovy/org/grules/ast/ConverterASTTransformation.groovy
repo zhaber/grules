@@ -24,6 +24,9 @@ import org.grules.functions.ConverterBooleanResult
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 class ConverterASTTransformation extends GrulesASTTransformation {
 	
+	/**
+	 * Visits a converter method.
+	 */
 	@Override
 	void visit(ASTNode[] nodes, SourceUnit source) {
     MethodNode methodNode = (MethodNode) nodes[1]		
