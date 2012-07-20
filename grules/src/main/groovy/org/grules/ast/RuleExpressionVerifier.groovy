@@ -48,9 +48,8 @@ class RuleExpressionVerifier {
 
 	static boolean isValidRuleParameter(Expression expression) {
 		if (expression instanceof ConstantExpression) {
-			ConstantExpression methodConstantExpression = expression
 			List<Method> inheritedMethods = (Script.methods as List<Method>) + (RulesScriptAPI.methods as List<Method>)
-			!(methodConstantExpression.value in inheritedMethods*.name)
+			!((expression as ConstantExpression).value in inheritedMethods*.name)
 		} else {
 			expression instanceof GStringExpression || expression instanceof VariableExpression
 		}
@@ -105,7 +104,5 @@ class RuleExpressionVerifier {
 			}
 		}
 	}
-
-
 }
 

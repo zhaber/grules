@@ -12,12 +12,6 @@ import org.codehaus.groovy.syntax.Token
 
 class ASTTestUtils {
 
-	static convertPrecedences(ruleExpression) {
-		ruleExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)
-		ruleExpression = RuleExpressionFormTransformer.infixToPostfixExpression(ruleExpression)
-		RuleExpressionFormTransformer.postfixExpressionToTree(ruleExpression)
-	}
-	
 	static List<Expression> fetchArguments(MethodCallExpression methodCallExpression) {
 		(methodCallExpression.arguments as ArgumentListExpression).expressions
 	}

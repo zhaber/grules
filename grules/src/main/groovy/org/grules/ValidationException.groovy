@@ -1,6 +1,5 @@
 package org.grules
 
-
 /**
  * Signals a validation error. 
  */

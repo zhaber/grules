@@ -15,9 +15,15 @@ import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.ExpressionStatement
 import org.codehaus.groovy.ast.stmt.Statement
 import org.codehaus.groovy.runtime.MethodClosure
-import org.grules.GroovyConstants
 
+/**
+ * A factory for Groovy expressions used by Grules local and global AST transformations.
+ */
 class GrulesASTFactory {
+	
+	final static String IT_NAME = 'it'
+	final static String CALL_METHOD_NAME = 'call'
+	
 	/**
 	 * Creates an instance method call that calls the given method closure.
 	 *
@@ -48,7 +54,7 @@ class GrulesASTFactory {
 	 * @return method call expression
 	 */
 	static MethodCallExpression createMethodCall(Expression methodExpression,	 List<Expression> arguments) {
-		ArgumentListExpression argumentsExpression = new ArgumentListExpression(arguments)
+		Expression argumentsExpression = new ArgumentListExpression(arguments)
 		new MethodCallExpression(VariableExpression.THIS_EXPRESSION, methodExpression, argumentsExpression)
 	}
 	
@@ -62,8 +68,8 @@ class GrulesASTFactory {
 	 */
 	static MethodCallExpression createStaticMethodCall(Class clazz, MethodClosure methodClosure,
 			List<Expression> arguments) {
-		ArgumentListExpression argumentsExpression = new ArgumentListExpression(arguments)
-		ConstantExpression methodExpression = new ConstantExpression(methodClosure.method)
+		Expression argumentsExpression = new ArgumentListExpression(arguments)
+		Expression methodExpression = new ConstantExpression(methodClosure.method)
 		new MethodCallExpression (new ClassExpression(ClassHelper.make(clazz)), methodExpression,	 argumentsExpression)
 	}
 			
@@ -75,31 +81,45 @@ class GrulesASTFactory {
 	 * @return constructor call expression
 	 */
 	static ConstructorCallExpression createConstructorCall(Class clazz, List<Expression> arguments) {
-		ArgumentListExpression argumentsExpression = new ArgumentListExpression(arguments)
+		Expression argumentsExpression = new ArgumentListExpression(arguments)
 		new ConstructorCallExpression(ClassHelper.make(clazz), argumentsExpression)
 	}
 
 	/**
 	 * Creates closure with a single expression.
+	 * 
+	 * @param expression a Groovy expression that has to be wrapped in closure
+	 * @return closure expression that wraps the specified expression
 	 */
 	static ClosureExpression createClosureExpression(Expression expression) {
-		BlockStatement blockStatement = new BlockStatement([new ExpressionStatement(expression)], new VariableScope())
+		Statement blockStatement = new BlockStatement([new ExpressionStatement(expression)], new VariableScope())
 		new ClosureExpression(new Parameter[0], blockStatement)
 	}
 	
+	/**
+	 * Creates closure with the specified block statement.
+	 * 
+	 * @param blockStatement a block statement that has to be wrapped in closure
+	 * @return closure expression that wraps the specified block statement
+	 */
 	static 	ClosureExpression createClosureExpression(BlockStatement blockStatement) {
 		VariableScope closureVariableScope = blockStatement.scope.copy()
 		closureVariableScope.parent = blockStatement.scope
 		List<Statement> statements = blockStatement.statements
 		VariableScope closureBlockVariableScope = closureVariableScope.copy()
 		closureBlockVariableScope.parent = closureVariableScope
-		BlockStatement closureBlockStatement = new BlockStatement(statements, closureBlockVariableScope)
+		Statement closureBlockStatement = new BlockStatement(statements, closureBlockVariableScope)
 		ClosureExpression closureExpression = new ClosureExpression(new Parameter[0], closureBlockStatement)
 		closureExpression.variableScope = closureVariableScope
 		closureExpression
 	}
 	
+	/**
+	 * Creates a variable "it".
+	 * 
+	 * @return variable "it" expression
+	 */
 	static 	VariableExpression createItVariable() {
-		new VariableExpression(GroovyConstants.IT_NAME)
+		new VariableExpression(IT_NAME)
 	}
 }

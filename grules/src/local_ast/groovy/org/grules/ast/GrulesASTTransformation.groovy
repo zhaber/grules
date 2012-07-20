@@ -7,6 +7,7 @@ import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.ModuleNode
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.codehaus.groovy.transform.ASTTransformation
+import org.codehaus.groovy.ast.GroovyClassVisitor
 
 /**
  * The class is common ancestor for grules script transformations.
@@ -14,24 +15,22 @@ import org.codehaus.groovy.transform.ASTTransformation
 abstract class GrulesASTTransformation implements ASTTransformation {
 
 	private GrulesASTTransformationLogger logger
+	private GroovyClassVisitor astNodeLoggerVisitor
 	
 	protected void init(String className) {
 	  logger = new GrulesASTTransformationLogger((className.split('\\.') as List).last())
+		astNodeLoggerVisitor = new AstNodeToScriptVisitor(logger.writer)
 	}
 	
-	void visit(ModuleNode moduleNode, node) {
+	/**
+	 * Visits the module node and applies AST transformations.
+	 */
+	protected void visit(ModuleNode moduleNode, node) {
 		try {
 		  visitModule(moduleNode, node)
-		  AstNodeToScriptVisitor astNodeToScriptVisitor = new AstNodeToScriptVisitor(logger.writer)
-			switch (node.class) {
-				case ClassNode: astNodeToScriptVisitor.visitClass(node)
-				                 break
-    		case MethodNode: astNodeToScriptVisitor.visitMethod(node)
-												 break
-			}
-			
+      logSource(node)
 		} catch (Throwable exception) {
-			StringWriter stringWriter = new StringWriter()
+			Writer stringWriter = new StringWriter()
 		  Throwable sanitizedException = StackTraceUtils.deepSanitize(exception)
 		  sanitizedException.printStackTrace(new PrintWriter(stringWriter))
       log(stringWriter)	
@@ -40,13 +39,31 @@ abstract class GrulesASTTransformation implements ASTTransformation {
 		}
 	}
 	
-	abstract void visitModule(ModuleNode moduleNode, node) 
-	
-	void log(message) {
-		logger.write(message.toString())
+	private void logSource(ClassNode node) {
+		astNodeLoggerVisitor.visitClass(node)
 	}
 	
-	void log(String label, message) {
+	private void logSource(MethodNode node) {
+		astNodeLoggerVisitor.visitMethod(node)
+	}
+
+	abstract protected void visitModule(ModuleNode moduleNode, node) 
+	
+	/**
+	 * Writes a message to a log.
+	 * 
+	 * @param message a message to log
+	 */
+	protected void log(message) {
+		logger.write(message.toString())
+	}
+
+	/**
+	 * Writes a message to a log. The message is prepended by the specifed label.
+	 *
+	 * @param message a message to log
+	 */
+	protected void log(String label, message) {
 		log(label + ': ' + message)
 	}
 	

@@ -22,13 +22,21 @@ class GrulesASTTransformationLogger implements Closeable {
 		}
 	}
 	
+	/**
+	 * Write the specified message to a log.
+	 * 
+	 * @param message
+	 */
 	void write(String message) {
 		String sanitizedMessage = message.replaceAll(org.codehaus.groovy.ast.ClassNode.package.name + '.', '')
 		sanitizedMessage = sanitizedMessage.replaceAll('@\\w+', '')
 		writer.write(sanitizedMessage + '\n\n')
 	}
 	
-	void close() {
+  /**
+   * Closes the logger writer.
+   */
+ 	void close() {
 		writer.close()
 	}	
 }

@@ -117,20 +117,16 @@ class RulesASTTransformation extends GrulesASTTransformation {
 	 * @param infixExpression subrules sequence in infix form
 	 * @return converted rule expression with correct operator precedence
 	 */
-	private MethodCallExpression convertToRuleExpression(MethodCallExpression methodCallExpression) {
+	private Expression convertToRuleExpression(MethodCallExpression methodCallExpression) {
 		Expression ruleExpression = (methodCallExpression.arguments as ArgumentListExpression).expressions[0]
 		log('Original rule', ruleExpression)
-		List infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)
-		log('Rule in infix form', infixExpression)
-		Deque postfixExpression = RuleExpressionFormTransformer.infixToPostfixExpression(infixExpression)
-		log('Rule in postfix form', postfixExpression)
-		ruleExpression = RuleExpressionFormTransformer.postfixExpressionToTree(postfixExpression)
-		log('Rule with changed precedence of &, |, and >>', ruleExpression)
+		ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
+		log('Rule with changed precedences of &, |, and >> operators', ruleExpression)
 		ruleExpression = liftErrors(ruleExpression)
 		ruleExpression = convertToRuleOperators(ruleExpression)
 		ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
 		ruleExpression = addSequenceWrapper(ruleExpression)
-		MethodCallExpression ruleApplicationExpression = createRuleApplicationExpression(methodCallExpression, ruleExpression)
+		Expression ruleApplicationExpression = createRuleApplicationExpression(methodCallExpression, ruleExpression)
 		log('Rule application expression', ruleApplicationExpression)
 		ruleApplicationExpression
 	}	
@@ -248,10 +244,10 @@ class RulesASTTransformation extends GrulesASTTransformation {
 		}
 	}	
 	
-	private static MethodCallExpression createRuleApplicationExpression(MethodCallExpression methodCallExpression,
+	private static Expression createRuleApplicationExpression(MethodCallExpression methodCallExpression,
 	    Expression rule) {
 		Expression objectExpression = methodCallExpression.objectExpression
-		ClosureExpression ruleClosureExpression = GrulesASTFactory.createClosureExpression(rule)
+		Expression ruleClosureExpression = GrulesASTFactory.createClosureExpression(rule)
 		if (objectExpression == VariableExpression.THIS_EXPRESSION) {
 			Expression parameterExpression = methodCallExpression.method
 			List<Expression> arguments = [parameterExpression, ruleClosureExpression]

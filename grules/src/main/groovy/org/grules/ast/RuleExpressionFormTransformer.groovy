@@ -8,7 +8,14 @@ import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
 
 
+/**
+ * Transforms a rule expression between tree, infix, and postfix forms.
+ */
 class RuleExpressionFormTransformer {
+	
+	/**
+	 * Returns operators precedence in rule expressions.
+	 */
 	private static Integer fetchOperatorPrecedence(Token token) {
 		switch (token.type) {
 			case Types.LEFT_PARENTHESIS: return 0
@@ -41,7 +48,7 @@ class RuleExpressionFormTransformer {
 	/**
 	 * Converts infix notation to postfix notation.
 	 */
-	static List<Object> infixToPostfixExpression(List<Object> infixExpression){
+	private static List<Object> infixToPostfixExpression(List<Object> infixExpression){
 		Stack<Token> stack = [] as Stack
 		Deque<Object> postfixExpression = [] as Queue
 		infixExpression.each { token ->
@@ -73,7 +80,7 @@ class RuleExpressionFormTransformer {
 	/**
 	 * Converts postfix expression to expression represented as a tree
 	 */
-	static Expression postfixExpressionToTree(Deque postfixExpression) {
+	private static Expression postfixExpressionToTree(Deque postfixExpression) {
 		Stack<Object> stack = [] as Stack
 		while (!postfixExpression.isEmpty()) {
 			def expression = postfixExpression.removeFirst()
@@ -110,8 +117,7 @@ class RuleExpressionFormTransformer {
 			List rightExpression = transformToInfixExpression(binaryExpression.rightExpression, operationPrecedence)
 			leftExpression + [operation] + rightExpression
 		} else if (expression instanceof NotExpression) {
-			NotExpression notExpression = expression
-			List innerExpression = transformToInfixExpression(notExpression.expression, operationPrecedence)
+			List innerExpression = transformToInfixExpression((expression as NotExpression).expression, operationPrecedence)
 			[operation] + innerExpression
 		} else if (expression instanceof BitwiseNegationExpression) {
 			BitwiseNegationExpression bitwiseExpression = expression
@@ -128,7 +134,7 @@ class RuleExpressionFormTransformer {
 	 * @param expression rule expression
 	 * @return rule expression in expression tree form
 	 */
-	static List transformToInfixExpression(Expression expression, Integer maxPrecedence = Integer.MIN_VALUE) {
+	private static List transformToInfixExpression(Expression expression, Integer maxPrecedence = Integer.MIN_VALUE) {
 		if (RuleExpressionVerifier.isAtomExpression(expression)) {
 			return [expression]
 		}
@@ -145,6 +151,18 @@ class RuleExpressionFormTransformer {
 			Token rightParenthesis = new Token(Types.RIGHT_PARENTHESIS, rightParenthesisText, lineNumber, columnNumber)
 			[leftParenthesis] + infixExpression + [rightParenthesis]
 		}
+	}
+	
+	/**
+	 * Converts precedences of the ||, &&, and >> operators
+	 * 
+	 * @param ruleExpression where operators have standard precedence
+	 * @return a converted rule expression
+	 */
+	static Expression convertPrecedences(ruleExpression) {
+		ruleExpression = transformToInfixExpression(ruleExpression)
+		ruleExpression = infixToPostfixExpression(ruleExpression)
+		postfixExpressionToTree(ruleExpression)
 	}
 
 }

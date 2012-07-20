@@ -28,7 +28,7 @@ class Operators {
 		/**
 		 * Creates a validation term that is a conjunction of two other terms.
 		 */
-    AndTerm and(expression) {
+    Term and(expression) {
 		  Term term = TermWrapper.wrap(expression)
 		  new AndTerm(this, term)
 	  }
@@ -36,14 +36,14 @@ class Operators {
 		/**
 		 * This method is added to produce an exception when a conjunction is applied to a conversion term.
 		 */
-		AndTerm and(TildeTerm expression) {
+		Term and(TildeTerm expression) {
 			throw new InvalidBooleanTermException(this, expression, Types.LOGICAL_AND)
 		}
 
 	  /**
 		 * Creates a validation term that is a disjunction of two other terms.
 		 */
-	  OrTerm or(expression) {
+	  Term or(expression) {
 		  Term term = TermWrapper.wrap(expression)
 		  new OrTerm(this, term)
 	  }
@@ -51,25 +51,24 @@ class Operators {
 		/**
 		 * This method is added to produce an exception when a disjunction is applied to a conversion term.
 		 */
-		AndTerm or(TildeTerm expression) {
+		Term or(TildeTerm expression) {
 			throw new InvalidBooleanTermException(this, expression, Types.LOGICAL_OR)
 		}
 	 
 	  /**
 		 * Creates a validation term that is a negation of itself.
 		 */
-	  NotTerm negative() {
+	  Term negative() {
 		  new NotTerm(this)
 	  }
 		
 		/**
 		 * Creates a conversion term.
 		 */
-		TildeTerm bitwiseNegate() {
+		Term bitwiseNegate() {
 			new TildeTerm(this)
 		}
 	}
-
 
 	@Category(TildeTerm)
 	class TildeTermOperators {
@@ -77,21 +76,21 @@ class Operators {
 		/**
 		 * This method is added to produce an exception when a conjunction is applied to a conversion term. 
 		 */
-		AndTerm and(expression) {
+		Term and(expression) {
 			throw new InvalidBooleanTermException(expression)
 		}
 
 		/**
 		 * This method is added to produce an exception when a disjunction is applied to a conversion term.
 		 */
-		AndTerm or(expression) {
+		Term or(expression) {
 			throw new InvalidBooleanTermException(expression)
 		}
 		
 		/**
 		 * This method is added to produce an exception when a negation is applied to a conversion term.
 		 */
-		NotTerm negative() {
+		Term negative() {
 			throw new InvalidBooleanTermException(this, Types.NOT)
 		}
 	}
@@ -102,21 +101,21 @@ class Operators {
 		/**
 		 * Creates a validation term that is a conjunction of validation closure and the given term.
 		 */
-		AndTerm and(rightTerm) {
+		Term and(rightTerm) {
 			(new ClosureTerm(this) as Term) & rightTerm
 		}
 
 		/**
 		 * Creates a validation term that is a disjunction of validation closure and the given term.
 		 */
-		OrTerm or(rightTerm) {
+		Term or(rightTerm) {
 			(new ClosureTerm(this) as Term) | rightTerm
 		}
 		
 		/**
 		 * Creates a validation term that is a negation of the given closure.
 		 */
-	  NotTerm negative() {
+	  Term negative() {
 		  new NotTerm(this)
 	  }
 
@@ -137,7 +136,7 @@ class Operators {
 		/**
 		 * Creates a conversion term.
 		 */
-		TildeTerm bitwiseNegate() {
+		Term bitwiseNegate() {
 			new TildeTerm(this)
 		}
 

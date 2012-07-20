@@ -42,7 +42,7 @@ class ClosureWrapperTest extends Specification {
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
 				~{a}
 			})
-			ruleExpression = convertPrecedences(ruleExpression)
+			ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
 			ruleExpression = RulesASTTransformation.liftErrors(ruleExpression)
 			ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
 		expect:

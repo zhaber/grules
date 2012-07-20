@@ -219,7 +219,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 	}
 	
 	def "postfixExpressionToTree for complex rule expression"() {
-		BinaryExpression binaryExpression = convertPrecedences(complexRuleExpression)
+		BinaryExpression binaryExpression = RuleExpressionFormTransformer.convertPrecedences(complexRuleExpression)
 		 assert binaryExpression.leftExpression instanceof BinaryExpression
 		BinaryExpression beforeJ = binaryExpression.leftExpression
 		assert beforeJ.leftExpression instanceof BinaryExpression

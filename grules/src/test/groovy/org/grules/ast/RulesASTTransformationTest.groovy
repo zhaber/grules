@@ -20,7 +20,6 @@ import org.codehaus.groovy.ast.stmt.Statement
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.runtime.MethodClosure
 import org.codehaus.groovy.syntax.Token
-import org.grules.GroovyConstants
 import org.grules.GrulesLogger
 import org.grules.script.RulesScriptAPI
 import org.grules.script.expressions.SubrulesSeqWrapper
@@ -34,6 +33,7 @@ class RulesASTTransformationTest extends Specification {
 	AstBuilder builder
 	CompilePhase phase
 	Expression complexRuleExpression
+	def ruleExpressionFormTransformer = new RuleExpressionFormTransformer()
 	
 	def a = 'a'
 	def b = 'b'
@@ -119,7 +119,7 @@ class RulesASTTransformationTest extends Specification {
 		  def methodCall = astTransformation.createRuleApplicationExpression(ruleExpression, ConstantExpression.NULL)
 			def methodName = (RulesScriptAPI.&applyRuleToOptionalParameter as MethodClosure).method
 		expect:
-		  (methodCall.method as ConstantExpression).value == methodName 
+		  ((methodCall as MethodCallExpression).method as ConstantExpression).value == methodName 
 	}
 		
 	
@@ -128,7 +128,7 @@ class RulesASTTransformationTest extends Specification {
   		def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
 	  		a || b && c >> d
  		  })
-		  ruleExpression = convertPrecedences(ruleExpression)
+		  ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
 		  BinaryExpression binaryRuleExpression = RulesASTTransformation.convertToRuleOperators(ruleExpression)
 		  BinaryExpression aOrBAndC = binaryRuleExpression.leftExpression
 		  BinaryExpression bAndC = aOrBAndC.rightExpression
@@ -143,7 +143,7 @@ class RulesASTTransformationTest extends Specification {
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
 				!(a && b) || c [d] >> e
 			})
-			ruleExpression = convertPrecedences(ruleExpression)
+			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
 			ruleExpression = RulesASTTransformation.liftErrors(ruleExpression)
 			BinaryExpression convertedRuleExpression = RulesASTTransformation.convertToRuleOperators(ruleExpression)
 			BinaryExpression aAndBOrCD = convertedRuleExpression.leftExpression
@@ -184,7 +184,7 @@ class RulesASTTransformationTest extends Specification {
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
 				a >> {b}
 			})
-			ruleExpression = convertPrecedences(ruleExpression)
+			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
 			ruleExpression = RulesASTTransformation.liftErrors(ruleExpression)
 			ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
 			ruleExpression = RulesASTTransformation.addSequenceWrapper(ruleExpression)
@@ -202,7 +202,7 @@ class RulesASTTransformationTest extends Specification {
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
 				a
 			})
-			ruleExpression = convertPrecedences(ruleExpression)
+			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
 			ruleExpression = RulesASTTransformation.liftErrors(ruleExpression)
 		expect:
 		  ruleExpression instanceof VariableExpression
@@ -213,7 +213,7 @@ class RulesASTTransformationTest extends Specification {
 		  def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
 			  a >> b [c] >> d && e [f]
 		  })
-			ruleExpression = convertPrecedences(ruleExpression)
+			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
 		  BinaryExpression expressionWithLiftedErrors = RulesASTTransformation.liftErrors(ruleExpression)
 			BinaryExpression aRightShiftBC = expressionWithLiftedErrors.leftExpression 
 	  expect:

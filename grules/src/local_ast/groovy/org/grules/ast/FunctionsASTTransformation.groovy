@@ -24,6 +24,9 @@ class FunctionsASTTransformation extends GrulesASTTransformation {
 		visit(source.ast, classNode)
 	}
 	
+	/**
+	 * Visits each method and makes it static.
+	 */
 	@Override
 	void visitModule(ModuleNode moduleNode, node) {
 		ClassNode classNode = node
