@@ -5,8 +5,11 @@ import static org.grules.TestScriptEntities.*
 import org.grules.ValidationException
 import org.grules.functions.ConverterBooleanResult
 import org.joda.time.DateTime
-
 import spock.lang.Specification
+
+enum TestEnum {
+	ELEMENT
+}
 
 class TypeFunctionsTest extends Specification {
 	
@@ -89,6 +92,18 @@ class TypeFunctionsTest extends Specification {
 			!(typeFunctions.toBoolean('') as ConverterBooleanResult).value
 			(typeFunctions.toBoolean(ZERO_STRING) as ConverterBooleanResult).value
 			!(typeFunctions.toBoolean(0) as ConverterBooleanResult).value
+	}
+	
+	def "toEnum"() {
+		expect:
+		  typeFunctions.toEnum(TestEnum.ELEMENT.name(), TestEnum) == TestEnum.ELEMENT
+	}
+	
+	def "toEnum invalid value"() {
+		when:
+			typeFunctions.toEnum('invalidElement', TestEnum)
+		then:
+		  thrown(ValidationException)
 	}
 
 	def "toNaturalBigDecimal"() {

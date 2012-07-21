@@ -80,6 +80,11 @@ class StringFunctionsTest extends Specification {
 			!stringFunctions.isLengthMoreEq(STRING, STRING.size() + 1)
 	}
 
+	def "matches"() {
+		expect:
+		  stringFunctions.matches(STRING, '.*')
+	}
+	
 	def "replace"() {
 		expect:
 		  stringFunctions.replace(STRING, SUFFIX, '') == PREFIX

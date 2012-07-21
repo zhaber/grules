@@ -54,6 +54,14 @@ class TypeFunctions {
 		value ? true : false
 	}
 
+	Enum toEnum(String value, Class enumClass) {
+		try {
+  		value.asType(enumClass)
+		} catch (IllegalArgumentException e) {
+		  throw new ValidationException(e.message)
+		}
+	}
+	
 	BigDecimal toNaturalBigDecimal(String value) {
 		BigDecimal bigDecimalValue = toBigDecimal(value)
 		if (bigDecimalValue >= 0) {

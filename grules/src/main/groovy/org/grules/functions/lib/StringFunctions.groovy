@@ -53,6 +53,10 @@ class StringFunctions {
 		value.length() >= minLength
 	}
 
+	boolean matches(String value, String regex) {
+		value ==~ regex
+	}
+	
 	String replace(String value, String regexp, String replacement) {
 		value.replaceAll(regexp, replacement)
 	}
