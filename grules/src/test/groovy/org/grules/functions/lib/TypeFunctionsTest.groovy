@@ -19,6 +19,8 @@ class TypeFunctionsTest extends Specification {
 	static final POSITIVE_LONG = Long.MAX_VALUE
 	static final POSITIVE_INTEGER = 1
 	static final POSITIVE_BIGDECIMAL = 1.1
+	static final POSITIVE_BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL.toString()
+	static final BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL_STRING
 	static final NEGATIVE_BIGDECIMAL = -POSITIVE_BIGDECIMAL
 	static final INTEGER = VALID_INTEGER
 	static final LONG = POSITIVE_LONG
@@ -26,65 +28,31 @@ class TypeFunctionsTest extends Specification {
 	static final INTEGER_STRING = INTEGER.toString()
 	static final POSITIVE_INTEGER_STRING = INTEGER_STRING
 	static final NEGATIVE_INTEGER_STRING = '-' + POSITIVE_INTEGER_STRING
-	static final POSITIVE_BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL.toString()
 	static final NEGATIVE_BIGDECIMAL_STRING = '-' + POSITIVE_BIGDECIMAL_STRING
-	static final BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL_STRING
 	static final POSITIVE_LONG_STRING = POSITIVE_LONG.toString()
 	static final NEGATIVE_LONG_STRING = NEGATIVE_LONG.toString()
 	static final NEGATIVE_LONG = Long.MIN_VALUE
 	static final LONG_STRING = POSITIVE_LONG_STRING
 	static final ZERO_STRING = '0'
+	static final BigDecimal BIGDECIMAL = POSITIVE_BIGDECIMAL
 
-	def "isBigDecimal"() {
+	def "isNonnegative"() {
 		expect:
-			typeFunctions.isBigDecimal(BIGDECIMAL_STRING)
+		  typeFunctions.isNonnegative(POSITIVE_INTEGER)
+			typeFunctions.isNonnegative(0)
+      !typeFunctions.isNonnegative(NEGATIVE_INTEGER)
 	}
-	
-	def "toDate"() {
-		setup:
-			Date date = typeFunctions.toDate(nowDateTime.year.toString(), 'yyyy')
-		expect:
-			(new DateTime(date)).year == nowDateTime.year
-	}
+  
+  def "isPositive"() {
+    expect:
+      typeFunctions.isPositive(POSITIVE_INTEGER)
+      !typeFunctions.isPositive(0)
+      !typeFunctions.isPositive(NEGATIVE_INTEGER)
+  }
 
-	def "toDate invalid"() {
-		when:
-			typeFunctions.toDate(nowDateTime.year.toString(), '*y')
-		then:
-			thrown(ValidationException)
-	}
-	
-	def "isInt"() {
-		expect:
-			typeFunctions.isInt(INTEGER_STRING)
-	}
-
-	def "isLong"() {
-		expect:
-			typeFunctions.isLong(LONG_STRING)
-	}
-	
-	def "isPositiveInt"() {
-		expect:
-		  typeFunctions.isPositiveInt(POSITIVE_INTEGER)
-			!typeFunctions.isPositiveInt(NEGATIVE_INTEGER)
-	}
-
-	def "isPositiveBigDecimal"() {
-		expect:
-		  typeFunctions.isPositiveBigDecimal(POSITIVE_BIGDECIMAL)
-			!typeFunctions.isPositiveBigDecimal(NEGATIVE_BIGDECIMAL)
-	}
-
-	def "isPositiveLong"() {
-		expect:
-			typeFunctions.isPositiveLong(POSITIVE_LONG)
-			!typeFunctions.isPositiveLong(NEGATIVE_LONG)
-	}
-	
 	def "toBigDecimal"() {
 		expect:
-			typeFunctions.toBigDecimal(POSITIVE_BIGDECIMAL_STRING) == POSITIVE_BIGDECIMAL
+			typeFunctions.toBigDecimal(BIGDECIMAL_STRING) == BIGDECIMAL
 	}
 	
 	def "toBoolean"() {
@@ -93,7 +61,26 @@ class TypeFunctionsTest extends Specification {
 			(typeFunctions.toBoolean(ZERO_STRING) as ConverterBooleanResult).value
 			!(typeFunctions.toBoolean(0) as ConverterBooleanResult).value
 	}
-	
+  
+  def "toDate"() {
+    setup:
+      Date date = typeFunctions.toDate(nowDateTime.year.toString(), 'yyyy')
+    expect:
+      (new DateTime(date)).year == nowDateTime.year
+  }
+
+  def "toDate invalid"() {
+    when:
+      typeFunctions.toDate(nowDateTime.year.toString(), '*y')
+    then:
+      thrown(ValidationException)
+  }
+  	
+	def "toDouble"() {
+		expect:
+			typeFunctions.toDouble(BIGDECIMAL_STRING) == BIGDECIMAL.doubleValue()
+	}
+  
 	def "toEnum"() {
 		expect:
 		  typeFunctions.toEnum(TestEnum.ELEMENT.name(), TestEnum) == TestEnum.ELEMENT
@@ -105,20 +92,39 @@ class TypeFunctionsTest extends Specification {
 		then:
 		  thrown(ValidationException)
 	}
+  
+  def "toFloat"() {
+    expect:
+      typeFunctions.toFloat(BIGDECIMAL_STRING) == BIGDECIMAL.floatValue()
+  }
 
-	def "toNaturalBigDecimal"() {
+	def "toNonnegativeBigDecimal"() {
 		when:
-			typeFunctions.toNaturalBigDecimal(NEGATIVE_BIGDECIMAL_STRING)
+			typeFunctions.toNonnegativeBigDecimal(NEGATIVE_BIGDECIMAL_STRING)
 		then:
 		  thrown(ValidationException)
 	}
 	
-	def "toNaturalBigDecimal for zero"() {
+	def "toNonnegativeBigDecimal for zero"() {
 		when:
-			typeFunctions.toNaturalBigDecimal(ZERO_STRING)
+			typeFunctions.toNonnegativeBigDecimal(ZERO_STRING)
 		then:
 			notThrown(ValidationException)
 	}
+  
+  def "toNonnegativeDouble"() {
+    when:
+      typeFunctions.toNonnegativeDouble(NEGATIVE_BIGDECIMAL_STRING)
+    then:
+      thrown(ValidationException)
+  }
+  
+  def "toNonnegativeFloat"() {
+    when:
+      typeFunctions.toNonnegativeFloat(NEGATIVE_BIGDECIMAL_STRING)
+    then:
+      thrown(ValidationException)
+  }
 
 	def "toPositiveBigDecimal"() {
 		when:
@@ -126,6 +132,20 @@ class TypeFunctionsTest extends Specification {
 		then:
 		  thrown(ValidationException)
 	}
+  
+  def "toPositiveDouble"() {
+    when:
+      typeFunctions.toPositiveDouble(ZERO_STRING)
+    then:
+      thrown(ValidationException)
+  }
+  
+  def "toPositiveFloat"() {
+    when:
+      typeFunctions.toPositiveFloat(ZERO_STRING)
+    then:
+      thrown(ValidationException)
+  }
 
 	def "toLong"() {
 		expect:

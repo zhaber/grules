@@ -66,6 +66,10 @@ class CommonFunctions {
 		values.any(validator)
 	}
 
+  boolean isFalse(value) {
+    !value
+  }
+  
 	boolean isEmpty(List value) {
 		value.isEmpty()
 	}
@@ -90,16 +94,6 @@ class CommonFunctions {
 		(value & 1) == 1
 	}
 
-	boolean isStrongPassword(String value, List<String> mediumRegexps, List<String> strongRegexps) {
-		if (!mediumRegexps.every {String regexp -> value.matches(regexp)}) {
-			throw new ValidationException((PasswordStrength.simpleName): PasswordStrength.WEAK)
-		} else if (!strongRegexps.every {String regexp -> value.matches(regexp)}) {
-			throw new ValidationException((PasswordStrength.simpleName): PasswordStrength.MEDIUM)
-		} else {
-			true
-		}
-	}
-
 	Number mod(Long value, Long number) {
 		value % number
 	}
@@ -112,7 +106,15 @@ class CommonFunctions {
 		value
 	}
 	
-	def pow(Double value, Double number) {
+	Double pow(Double value, Double number) {
 		Math.pow(value, number)
 	}
+	
+	Double round(Double value) {
+		Math.round(value)
+	}
+  
+  boolean isTrue(value) {
+    value
+  }
 }

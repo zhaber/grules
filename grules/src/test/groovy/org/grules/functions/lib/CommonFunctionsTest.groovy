@@ -61,6 +61,11 @@ class CommonFunctionsTest extends Specification {
 			commonFunctions.isEven(0)
 			!commonFunctions.isEven(-1)
 	}
+  
+  def "isFalse"() {
+    expect:
+      commonFunctions.isFalse('')
+  }
 	
 	def "isOdd"() {
 		expect:
@@ -78,20 +83,6 @@ class CommonFunctionsTest extends Specification {
 	def "isIn"() {
 		expect:
 			commonFunctions.isIn(PARAMETER_VALUE, [PARAMETER_VALUE, INVALID_PARAMETER_VALUE]) 
-	}
-
-	def "isStrong password returns true for strong password"() {
-		expect:
-			commonFunctions.isStrongPassword('a0+', [/.*[a-z].*/, /.*[0-9].*/], [/.*\+.*/])
-	}
-	
-	def "isStrong password throws excpetion for invalid password"() {
-		when:
-			commonFunctions.isStrongPassword('a0', [/.*[a-z].*/, /.*[0-9].*/], [/.*\+.*/])
-		then:
-			ValidationException e = thrown(ValidationException)
-		expect:
-			e.errorProperties.hasErrorProperty(PasswordStrength.simpleName)
 	}
 
 	def "mod"() {
@@ -113,5 +104,14 @@ class CommonFunctionsTest extends Specification {
 		expect:
 		  commonFunctions.pow(0.5, 2) == 0.25
 	}
-
+	
+	def "round"() {
+		expect:
+		  commonFunctions.round(0.8) == 1
+	}
+  
+  def "isTrue"() {
+    expect:
+      commonFunctions.isTrue(1)
+  }
 }

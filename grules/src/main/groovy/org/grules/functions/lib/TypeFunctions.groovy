@@ -14,33 +14,14 @@ import org.grules.ast.Functions
 @Functions
 class TypeFunctions {
 	
-	boolean isBigDecimal(String value) {
-		//Groovy 2.0: StringGroovyMethods.isBigDecimal(value)
-		value.isBigDecimal()
-	}
-	
-	boolean isInt(String value) {
-		// Groovy 2.0: StringGroovyMethods.isInteger()
-		value.isInteger()
-	}
-
-	boolean isLong(String value) {
-		// Groovy 2.0: StringGroovyMethods.isLong(value) 
-		value.isLong()
-	}
-
-	boolean isPositiveInt(Integer value) {
-		value > 0
-	}
-
-	boolean isPositiveBigDecimal(BigDecimal value) {
-		value > 0
-	}
-
-	boolean isPositiveLong(Long value) {
-		value > 0
-	}
-
+  boolean isPositive(Number value) {
+    value > 0
+  }
+  
+  boolean isNonnegative(Number value) {
+    value >= 0
+  }
+  
 	BigDecimal toBigDecimal(String value) {
 	  if (value.isBigDecimal()) {
 		  value.toBigDecimal()
@@ -53,16 +34,41 @@ class TypeFunctions {
 	Boolean toBoolean(value) {
 		value ? true : false
 	}
+  
+  Date toDate(String value, String pattern, Locale locale = Locale.default) {
+    DateFormat dateFormatter = new SimpleDateFormat(pattern, locale)
+    try {
+      dateFormatter.parse(value)
+    } catch (ParseException e) {
+      throw new ValidationException(e.message)
+    }
+  }
+  
+	Double toDouble(String value) {
+		if (value.isDouble()) {
+			value.toDouble()
+		} else {
+			throw new ValidationException()
+		}
+	}
 
 	Enum toEnum(String value, Class enumClass) {
 		try {
   		value.asType(enumClass)
 		} catch (IllegalArgumentException e) {
-		  throw new ValidationException(e.message)
+		  throw new ValidationException()
 		}
 	}
 	
-	BigDecimal toNaturalBigDecimal(String value) {
+	Float toFloat(String value) {
+		if (value.isFloat()) {
+			value.toFloat()
+		} else {
+			throw new ValidationException()
+		}
+	}
+	
+  BigDecimal toNonnegativeBigDecimal(String value) {
 		BigDecimal bigDecimalValue = toBigDecimal(value)
 		if (bigDecimalValue >= 0) {
 			bigDecimalValue
@@ -70,7 +76,24 @@ class TypeFunctions {
 			throw new ValidationException()
 		}
 	}
+	
+	Double toNonnegativeDouble(String value) {
+		Double doubleValue = toDouble(value)
+		if (doubleValue >= 0) {
+			doubleValue
+		} else {
+			throw new ValidationException()
+		}
+	}
 
+	Float toNonnegativeFloat(String value) {
+		Float floatValue = toFloat(value)
+		if (floatValue >= 0) {
+			floatValue
+		} else {
+			throw new ValidationException()
+		}
+	}
 	BigDecimal toPositiveBigDecimal(String value) {
 		BigDecimal bigDecimalValue = toBigDecimal(value)
 		if (bigDecimalValue > 0) {
@@ -79,7 +102,25 @@ class TypeFunctions {
 			throw new ValidationException()
 		}
 	}
+	
+	Double toPositiveDouble(String value) {
+		Double doubleValue = toDouble(value)
+		if (doubleValue > 0) {
+			doubleValue
+		} else {
+			throw new ValidationException()
+		}
+	}
 
+	Float toPositiveFloat(String value) {
+		Float floatValue = toFloat(value)
+		if (floatValue > 0) {
+			floatValue
+		} else {
+			throw new ValidationException()
+		}
+	}
+	
 	Long toLong(String value) {
 		if (value.isLong()) {
 			value.toLong()
@@ -129,15 +170,6 @@ class TypeFunctions {
 			intValue
 		} else {
 			throw new ValidationException()
-		}
-	}
-	
-	Date toDate(String value, String pattern, Locale locale = Locale.default) {
-		DateFormat dateFormatter = new SimpleDateFormat(pattern, locale)
-		try {
-			dateFormatter.parse(value)
-		} catch (ParseException e) {
-			throw new ValidationException(e.message)
 		}
 	}
 }

@@ -26,7 +26,7 @@ class UserController {
 
     def save() {
      		Map<String, Object> headers = Grules.fetchRequestHeaders(request) 
-  			RulesScriptGroupResult result = Grules.applyGroupRules(UserGrules, PARAMETERS: params, HEADER: headers)
+  			RulesScriptGroupResult result = Grules.applyGroupRules(UserGrules, [PARAMETERS: params, HEADER: headers])
 				if (result.invalidParameters.isEmpty()) {
           def userInstance = new User(result.cleanParameters.PARAMETERS)
           if (!userInstance.save(flush: true)) {
