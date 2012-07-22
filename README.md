@@ -2,7 +2,7 @@ Grules is a rule engine for data preprocessing (validation and canonicalization)
 
     email isEmail ['Not valid email'] // isEmail is a Groovy method that takes an email value as its parameter
 
-    login isLogin [invalidLoginErr] >> isUnique [notUniqueErr] // invalidLoginErr and notUniqueErr are String error messages
+    login isLogin [invalidLoginErr] >> isUnique [dupLoginErr] // invalidLoginErr and notUniqueErr are String error messages
 
     gender toEnum(Gender) // Gender is a Groovy enumeration
 
