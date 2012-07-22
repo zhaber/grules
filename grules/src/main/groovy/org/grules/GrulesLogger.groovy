@@ -9,29 +9,29 @@ import java.util.logging.Logger
 import org.grules.config.Config
 
 /**
- * A common logger for all rule engine events.  
+ * A common logger for all rule engine events.
  */
 class GrulesLogger {
 
-	private static final Logger LOGGER = Logger.getLogger('grules')
-	private static final Config CONFIG = GrulesInjector.config
-					
-	static {
-		LOGGER.level = CONFIG.logLevel
-		LOGGER.addHandler(CONFIG.loggerHandler)
-	}
-	
-	static void fine(String message) {
-		LOGGER.fine(message)
-	}
-	
-	static void warn(String message) {
-		LOGGER.warning(message)
-	}
-	
-	static void turnOff() {
-		LOGGER.level = Level.OFF
-	}
+  private static final Logger LOGGER = Logger.getLogger('grules')
+  private static final Config CONFIG = GrulesInjector.config
+
+  static {
+    LOGGER.level = CONFIG.logLevel
+    LOGGER.addHandler(CONFIG.loggerHandler)
+  }
+
+  static void fine(String message) {
+    LOGGER.fine(message)
+  }
+
+  static void warn(String message) {
+    LOGGER.warning(message)
+  }
+
+  static void turnOff() {
+    LOGGER.level = Level.OFF
+  }
 }
 
 /**
@@ -39,14 +39,14 @@ class GrulesLogger {
 */
 class StdoutConsoleHandler extends ConsoleHandler {
 
-	@Override
+  @Override
   protected void setOutputStream(OutputStream out) {
-  	super.setOutputStream(System.out)
-  	level = Level.FINE
-  	formatter = new Formatter() {
-   	  String format(LogRecord record) {
-			  record.message + '\n'
-		  }
-	  }
+    super.setOutputStream(System.out)
+    level = Level.FINE
+    formatter = new Formatter() {
+       String format(LogRecord record) {
+        record.message + '\n'
+      }
+    }
   }
 }

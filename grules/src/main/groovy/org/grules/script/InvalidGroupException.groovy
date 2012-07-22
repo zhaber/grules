@@ -11,9 +11,9 @@ import org.grules.config.ConfigFactory
  */
 class InvalidGroupException extends GrulesException {
 
-	InvalidGroupException(String name) {
-		super("Group '$name' is not in registered groups: ${GrulesInjector.config.groups}, " +
-			     "see ${ConfigFactory.CONFIG_PATH}. Possible solutions: add group to the config file, use " + 
-					  (Grules.&applyFlatRules as MethodClosure).method + ' for single group of parameters.')
-	}
+  InvalidGroupException(String name) {
+    super("Group '$name' is not in registered groups: ${GrulesInjector.config.groups}, " +
+           "see ${ConfigFactory.CONFIG_PATH}. Possible solutions: add group to the config file, use " +
+            (Grules.&applyFlatRules as MethodClosure).method + ' for single group of parameters.')
+  }
 }

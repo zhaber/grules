@@ -7,7 +7,7 @@ import java.lang.annotation.Target
 
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
 
-/** 
+/**
  * Indicates that the function is a converter. Can be used for functions that return a boolean value.
  */
 @java.lang.annotation.Documented

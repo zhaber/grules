@@ -12,33 +12,33 @@ group = 'org.grules'
 version = '0.1'
 
 sourceSets {
-	local_ast
-	test_scripts
-	test_integration
+  local_ast
+  test_scripts
+  test_integration
 }
 
 configurations {
-	excludedClasspathJars
+  excludedClasspathJars
 }
 
 project.ext {
-	srcLibName = "${name}-src"
-	buildLibDir = 'lib'
-	configDir = 'config'
-	codenarcConfigPath = "$configDir/codenarc.groovy"
-	codenarcScriptsConfigPath = "$configDir/codenarc_scripts.groovy"
+  srcLibName = "${name}-src"
+  buildLibDir = 'lib'
+  configDir = 'config'
+  codenarcConfigPath = "$configDir/codenarc.groovy"
+  codenarcScriptsConfigPath = "$configDir/codenarc_scripts.groovy"
 }
 
-sourceSets*.output.each {it.classesDir = buildDir; it.resourcesDir = buildDir} 
+sourceSets*.output.each {it.classesDir = buildDir; it.resourcesDir = buildDir}
 
 repositories {
-	mavenCentral()
+  mavenCentral()
 }
 
 def groovyArtifacts = ['org.codehaus.groovy:groovy-all:1.8.6', 'asm:asm:3.3.1']
-def commonArtifacts = ['joda-time:joda-time:2.1+', 'com.google.inject:guice:3.0', 
-	                     'org.apache.tomcat:servlet-api:6.0.35+', 'org.codehaus.gpars:gpars:0.12+', 
-											 'javax.mail:mail:1.4.5+']
+def commonArtifacts = ['joda-time:joda-time:2.1+', 'com.google.inject:guice:3.0',
+                       'org.apache.tomcat:servlet-api:6.0.35+', 'org.codehaus.gpars:gpars:0.12+',
+                       'javax.mail:mail:1.4.5+']
 def testArtifacts = ['org.spockframework:spock-core:0.6-groovy-1.8', 'org.objenesis:objenesis:1.2']
 
 dependencies {
@@ -46,30 +46,30 @@ dependencies {
   local_astCompile groovyArtifacts
   compile commonArtifacts
   testCompile testArtifacts
-	test_integrationCompile groovyArtifacts, commonArtifacts, testArtifacts
-	test_scriptsCompile groovyArtifacts, commonArtifacts
+  test_integrationCompile groovyArtifacts, commonArtifacts, testArtifacts
+  test_scriptsCompile groovyArtifacts, commonArtifacts
 }
 
 task jar(type: Jar, overwrite: true) {
-	destinationDir = file(project.buildLibDir)
-	from buildDir
-	excludes=['tmp']
+  destinationDir = file(project.buildLibDir)
+  from buildDir
+  excludes=['tmp']
 }
 
 compileLocal_astGroovy.dependsOn clean
-compileGroovy.dependsOn compileLocal_astGroovy 
+compileGroovy.dependsOn compileLocal_astGroovy
 compileTestGroovy.dependsOn jar
 compileTest_scriptsGroovy.dependsOn processResources, compileTestGroovy
 compileTest_integrationGroovy.dependsOn compileTest_scriptsGroovy, processTest_integrationResources
 
 task sourcesJar(type: Jar) {
-	classifier = 'sources'
-	destinationDir = file(project.buildLibDir)
-	from sourceSets.main.allSource
+  classifier = 'sources'
+  destinationDir = file(project.buildLibDir)
+  from sourceSets.main.allSource
 }
 
 tasks.withType(CodeNarc).all { codeNarcTask ->
-	codeNarcTask.configFile = file(project.codenarcConfigPath)
+  codeNarcTask.configFile = file(project.codenarcConfigPath)
 }
 
 codenarcTest_scripts.configFile = file(project.codenarcScriptsConfigPath)
@@ -77,12 +77,12 @@ codenarcTest_scripts.configFile = file(project.codenarcScriptsConfigPath)
 task compileAll(dependsOn: [compileGroovy, compileTestGroovy, compileTest_integrationGroovy]) << {}
 
 task testAll(type: Test) {
-	dependsOn compileAll
-	testClassesDir = file(buildDir)
+  dependsOn compileAll
+  testClassesDir = file(buildDir)
 }
 
 task initProject << {
-	sourceSets*.allSource.srcDirs.flatten().each {if (it.name != 'java') it.mkdirs()}
+  sourceSets*.allSource.srcDirs.flatten().each {if (it.name != 'java') it.mkdirs()}
 }
 
 task initEclipseProject(dependsOn: [initProject, eclipseClasspath]) << {}
@@ -90,64 +90,64 @@ task initEclipseProject(dependsOn: [initProject, eclipseClasspath]) << {}
 build.dependsOn = [testAll, check, sourcesJar, jar]
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '1.0'
+  gradleVersion = '1.0'
 }
 
 artifacts {
-	archives jar 	
-	archives sourcesJar
+  archives jar
+  archives sourcesJar
 }
 
 signing {
-	sign configurations.archives
+  sign configurations.archives
 }
 
 uploadArchives {
-	repositories {
-			mavenDeployer {
-					beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
-					repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-						authentication(userName: sonatypeUsername, password: sonatypePassword)
-					}
-					pom.project {
-						 name 'Grules'
-						 packaging 'jar'
-						 description 'Grules is a rule engine written in Groovy'
-						 url 'http://grules.org'
+  repositories {
+      mavenDeployer {
+          beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+          repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+            authentication(userName: sonatypeUsername, password: sonatypePassword)
+          }
+          pom.project {
+             name 'Grules'
+             packaging 'jar'
+             description 'Grules is a rule engine written in Groovy'
+             url 'http://grules.org'
 
-						 scm {
-								 url 'scm:git@github.com:zhaber/grules.git'
-								 connection 'scm:git@github.com:zhaber/grules.git'
-								 developerConnection 'scm:git@github.com:zhaber/grules.git'
-						 }
+             scm {
+                 url 'scm:git@github.com:zhaber/grules.git'
+                 connection 'scm:git@github.com:zhaber/grules.git'
+                 developerConnection 'scm:git@github.com:zhaber/grules.git'
+             }
 
-						 licenses {
-								 license {
-										 name 'GNU Lesser General Public License v3.0'
-										 url 'http://www.gnu.org/licenses/lgpl.html'
-										 distribution 'repo'
-								 }
-						 }
+             licenses {
+                 license {
+                     name 'GNU Lesser General Public License v3.0'
+                     url 'http://www.gnu.org/licenses/lgpl.html'
+                     distribution 'repo'
+                 }
+             }
 
-						 developers {
-								 developer {
-										 id 'zhaber'
-										 name 'Vitalii Fedorenko'
-								 }
-						 }
-				 }
+             developers {
+                 developer {
+                     id 'zhaber'
+                     name 'Vitalii Fedorenko'
+                 }
+             }
+         }
 
-				 pom.withXml { XmlProvider xmlProvider ->
-						 def xml = xmlProvider.asString()
-						 def pomXml = new XmlParser().parse(new ByteArrayInputStream(xml.toString().bytes))
-						 pomXml.version[0] + { packaging('jar') }
-						 def newXml = new StringWriter()
-						 def printer = new XmlNodePrinter(new PrintWriter(newXml))
-						 printer.preserveWhitespace = true
-						 printer.print(pomXml)
-						 xml.setLength(0)
-						 xml.append(newXml.toString())
-				 }
-			}
-	}
+         pom.withXml { XmlProvider xmlProvider ->
+             def xml = xmlProvider.asString()
+             def pomXml = new XmlParser().parse(new ByteArrayInputStream(xml.toString().bytes))
+             pomXml.version[0] + { packaging('jar') }
+             def newXml = new StringWriter()
+             def printer = new XmlNodePrinter(new PrintWriter(newXml))
+             printer.preserveWhitespace = true
+             printer.print(pomXml)
+             xml.setLength(0)
+             xml.append(newXml.toString())
+         }
+      }
+  }
 }

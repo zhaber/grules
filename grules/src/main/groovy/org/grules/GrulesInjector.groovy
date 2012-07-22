@@ -10,18 +10,18 @@ import com.google.inject.Injector
  * A Guice injector for service classes.
  */
 class GrulesInjector {
-	
-	private static final Injector INJECTOR = Guice.createInjector(new GrulesModule()) 
-	
-	static RuleEngine getRuleEngine() {
-		INJECTOR.getInstance(RuleEngine)
-	}
-	
-	static Config getConfig() {
-		INJECTOR.getInstance(Config)
-	}
-	
-	static MessagesResourceBundle getMessagesResourceBundle() {
-		INJECTOR.getInstance(MessagesResourceBundle)
-	}
+
+  private static final Injector INJECTOR = Guice.createInjector(new GrulesModule())
+
+  static RuleEngine getRuleEngine() {
+    INJECTOR.getInstance(RuleEngine)
+  }
+
+  static Config getConfig() {
+    INJECTOR.getInstance(Config)
+  }
+
+  static MessagesResourceBundle getMessagesResourceBundle() {
+    INJECTOR.getInstance(MessagesResourceBundle)
+  }
 }

@@ -7,7 +7,7 @@ import java.lang.annotation.Target
 
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
 
-/** 
+/**
  * Transforms an instance-style Groovy class to become a static-style class.
  */
 @java.lang.annotation.Documented

@@ -8,149 +8,149 @@ import org.grules.ValidationErrorProperties
  */
 class Operators {
 
-	@Category(Term)
-	class TermOperators {
+  @Category(Term)
+  class TermOperators {
 
-		/**
-		 * Binds an error message to a current subrule. 
-		 */
-		Subrule getAt(String message) {
-			SubrulesFactory.create(this, new ValidationErrorProperties(message))
-		}
-		
-		/**
- 		 * Binds a redirect URL to a current subrule.
-		 */
-		Subrule getAt(ValidationErrorProperties errorProperties) {
-			SubrulesFactory.create(this, errorProperties)
-		}
-		
-		/**
-		 * Creates a validation term that is a conjunction of two other terms.
-		 */
+    /**
+     * Binds an error message to a current subrule.
+     */
+    Subrule getAt(String message) {
+      SubrulesFactory.create(this, new ValidationErrorProperties(message))
+    }
+
+    /**
+      * Binds a redirect URL to a current subrule.
+     */
+    Subrule getAt(ValidationErrorProperties errorProperties) {
+      SubrulesFactory.create(this, errorProperties)
+    }
+
+    /**
+     * Creates a validation term that is a conjunction of two other terms.
+     */
     Term and(expression) {
-		  Term term = TermWrapper.wrap(expression)
-		  new AndTerm(this, term)
-	  }
-		
-		/**
-		 * This method is added to produce an exception when a conjunction is applied to a conversion term.
-		 */
-		Term and(TildeTerm expression) {
-			throw new InvalidBooleanTermException(this, expression, Types.LOGICAL_AND)
-		}
+      Term term = TermWrapper.wrap(expression)
+      new AndTerm(this, term)
+    }
 
-	  /**
-		 * Creates a validation term that is a disjunction of two other terms.
-		 */
-	  Term or(expression) {
-		  Term term = TermWrapper.wrap(expression)
-		  new OrTerm(this, term)
-	  }
-		
-		/**
-		 * This method is added to produce an exception when a disjunction is applied to a conversion term.
-		 */
-		Term or(TildeTerm expression) {
-			throw new InvalidBooleanTermException(this, expression, Types.LOGICAL_OR)
-		}
-	 
-	  /**
-		 * Creates a validation term that is a negation of itself.
-		 */
-	  Term negative() {
-		  new NotTerm(this)
-	  }
-		
-		/**
-		 * Creates a conversion term.
-		 */
-		Term bitwiseNegate() {
-			new TildeTerm(this)
-		}
-	}
+    /**
+     * This method is added to produce an exception when a conjunction is applied to a conversion term.
+     */
+    Term and(TildeTerm expression) {
+      throw new InvalidBooleanTermException(this, expression, Types.LOGICAL_AND)
+    }
 
-	@Category(TildeTerm)
-	class TildeTermOperators {
+    /**
+     * Creates a validation term that is a disjunction of two other terms.
+     */
+    Term or(expression) {
+      Term term = TermWrapper.wrap(expression)
+      new OrTerm(this, term)
+    }
 
-		/**
-		 * This method is added to produce an exception when a conjunction is applied to a conversion term. 
-		 */
-		Term and(expression) {
-			throw new InvalidBooleanTermException(expression)
-		}
+    /**
+     * This method is added to produce an exception when a disjunction is applied to a conversion term.
+     */
+    Term or(TildeTerm expression) {
+      throw new InvalidBooleanTermException(this, expression, Types.LOGICAL_OR)
+    }
 
-		/**
-		 * This method is added to produce an exception when a disjunction is applied to a conversion term.
-		 */
-		Term or(expression) {
-			throw new InvalidBooleanTermException(expression)
-		}
-		
-		/**
-		 * This method is added to produce an exception when a negation is applied to a conversion term.
-		 */
-		Term negative() {
-			throw new InvalidBooleanTermException(this, Types.NOT)
-		}
-	}
+    /**
+     * Creates a validation term that is a negation of itself.
+     */
+    Term negative() {
+      new NotTerm(this)
+    }
 
-	@Category(Closure)
-	class ClosureOperators {
+    /**
+     * Creates a conversion term.
+     */
+    Term bitwiseNegate() {
+      new TildeTerm(this)
+    }
+  }
 
-		/**
-		 * Creates a validation term that is a conjunction of validation closure and the given term.
-		 */
-		Term and(rightTerm) {
-			(new ClosureTerm(this) as Term) & rightTerm
-		}
+  @Category(TildeTerm)
+  class TildeTermOperators {
 
-		/**
-		 * Creates a validation term that is a disjunction of validation closure and the given term.
-		 */
-		Term or(rightTerm) {
-			(new ClosureTerm(this) as Term) | rightTerm
-		}
-		
-		/**
-		 * Creates a validation term that is a negation of the given closure.
-		 */
-	  Term negative() {
-		  new NotTerm(this)
-	  }
+    /**
+     * This method is added to produce an exception when a conjunction is applied to a conversion term.
+     */
+    Term and(expression) {
+      throw new InvalidBooleanTermException(expression)
+    }
 
-		/**
- 		 * Binds an error message to a subrule implemented as a closure.
-	 	 */
-		Subrule getAt(String message) {
-			SubrulesFactory.create(new ClosureTerm(this), new ValidationErrorProperties(message))
-		}
-		
-	  /**
-		 * Binds a redirect URL to a subrule implemented as a closure.
-		 */
-		Subrule getAt(ValidationErrorProperties errorProperties) {
-			SubrulesFactory.create(new ClosureTerm(this), errorProperties)
-		}
-		
-		/**
-		 * Creates a conversion term.
-		 */
-		Term bitwiseNegate() {
-			new TildeTerm(this)
-		}
+    /**
+     * This method is added to produce an exception when a disjunction is applied to a conversion term.
+     */
+    Term or(expression) {
+      throw new InvalidBooleanTermException(expression)
+    }
 
-	}
+    /**
+     * This method is added to produce an exception when a negation is applied to a conversion term.
+     */
+    Term negative() {
+      throw new InvalidBooleanTermException(this, Types.NOT)
+    }
+  }
 
-	/**
-	 * The ">>" operator that combines two subrules in a sequence such that a result of application of a first subrule is 
-	 * passed to a second subrule.   
-	 */
-	@Category(SubrulesSeq)
-	class SubrulesSeqOperators {
+  @Category(Closure)
+  class ClosureOperators {
 
-		SubrulesSeq rightShift(exression) {
-			(this as SubrulesSeq).add(exression)
-		}
-	}
+    /**
+     * Creates a validation term that is a conjunction of validation closure and the given term.
+     */
+    Term and(rightTerm) {
+      (new ClosureTerm(this) as Term) & rightTerm
+    }
+
+    /**
+     * Creates a validation term that is a disjunction of validation closure and the given term.
+     */
+    Term or(rightTerm) {
+      (new ClosureTerm(this) as Term) | rightTerm
+    }
+
+    /**
+     * Creates a validation term that is a negation of the given closure.
+     */
+    Term negative() {
+      new NotTerm(this)
+    }
+
+    /**
+      * Binds an error message to a subrule implemented as a closure.
+      */
+    Subrule getAt(String message) {
+      SubrulesFactory.create(new ClosureTerm(this), new ValidationErrorProperties(message))
+    }
+
+    /**
+     * Binds a redirect URL to a subrule implemented as a closure.
+     */
+    Subrule getAt(ValidationErrorProperties errorProperties) {
+      SubrulesFactory.create(new ClosureTerm(this), errorProperties)
+    }
+
+    /**
+     * Creates a conversion term.
+     */
+    Term bitwiseNegate() {
+      new TildeTerm(this)
+    }
+
+  }
+
+  /**
+   * The ">>" operator that combines two subrules in a sequence such that a result of application of a first subrule is
+   * passed to a second subrule.
+   */
+  @Category(SubrulesSeq)
+  class SubrulesSeqOperators {
+
+    SubrulesSeq rightShift(exression) {
+      (this as SubrulesSeq).add(exression)
+    }
+  }
 }

@@ -9,8 +9,8 @@ import org.grules.GrulesException
  */
 @InheritConstructors
 class InvalidTermException extends GrulesException {
-	
-	InvalidTermException(term) {
-		super("Term '$term' is invalid")
-	}
+
+  InvalidTermException(term) {
+    super("Term '$term' is invalid")
+  }
 }

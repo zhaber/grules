@@ -16,26 +16,26 @@ import org.objectweb.asm.Opcodes
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 class FunctionsASTTransformation extends GrulesASTTransformation {
-	
-	@Override
-	void visit(ASTNode[] nodes, SourceUnit source) {
-		ClassNode classNode = nodes[1]
-		init(classNode.name)
-		visit(source.ast, classNode)
-	}
-	
-	/**
-	 * Visits each method and makes it static.
-	 */
-	@Override
-	void visitModule(ModuleNode moduleNode, node) {
-		ClassNode classNode = node
-		classNode.methods.each {
-			MethodNode methodNode ->
-			methodNode.modifiers = methodNode.modifiers | Opcodes.ACC_STATIC
-			methodNode.setParameters(methodNode.parameters) //set static context to parameters
-			(methodNode.code as BlockStatement).scope.parent = methodNode.variableScope
-		}
-	}
-	
+
+  @Override
+  void visit(ASTNode[] nodes, SourceUnit source) {
+    ClassNode classNode = nodes[1]
+    init(classNode.name)
+    visit(source.ast, classNode)
+  }
+
+  /**
+   * Visits each method and makes it static.
+   */
+  @Override
+  void visitModule(ModuleNode moduleNode, node) {
+    ClassNode classNode = node
+    classNode.methods.each {
+      MethodNode methodNode ->
+      methodNode.modifiers = methodNode.modifiers | Opcodes.ACC_STATIC
+      methodNode.setParameters(methodNode.parameters) //set static context to parameters
+      (methodNode.code as BlockStatement).scope.parent = methodNode.variableScope
+    }
+  }
+
 }

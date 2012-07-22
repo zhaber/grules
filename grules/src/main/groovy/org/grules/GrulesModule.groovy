@@ -14,12 +14,12 @@ import com.google.inject.Scopes
  */
 class GrulesModule implements Module {
 
-	void configure(Binder binder) {
-		binder.bind(Config).toInstance(ConfigFactory.createConfig())
-		binder.bind(RulesScriptFactory).in(Scopes.SINGLETON)
-		binder.bind(RuleEngine).in(Scopes.SINGLETON)
-		binder.bind(MessagesResourceBundle).in(Scopes.SINGLETON)
-	}
+  void configure(Binder binder) {
+    binder.bind(Config).toInstance(ConfigFactory.createConfig())
+    binder.bind(RulesScriptFactory).in(Scopes.SINGLETON)
+    binder.bind(RuleEngine).in(Scopes.SINGLETON)
+    binder.bind(MessagesResourceBundle).in(Scopes.SINGLETON)
+  }
 }
 
 

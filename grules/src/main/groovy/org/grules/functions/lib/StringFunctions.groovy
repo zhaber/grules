@@ -3,81 +3,81 @@ package org.grules.functions.lib
 import org.grules.ast.Functions
 
 /**
- * Converters and validators for strings. 
+ * Converters and validators for strings.
  */
 @Functions
 class StringFunctions {
-	
-	String capitalize(String value) {
-		//Groovy 2.0: StringGroovyMethods.capitalize(value) 
-		value.capitalize()
-	}
 
-	boolean contains(String value, String substring) {
-		value.contains(substring)
-	}
+  String capitalize(String value) {
+    //Groovy 2.0: StringGroovyMethods.capitalize(value)
+    value.capitalize()
+  }
 
-	boolean endsWith(String value, String suffix) {
-		value.endsWith(suffix)
-	}
+  boolean contains(String value, String substring) {
+    value.contains(substring)
+  }
 
-	boolean isAlpha(String value) {
-		value ==~ /[a-zA-Z]*/
-	}
+  boolean endsWith(String value, String suffix) {
+    value.endsWith(suffix)
+  }
 
-	boolean isAlphanum(String value) {
-		value ==~ /[a-zA-Z0-9]*/
-	}
+  boolean isAlpha(String value) {
+    value ==~ /[a-zA-Z]*/
+  }
 
-	boolean isLengthEq(String value, Integer length) {
-		value.length() == length
-	}
+  boolean isAlphanum(String value) {
+    value ==~ /[a-zA-Z0-9]*/
+  }
 
-	boolean isLengthBetween(String value, Integer minLength, Integer maxLength) {
-		value.length() >= minLength && value.length() <= maxLength
-	}
+  boolean isLengthEq(String value, Integer length) {
+    value.length() == length
+  }
 
-	boolean isLengthLess(String value, Integer maxLength) {
-		value.length() < maxLength
-	}
+  boolean isLengthBetween(String value, Integer minLength, Integer maxLength) {
+    value.length() >= minLength && value.length() <= maxLength
+  }
 
-	boolean isLengthMore(String value, Integer minLength) {
-		value.length() > minLength
-	}
+  boolean isLengthLess(String value, Integer maxLength) {
+    value.length() < maxLength
+  }
 
-	boolean isLengthLessEq(String value, Integer maxLength) {
-		value.length() <= maxLength
-	}
+  boolean isLengthMore(String value, Integer minLength) {
+    value.length() > minLength
+  }
 
-	boolean isLengthMoreEq(String value, Integer minLength) {
-		value.length() >= minLength
-	}
+  boolean isLengthLessEq(String value, Integer maxLength) {
+    value.length() <= maxLength
+  }
 
-	boolean matches(String value, String regex) {
-		value ==~ regex
-	}
-	
-	String replace(String value, String regexp, String replacement) {
-		value.replaceAll(regexp, replacement)
-	}
+  boolean isLengthMoreEq(String value, Integer minLength) {
+    value.length() >= minLength
+  }
 
-	String substring(String value, Integer beginIndex, Integer endIndex) {
-		value[beginIndex..endIndex]
-	}
+  boolean matches(String value, String regex) {
+    value ==~ regex
+  }
 
-	boolean startsWith(String value, String prefix) {
-		value.startsWith(prefix)
-	}
-	
-	String toLowerCase(String value) {
-		value.toLowerCase()
-	}
+  String replace(String value, String regexp, String replacement) {
+    value.replaceAll(regexp, replacement)
+  }
 
-	String toUpperCase(String value) {
-		value.toUpperCase()
-	}
+  String substring(String value, Integer beginIndex, Integer endIndex) {
+    value[beginIndex..endIndex]
+  }
 
-	String trim(String value) {
-		value.trim()
-	} 
+  boolean startsWith(String value, String prefix) {
+    value.startsWith(prefix)
+  }
+
+  String toLowerCase(String value) {
+    value.toLowerCase()
+  }
+
+  String toUpperCase(String value) {
+    value.toUpperCase()
+  }
+
+  String trim(String value) {
+    value.trim()
+  }
 }

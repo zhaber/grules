@@ -10,11 +10,11 @@ import groovy.transform.InheritConstructors
 @InheritConstructors
 class MissingParameterException extends GrulesException {
 
-	final String group
-	final String parameterName
+  final String group
+  final String parameterName
 
-	MissingParameterException(String group, String parameterName) {
-		this.group = group
-		this.parameterName = parameterName
-	}
+  MissingParameterException(String group, String parameterName) {
+    this.group = group
+    this.parameterName = parameterName
+  }
 }

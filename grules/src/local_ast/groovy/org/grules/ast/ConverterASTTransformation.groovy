@@ -18,42 +18,42 @@ import org.grules.functions.ConverterBooleanResult
 
 /**
  * Transformation for a converter function.
- * 
+ *
  * @see Converter
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 class ConverterASTTransformation extends GrulesASTTransformation {
-	
-	/**
-	 * Visits a converter method.
-	 */
-	@Override
-	void visit(ASTNode[] nodes, SourceUnit source) {
-    MethodNode methodNode = (MethodNode) nodes[1]		
-		init(methodNode.name)
-		visit(source.ast, methodNode)
-	}
-	
-	/**
-	 * Wraps a method return value to {@link org.grules.functions.ConverterBooleanResult} so the method can be used as a 
-	 * converter.
-	 */
-	@Override
-	void visitModule(ModuleNode moduleNode, node) {
-		MethodNode methodNode = node 
-		methodNode.parameters.each { Parameter parameter ->
-			parameter.closureShare = true
-		}
+
+  /**
+   * Visits a converter method.
+   */
+  @Override
+  void visit(ASTNode[] nodes, SourceUnit source) {
+    MethodNode methodNode = (MethodNode) nodes[1]
+    init(methodNode.name)
+    visit(source.ast, methodNode)
+  }
+
+  /**
+   * Wraps a method return value to {@link org.grules.functions.ConverterBooleanResult} so the method can be used as a
+   * converter.
+   */
+  @Override
+  void visitModule(ModuleNode moduleNode, node) {
+    MethodNode methodNode = node
+    methodNode.parameters.each { Parameter parameter ->
+      parameter.closureShare = true
+    }
     methodNode.returnType = ClassHelper.make(Object)
-		BlockStatement methodBlockStatement = methodNode.code
-		Expression closureExpression = GrulesASTFactory.createClosureExpression(methodNode.code) 
-		Expression arguments = new ArgumentListExpression([])
-		Expression closureMethod = new ConstantExpression(GrulesASTFactory.CALL_METHOD_NAME)
-		MethodCallExpression closureCall = new MethodCallExpression(closureExpression, closureMethod, arguments)
-		closureCall.implicitThis = false
-		Expression wrapperMethodCall = GrulesASTFactory.createStaticMethodCall(ConverterBooleanResult, 
-			  ConverterBooleanResult.&wrap, [closureCall])
-		methodBlockStatement.statements = [new ExpressionStatement(wrapperMethodCall)]
-	}
-	
+    BlockStatement methodBlockStatement = methodNode.code
+    Expression closureExpression = GrulesASTFactory.createClosureExpression(methodNode.code)
+    Expression arguments = new ArgumentListExpression([])
+    Expression closureMethod = new ConstantExpression(GrulesASTFactory.CALL_METHOD_NAME)
+    MethodCallExpression closureCall = new MethodCallExpression(closureExpression, closureMethod, arguments)
+    closureCall.implicitThis = false
+    Expression wrapperMethodCall = GrulesASTFactory.createStaticMethodCall(ConverterBooleanResult,
+        ConverterBooleanResult.&wrap, [closureCall])
+    methodBlockStatement.statements = [new ExpressionStatement(wrapperMethodCall)]
+  }
+
 }

@@ -25,36 +25,36 @@ class UserController {
     }
 
     def save() {
-     		Map<String, Object> headers = Grules.fetchRequestHeaders(request) 
-  			RulesScriptGroupResult result = Grules.applyGroupRules(UserGrules, [PARAMETERS: params, HEADER: headers])
-				if (result.invalidParameters.isEmpty()) {
+         Map<String, Object> headers = Grules.fetchRequestHeaders(request)
+        RulesScriptGroupResult result = Grules.applyGroupRules(UserGrules, [PARAMETERS: params, HEADER: headers])
+        if (result.invalidParameters.isEmpty()) {
           def userInstance = new User(result.cleanParameters.PARAMETERS)
           if (!userInstance.save(flush: true)) {
-          	render(view: "create", model: [userInstance: userInstance])
-          	return
+            render(view: "create", model: [userInstance: userInstance])
+            return
           }
-          flash.message = message(code: 'default.created.message', args: [message(code: 'user.label', default: 'User'), 
-						  userInstance.id])
+          flash.message = message(code: 'default.created.message', args: [message(code: 'user.label', default: 'User'),
+              userInstance.id])
           redirect(action: "show", id: userInstance.id)
-				} else {
-				  flash.message = message(code: 'grules.errorReport', args: [
-						convertParameters(result.cleanParameters), 
-						convertParameters(result.invalidParameters),
-					  convertParameters(result.missingRequiredParameters),
-						convertParameters(result.notValidatedParameters),
-						convertParameters(result.parametersWithMissingDependency)]).replace('\n', '<br>')
-						redirect(action: "create")
-				}
+        } else {
+          flash.message = message(code: 'grules.errorReport', args: [
+            convertParameters(result.cleanParameters),
+            convertParameters(result.invalidParameters),
+            convertParameters(result.missingRequiredParameters),
+            convertParameters(result.notValidatedParameters),
+            convertParameters(result.parametersWithMissingDependency)]).replace('\n', '<br>')
+            redirect(action: "create")
+        }
     }
-		
-		private def convertParameters(Map<String, Object> map) {
-			map.keySet().inject("") {acc, val -> acc + val + " = " + map[val] + "<br>"}
-		}
+
+    private def convertParameters(Map<String, Object> map) {
+      map.keySet().inject("") {acc, val -> acc + val + " = " + map[val] + "<br>"}
+    }
 
     def show() {
         def userInstance = User.get(params.id)
         if (!userInstance) {
-			flash.message = message(code: 'default.not.found.message', args: [message(code: 'user.label', default: 'User'), params.id])
+      flash.message = message(code: 'default.not.found.message', args: [message(code: 'user.label', default: 'User'), params.id])
             redirect(action: "list")
             return
         }
@@ -99,25 +99,25 @@ class UserController {
             return
         }
 
-		flash.message = message(code: 'default.updated.message', args: [message(code: 'user.label', default: 'User'), userInstance.id])
+    flash.message = message(code: 'default.updated.message', args: [message(code: 'user.label', default: 'User'), userInstance.id])
         redirect(action: "show", id: userInstance.id)
     }
 
     def delete() {
         def userInstance = User.get(params.id)
         if (!userInstance) {
-			flash.message = message(code: 'default.not.found.message', args: [message(code: 'user.label', default: 'User'), params.id])
+      flash.message = message(code: 'default.not.found.message', args: [message(code: 'user.label', default: 'User'), params.id])
             redirect(action: "list")
             return
         }
 
         try {
             userInstance.delete(flush: true)
-			flash.message = message(code: 'default.deleted.message', args: [message(code: 'user.label', default: 'User'), params.id])
+      flash.message = message(code: 'default.deleted.message', args: [message(code: 'user.label', default: 'User'), params.id])
             redirect(action: "list")
         }
         catch (DataIntegrityViolationException e) {
-			flash.message = message(code: 'default.not.deleted.message', args: [message(code: 'user.label', default: 'User'), params.id])
+      flash.message = message(code: 'default.not.deleted.message', args: [message(code: 'user.label', default: 'User'), params.id])
             redirect(action: "show", id: params.id)
         }
     }
