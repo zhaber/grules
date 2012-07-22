@@ -1,19 +1,26 @@
 Grules is a rule engine for data preprocessing (validation and canonicalization). The rules are specified via internal Groovy DSL, which has a concise and simple syntax. For example:
 
-```groovy
-email isEmail ['Not valid email'] // isEmail is a Groovy method that takes an email value as its parameter
+```java
+// isEmail is a Groovy method that takes an email value as its parameter
+email isEmail ['Not valid email']
 
-login isLogin [invalidLoginErr] >> isUnique [dupLoginErr] // invalidLoginErr and dupLoginErr are String error messages
+// invalidLoginErr and dupLoginErr are String error messages
+login isLogin [invalidLoginErr] >> isUnique [dupLoginErr] 
 
-gender toEnum(Gender) // Gender is a Groovy enumeration
+// Gender is a Groovy enumeration
+gender toEnum(Gender) 
 
-zipcode['10001'] isValidZipcode // '10001' is a default value
+// '10001' is a default value
+zipcode['10001'] isValidZipcode 
 
-termsCondition[''] !isEmpty [m.agreeToTerms] // agreeToTerms is a message from a resource bundle
+// agreeToTerms is a message from a resource bundle
+termsCondition[''] !isEmpty [m.agreeToTerms] 
 
-weight toPositiveBigDecimal [decimalErr] >> {round(it / 1000)} // you can use closures as well
+// you can use closures as well
+weight toPositiveBigDecimal [decimalErr] >> {round(it / 1000)} 
 
-endDate isAfterNow && isBefore(deadline) // Grules supports disjunction, conjunction, negation
+// Grules supports disjunction, conjunction, negation
+endDate isAfterNow && isBefore(deadline)
 ```
 
 To build the project, you should run the following command in the grules folder:
