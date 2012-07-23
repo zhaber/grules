@@ -135,4 +135,11 @@ class StringFunctions {
   String trim(String value) {
     value.trim()
   }
+
+  /**
+   * An additional trim method to make it usable as a default converter.
+   */
+  def trim(value) {
+    value
+  }
 }

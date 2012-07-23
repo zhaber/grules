@@ -8,8 +8,8 @@ class BinaryValidationTermTest extends Specification {
 
 	def "Apply AND term to valid terms"() {
 		setup:
-			def validatorTermLeft = newIsIntegerValidator()
-		  def validatorTermRight = newIsIntegerValidator()
+			def validatorTermLeft = createIsIntegerValidator()
+		  def validatorTermRight = createIsIntegerValidator()
 		  def term = new AndTerm(validatorTermLeft, validatorTermRight)
 		expect:
 		  term.apply(VALID_INTEGER_STRING)
@@ -17,8 +17,8 @@ class BinaryValidationTermTest extends Specification {
 	
 	def "Apply AND term to invalid terms"() {
     setup: 
-			def validatorTermLeft = newIsIntegerValidator()
-		  def validatorTermRight = newIsEmptyValidator()
+			def validatorTermLeft = createIsIntegerValidator()
+		  def validatorTermRight = createIsEmptyValidator()
 		  def term = new AndTerm(validatorTermLeft, validatorTermRight)
 		expect:
 		  !term.apply(VALID_INTEGER_STRING)
@@ -26,8 +26,8 @@ class BinaryValidationTermTest extends Specification {
 	
 	def "Apply OR term to valid terms"() {
 		setup:
-		  def validatorTermLeft = newIsIntegerValidator()
-		  def validatorTermRight = newIsEmptyValidator()
+		  def validatorTermLeft = createIsIntegerValidator()
+		  def validatorTermRight = createIsEmptyValidator()
 		  def term = new OrTerm(validatorTermLeft, validatorTermRight)
 		expect:
 		  term.apply(VALID_INTEGER_STRING)
@@ -35,8 +35,8 @@ class BinaryValidationTermTest extends Specification {
 	
 	def "Apply OR term to invalid terms"() {
 		setup:
-		  def validatorTermLeft = newIsEmptyValidator()
-		  def validatorTermRight = newIsEmptyValidator()
+		  def validatorTermLeft = createIsEmptyValidator()
+		  def validatorTermRight = createIsEmptyValidator()
 		  def term = new OrTerm(validatorTermLeft, validatorTermRight)
 		expect:
 		  !term.apply(VALID_INTEGER_STRING)

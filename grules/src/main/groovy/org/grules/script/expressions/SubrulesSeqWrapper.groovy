@@ -41,7 +41,7 @@ class SubrulesSeqWrapper {
    */
   static SubrulesSeq wrap(Term term) {
     SubrulesSeq subrulesSeq = new SubrulesSeq()
-     subrulesSeq.add(term)
+    subrulesSeq.add(term)
     subrulesSeq
   }
 

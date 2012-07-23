@@ -12,7 +12,7 @@ class UnaryTermsTest extends Specification {
 	
 	def "Not term returns opposit result"() {
 		setup:
-		  def term = new NotTerm(newIsIntegerValidator()) 
+		  def term = new NotTerm(createIsIntegerValidator()) 
 		expect:
 		  term.apply(INVALID_PARAMETER_VALUE)
 	}
@@ -20,7 +20,7 @@ class UnaryTermsTest extends Specification {
 	def "Not operator throws exception if term is tilde term"() {
 		when:
 			use(TildeTermOperators) {
-				-newTildeTerm()
+				-createTildeTerm()
 			}
 		then:
 			thrown(InvalidBooleanTermException)
@@ -28,7 +28,7 @@ class UnaryTermsTest extends Specification {
 	
 	def "Not operator throws exception if term returns non-boolean value"() {
 		when:
-			(new NotTerm(newConversionTerm())).apply('')
+			(new NotTerm(createConversionTerm())).apply('')
 		then:
 			thrown(InvalidBooleanTermException)
 	}

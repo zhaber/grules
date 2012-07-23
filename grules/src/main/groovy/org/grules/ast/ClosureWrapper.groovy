@@ -5,7 +5,6 @@ import groovy.inspect.swingui.AstNodeToScriptVisitor
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
-import org.codehaus.groovy.ast.expr.ClosureExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.GStringExpression
@@ -23,17 +22,23 @@ class ClosureWrapper {
     expression
   }
 
+  private static ConstantExpression methodToConstantExpression(Expression methodExpression) {
+    if (methodExpression instanceof ConstantExpression) {
+      return methodExpression
+    }
+    Writer stringWriter = new StringWriter()
+    AstNodeToScriptVisitor stringAstNodeToScriptVisitor = new AstNodeToScriptVisitor(stringWriter)
+    methodExpression.visit(stringAstNodeToScriptVisitor)
+    new ConstantExpression(stringWriter.toString())
+  }
+
   static Expression wrapInClosures(MethodCallExpression expression) {
     List<Expression> arguments = (expression.arguments as ArgumentListExpression).expressions
     arguments = [GrulesASTFactory.createItVariable()] + arguments
-    Expression method = expression.method
-    Expression closureMethodCallExpression = GrulesASTFactory.createMethodCall(method, arguments)
+    Expression methodExpression = expression.method
+    Expression closureMethodCallExpression = GrulesASTFactory.createMethodCall(methodExpression, arguments)
     Expression closure = GrulesASTFactory.createClosureExpression(closureMethodCallExpression)
-    Writer stringWriter = new StringWriter()
-    AstNodeToScriptVisitor stringAstNodeToScriptVisitor = new AstNodeToScriptVisitor(stringWriter)
-    method.visit(stringAstNodeToScriptVisitor)
-    Expression methodName = new ConstantExpression(stringWriter.toString())
-    GrulesASTFactory.createConstructorCall(FunctionTerm, [closure, methodName])
+    GrulesASTFactory.createConstructorCall(FunctionTerm, [closure, methodToConstantExpression(methodExpression)])
   }
 
   static Expression wrapInClosures(VariableExpression expression) {

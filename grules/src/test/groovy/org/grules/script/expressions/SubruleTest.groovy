@@ -12,7 +12,7 @@ class SubruleTest extends Specification{
 	
 	def "Apply validation subrule to valid term"() {
 		setup:
-		  def validatorTerm = newIsIntegerValidator()
+		  def validatorTerm = createIsIntegerValidator()
 		  def subrule = SubrulesFactory.create(validatorTerm)
 		when:
 		  subrule.apply(VALID_INTEGER_STRING)
@@ -22,7 +22,7 @@ class SubruleTest extends Specification{
 
 	def "Apply validation subrule to invalid term"() {
 		setup:
-		  def validatorTerm = newIsIntegerValidator()
+		  def validatorTerm = createIsIntegerValidator()
 		  def subrule = SubrulesFactory.create(validatorTerm, new ValidationErrorProperties())
 		when:
 		  subrule.apply(INVALID_PARAMETER_VALUE)
@@ -32,7 +32,7 @@ class SubruleTest extends Specification{
 	
 	def "Apply conversion subrule to valid term"() {
 		setup:
-		  def conversionTerm = newTrimConverter()
+		  def conversionTerm = createTrimConverter()
 		  def subrule = SubrulesFactory.create(conversionTerm)
 		when:
 		  subrule.apply(DEFAULT_VALUE)
@@ -42,7 +42,7 @@ class SubruleTest extends Specification{
 
 	def "Apply conversion subrule to invalid term"() {
 		setup:
-		  def converterTerm = newToIntConverter()
+		  def converterTerm = createToIntConverter()
 		  def subrule = SubrulesFactory.create(converterTerm, new ValidationErrorProperties())
 		when:
 		  subrule.apply(INVALID_PARAMETER_VALUE)
@@ -52,7 +52,7 @@ class SubruleTest extends Specification{
 
 	def "create for term"() {
 		setup:
-		  def subrule = SubrulesFactory.create(newValidationTerm())
+		  def subrule = SubrulesFactory.create(createValidationTerm())
 		expect:
 		  subrule.term instanceof Term
 	}

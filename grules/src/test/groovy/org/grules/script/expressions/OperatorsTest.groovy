@@ -15,7 +15,7 @@ class OperatorsTest extends Specification {
 	def "AND operator throws exception for unknown term"() {
 		when:
 		  use(TermOperators) {
-		    (newValidationTerm() & newTrimConverter()).apply('')
+		    (createValidationTerm() & createTrimConverter()).apply('')
 	    }
 		then:
 		  thrown(InvalidBooleanTermException)
@@ -24,7 +24,7 @@ class OperatorsTest extends Specification {
 	def "OR operator throws exception for unknown term"() {
 		when:
 		  use(TermOperators) {
-		    (newFailValidationTerm() | newTrimConverter()).apply('')
+		    (createFailValidationTerm() | createTrimConverter()).apply('')
 	    }
 		then:
 		  thrown(InvalidBooleanTermException)
@@ -33,7 +33,7 @@ class OperatorsTest extends Specification {
 	def "AND operator throws exception if left term is tilde term"() {
 		when:
 		  use(TildeTermOperators){
-  		  newTildeTerm() & newTerm()
+  		  createTildeTerm() & createTerm()
 	    }
 		then:
 		  thrown(InvalidBooleanTermException)
@@ -42,7 +42,7 @@ class OperatorsTest extends Specification {
 	def "AND operator throws exception if right term is tilde term"() {
 		when:
 			use(TermOperators){
-			  newValidationTerm() & newTildeTerm()
+			  createValidationTerm() & createTildeTerm()
 			}
 		then:
 			thrown(InvalidBooleanTermException)
@@ -51,7 +51,7 @@ class OperatorsTest extends Specification {
 	def "OR operator throws exception if left term is tilde term"() {
 		when:
 		  use(TildeTermOperators){
-  		  newTildeTerm() | newTerm()
+  		  createTildeTerm() | createTerm()
 	    }
 	 	then:
 		  thrown(InvalidBooleanTermException)
@@ -60,7 +60,7 @@ class OperatorsTest extends Specification {
 	def "OR operator throws exception if right term is a tilde term"() {
 		when:
 			use(TermOperators) {
-				newValidationTerm() | newTildeTerm()
+				createValidationTerm() | createTildeTerm()
 			}
 		then:
 			thrown(InvalidBooleanTermException)
@@ -69,7 +69,7 @@ class OperatorsTest extends Specification {
 	def "AND operator throws exception if left term returns non-boolean value"() {
 		when:
 			use(TermOperators){
-				(newConversionTerm() & newValidationTerm()).apply('')
+				(createConversionTerm() & createValidationTerm()).apply('')
 			}
 		then:
 			thrown(InvalidBooleanTermException)
@@ -78,7 +78,7 @@ class OperatorsTest extends Specification {
 	def "AND operator throws exception if right term returns non-boolean value"() {
 		when:
 			use(TermOperators){
-				(newSuccessValidationTerm() & newConversionTerm()).apply('')
+				(createSuccessValidationTerm() & createConversionTerm()).apply('')
 			}
 		then:
 			thrown(InvalidBooleanTermException)
@@ -87,7 +87,7 @@ class OperatorsTest extends Specification {
 	def "OR operator throws exception if left term returns non-boolean value"() {
 		when:
 			use(TermOperators){
-				(newConversionTerm() | newValidationTerm()).apply('')
+				(createConversionTerm() | createValidationTerm()).apply('')
 			}
 		then:
 			thrown(InvalidBooleanTermException)
@@ -96,7 +96,7 @@ class OperatorsTest extends Specification {
 	def "OR operator throws exception if right term returns non-boolean value"() {
 		when:
 			use(TermOperators){
-				(newFailValidationTerm() | newConversionTerm()).apply('')
+				(createFailValidationTerm() | createConversionTerm()).apply('')
 			}
 		then:
 			thrown(InvalidBooleanTermException)
@@ -104,7 +104,7 @@ class OperatorsTest extends Specification {
 	
 	def "Validation term AND operator returns term"() {
 		setup:
-		  def term = newValidationTerm()
+		  def term = createValidationTerm()
 		  def andTerm
 		  use(TermOperators){
   	   	andTerm = term & term
@@ -115,7 +115,7 @@ class OperatorsTest extends Specification {
 	
 	def "Validation term OR operator returns term"() {
 		setup:
-		  def term = newValidationTerm()
+		  def term = createValidationTerm()
 		  def orTerm
 		  use(TermOperators) {
 			  orTerm = term | term
@@ -126,7 +126,7 @@ class OperatorsTest extends Specification {
 	
 	def "GetAt operator for term returns subrule"() {
 		setup:
-		  def term = newValidationTerm()
+		  def term = createValidationTerm()
 		  def subrule
 		  use(TermOperators) {
 		    subrule = term[ERROR_MSG] as Subrule
@@ -141,7 +141,7 @@ class OperatorsTest extends Specification {
 		  def closure = {}
 		  def term
 		  use (ClosureOperators, TermOperators) {
-			  term = (closure & newValidationTerm()) as BinaryValidationTerm
+			  term = (closure & createValidationTerm()) as BinaryValidationTerm
 		  }
 		expect:
 		  (term.leftTerm as ClosureTerm).closure == closure 
@@ -152,7 +152,7 @@ class OperatorsTest extends Specification {
 		  def closure = {}
 		  def term
 		  use (ClosureOperators, TermOperators) {
-			  term = (closure | newValidationTerm()) as BinaryValidationTerm
+			  term = (closure | createValidationTerm()) as BinaryValidationTerm
 		  }
 		expect:
 		  (term.leftTerm as ClosureTerm).closure == closure
@@ -182,10 +182,10 @@ class OperatorsTest extends Specification {
 
 	def "Right shift for subrules sequence add new subrule"() {
 		setup:
-		  def subrulesSeq = newSubrulesSeq()
+		  def subrulesSeq = createSubrulesSeq()
 		  def initialSize = subrulesSeq.subrules.size()
 		  use (SubrulesSeqOperators) {
-  		  subrulesSeq >> newSubrule()
+  		  subrulesSeq >> createSubrule()
 		  }
 		expect:
 	    subrulesSeq.subrules.size() == initialSize + 1

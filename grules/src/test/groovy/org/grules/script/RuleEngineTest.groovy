@@ -14,7 +14,7 @@ import spock.lang.Specification
 
 class TestRulesScript extends Script {
 	def run() {
-		(this as RulesScript).applyRule(PARAMETER_NAME, PARAMETER_VALUE, newEmptyRuleClosure())
+		(this as RulesScript).applyRule(PARAMETER_NAME, PARAMETER_VALUE, createEmptyRuleClosure())
 	}
 }
 
@@ -87,7 +87,7 @@ class RuleEngineTest extends Specification {
 
 	def "runMainScript mixes in validation term operators for closure validator"() {
 		setup:
-		  rulesScript.applyRules() >> {newValidatorClosureTerm() | newValidatorClosureTerm()}
+		  rulesScript.applyRules() >> {createValidatorClosureTerm() | createValidatorClosureTerm()}
 		when:
 		  runMainScript()
 		then:
@@ -96,7 +96,7 @@ class RuleEngineTest extends Specification {
 	
 	def "runMainScript mixes in term operators"() {
 		setup:
-		  rulesScript.applyRules() >> {newValidationTerm()['']}
+		  rulesScript.applyRules() >> {createValidationTerm()['']}
 		when:
 		  runMainScript()
 		then:
@@ -105,7 +105,7 @@ class RuleEngineTest extends Specification {
 
 	def "runMainScript mixes in vaidation term operators"() {
 		setup:
-		  rulesScript.applyRules() >> {newValidationTerm() | newValidationTerm()}
+		  rulesScript.applyRules() >> {createValidationTerm() | createValidationTerm()}
 		when:
 		  runMainScript()
 		then:

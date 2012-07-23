@@ -8,7 +8,7 @@ class TermsTest extends Specification {
 	
 	def "wrap for term"() {
 		setup:
-		  def term = TermWrapper.wrap(newTerm())
+		  def term = TermWrapper.wrap(createTerm())
 		expect:
 		  term instanceof Term
 	}

@@ -1,74 +1,80 @@
 package org.grules
 
+import org.grules.functions.lib.CommonFunctions
 import org.grules.script.expressions.ClosureTerm
-import org.grules.script.expressions.TildeTerm
 import org.grules.script.expressions.Subrule
 import org.grules.script.expressions.SubrulesFactory
 import org.grules.script.expressions.SubrulesSeq
 import org.grules.script.expressions.Term
+import org.grules.script.expressions.TildeTerm
 
 
 class TestRuleEntriesFactory {
 
-	static Closure<SubrulesSeq> newEmptyRuleClosure() {
+	static Closure<SubrulesSeq> createEmptyRuleClosure() {
 		{->new SubrulesSeq()}
 	}
 
-	static Term newTerm() {
-		{value -> value} as Term
+	static Term createTerm() {
+		createConversionTerm()
 	}
-	
-	static Term newConversionTerm() {
-		{value -> value} as Term
+
+	static Term createConversionTerm() {
+		createNopTerm()
 	}
-	
-	static Term newValidationTerm() {
-		{value -> true} as Term
-	}
-	
-	static Term newFailValidationTerm() {
-		{value -> false} as Term
-	}
-	
-	static Term newSuccessValidationTerm() {
+
+  static Term createNopTerm() {
+    CommonFunctions commonFunctions = new CommonFunctions()
+    commonFunctions.&nop as Term
+  }
+
+	static Term createValidationTerm() {
 		{value -> true} as Term
 	}
 
-	static TildeTerm newTildeTerm() {
-		new TildeTerm(newTerm())
+	static Term createFailValidationTerm() {
+		{value -> false} as Term
 	}
-		
-	static ClosureTerm newIsIntegerValidator() {
+
+	static Term createSuccessValidationTerm() {
+		{value -> true} as Term
+	}
+
+	static TildeTerm createTildeTerm() {
+		new TildeTerm(createTerm())
+	}
+
+	static ClosureTerm createIsIntegerValidator() {
 		new ClosureTerm({String number -> number.isInteger()})
 	}
-	
-	static ClosureTerm newIsEmptyValidator() {
+
+	static ClosureTerm createIsEmptyValidator() {
 		new ClosureTerm({String term -> term.isEmpty()})
 	}
-	
-	static ClosureTerm newValidatorClosureTerm() {
+
+	static ClosureTerm createValidatorClosureTerm() {
 		new ClosureTerm({})
 	}
-	
-	static TildeTerm newTrimConverter() {  
+
+	static TildeTerm createTrimConverter() {
 	  new TildeTerm({String string -> string.trim()})
 	}
-	
-	static TildeTerm newToIntConverter() {
+
+	static TildeTerm createToIntConverter() {
 		new TildeTerm({String string ->
-			try { 
+			try {
 			  string.toInteger()
 			} catch(NumberFormatException e) {
 			  throw new ValidationException()
 			}
 		})
 	}
-	
-	static SubrulesSeq newSubrulesSeq() {
-		(new SubrulesSeq()).add(newTrimConverter())
+
+	static SubrulesSeq createSubrulesSeq() {
+		(new SubrulesSeq()).add(createTrimConverter())
 	}
-	
-	static Subrule newSubrule() {
-		SubrulesFactory.create(newTrimConverter())
+
+	static Subrule createSubrule() {
+		SubrulesFactory.create(createTrimConverter())
 	}
 }

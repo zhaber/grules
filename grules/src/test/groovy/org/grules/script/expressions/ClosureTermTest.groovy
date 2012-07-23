@@ -8,7 +8,7 @@ class ClosureTermTest extends Specification {
 	
 	def "Closure term applies method closure"() {
 		setup:
-		  Term term = newIsEmptyValidator()
+		  Term term = createIsEmptyValidator()
     expect:
 		  term.apply('')
 	}

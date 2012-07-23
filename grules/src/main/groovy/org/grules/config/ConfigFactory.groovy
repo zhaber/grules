@@ -1,7 +1,9 @@
 package org.grules.config
 
 import java.util.logging.Level
+
 import org.grules.StdoutConsoleHandler
+import org.grules.functions.lib.StringFunctions
 import org.grules.http.HttpRequestParametersGroup
 
 /**
@@ -17,7 +19,8 @@ class ConfigFactory {
     (Config.LOG_LEVEL_PARAMETER_NAME): Level.FINE,
     (Config.GROUPS_PARAMETER_NAME): HttpRequestParametersGroup.values()*.name(),
     (Config.LOGGER_HANDLER_PARAMETER_NAME): new StdoutConsoleHandler(),
-    (Config.RESOURCE_BUNDLE_PARAMETER_NAME): 'messages']
+    (Config.RESOURCE_BUNDLE_PARAMETER_NAME): 'messages',
+    (Config.DEFAULT_CONVERTERS_PARAMETER_NAME): [StringFunctions.&trim]]
 
   /**
    * Creates a grules configuration object based on the provided script file.

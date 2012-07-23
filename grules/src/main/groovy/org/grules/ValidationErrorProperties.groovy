@@ -51,6 +51,13 @@ class ValidationErrorProperties {
   }
 
   /**
+   * Sets an error message that has to be shown on validation error event.
+   */
+  void setMessage(String message) {
+    errorProperties[MESSAGE_ERROR_PROPERTY] = message
+  }
+
+  /**
    * A redirect URL that has to used on validation error event.
    */
   String getRedirectUrl() {

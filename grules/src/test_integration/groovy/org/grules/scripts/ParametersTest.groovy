@@ -37,7 +37,7 @@ class ParametersTest extends Specification {
 
   def "Capitalized parameter names are processed as lowercase parameters"() {
     setup:
-      def parameterName = (PARAMETER_NAME as String).capitalize()
+      def parameterName = PARAMETER_NAME.capitalize()
       RulesScriptResult result = Grules.applyRules(RequiredGrules, [(parameterName): PARAMETER_VALUE])
     expect:
       result.cleanParameters.containsKey(parameterName)

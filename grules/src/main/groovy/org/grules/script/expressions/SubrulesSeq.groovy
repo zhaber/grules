@@ -1,5 +1,7 @@
 package org.grules.script.expressions
 
+import org.grules.GrulesInjector
+import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
 
 /**
@@ -7,7 +9,11 @@ import org.grules.ValidationException
  */
 class SubrulesSeq {
 
-  private final List<Subrule> subrules = []
+  final static List<Subrule> DEFAULT_SUBRULES = GrulesInjector.config.defaultConverters.collect {Closure closure ->
+    SubrulesFactory.create(closure)
+  }
+
+  private final List<Subrule> subrules = DEFAULT_SUBRULES.collect()
 
   /**
    * Applies subrules in order. If validation error is thrown and the source subrule does not have an error action,
@@ -28,8 +34,12 @@ class SubrulesSeq {
         if (subruleWithValidaitonExceptionIndex != -1) {
           e.addProperties(subrules[subruleWithValidaitonExceptionIndex].errorProperties)
         }
-        e.errorProperties.value = originalValue
-        e.errorProperties.subruleIndex = i
+        ValidationErrorProperties errorProperties = e.errorProperties
+        if (errorProperties.hasMessage()) {
+          errorProperties.message = errorProperties.message.replaceAll('_', originalValue)
+        }
+        errorProperties.value = originalValue
+        errorProperties.subruleIndex = i - DEFAULT_SUBRULES.size()
         throw e
       }
     }

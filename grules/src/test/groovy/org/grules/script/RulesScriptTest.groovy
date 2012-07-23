@@ -98,14 +98,14 @@ class RulesScriptTest extends Specification {
 	
 	def "applyRule saves the result for valid parameter"() {
 		setup:
-			script.applyRule(PARAMETER_NAME, PARAMETER_VALUE, newEmptyRuleClosure())
+			script.applyRule(PARAMETER_NAME, PARAMETER_VALUE, createEmptyRuleClosure())
 		expect:
 	  	script.variables.containsKey(PARAMETER_NAME)
 	}
 	
 	def "applyRuleToOptionalParameter saves the result for valid parameter with default value"() {
 		setup:
-			script.applyRuleToOptionalParameter(PARAMETER_NAME_AUX, newEmptyRuleClosure(), '')
+			script.applyRuleToOptionalParameter(PARAMETER_NAME_AUX, createEmptyRuleClosure(), '')
 		expect:
 			script.variables.containsKey(PARAMETER_NAME_AUX)
 	}
@@ -113,14 +113,14 @@ class RulesScriptTest extends Specification {
 	def "applyRuleToRequiredParameter saves a parameter as missing if it is required but empty"() {
 		setup:
 			(script.variables[GROUP] as Map).put(PARAMETER_NAME, '')
-			script.applyRuleToRequiredParameter(PARAMETER_NAME, newEmptyRuleClosure())
+			script.applyRuleToRequiredParameter(PARAMETER_NAME, createEmptyRuleClosure())
 		expect:
 			script.missingRequiredParameters == [(GROUP): [PARAMETER_NAME] as Set]
 	}
 	
 	def "applyRuleToRequiredParameter saves a parameter as missing if its value is not available"() {
 		setup:
-			script.applyRuleToRequiredParameter(PARAMETER_NAME_AUX, newEmptyRuleClosure())
+			script.applyRuleToRequiredParameter(PARAMETER_NAME_AUX, createEmptyRuleClosure())
 		expect:
 			script.missingRequiredParameters == [(GROUP): [PARAMETER_NAME_AUX] as Set]
 	}
@@ -254,7 +254,7 @@ class RulesScriptTest extends Specification {
 	
 	def "Fetching clean parameters"() {
 		setup:
-		  script.applyRule(PARAMETER_NAME, PARAMETER_VALUE, newEmptyRuleClosure())
+		  script.applyRule(PARAMETER_NAME, PARAMETER_VALUE, createEmptyRuleClosure())
 			(script.variables.get(GROUP) as Map).put(RulesBinding.toDirtyParameterName(PARAMETER_NAME), PARAMETER_VALUE) 
 			script.variables.put(VARIABLE_NAME, VARIABLE_VALUE)
 		expect:
