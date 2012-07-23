@@ -10,4 +10,5 @@ interface RulesScriptAPI {
   void applyRuleToRequiredParameter(String name, Closure<SubrulesSeq> subrulesSeqClosure)
   void applyRuleToOptionalParameter(String name, Closure<SubrulesSeq> subrulesSeqClosure, defaultValue)
   void applyRuleToParametersGroup(List<String> names, String name, Closure<SubrulesSeq> subrulesSeqClosure)
+  SubrulesSeq skip(String... converters)
 }

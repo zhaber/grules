@@ -5,6 +5,7 @@ import java.util.logging.Level
 import org.grules.StdoutConsoleHandler
 import org.grules.functions.lib.StringFunctions
 import org.grules.http.HttpRequestParametersGroup
+import org.grules.script.expressions.DefaultFunctionFactory
 
 /**
  * The factory creates a grules configuration object from a groovy file or class.
@@ -20,7 +21,7 @@ class ConfigFactory {
     (Config.GROUPS_PARAMETER_NAME): HttpRequestParametersGroup.values()*.name(),
     (Config.LOGGER_HANDLER_PARAMETER_NAME): new StdoutConsoleHandler(),
     (Config.RESOURCE_BUNDLE_PARAMETER_NAME): 'messages',
-    (Config.DEFAULT_CONVERTERS_PARAMETER_NAME): [StringFunctions.&trim]]
+    (Config.DEFAULT_FUNCTIONS_PARAMETER_NAME): [DefaultFunctionFactory.create(StringFunctions.&trim)]]
 
   /**
    * Creates a grules configuration object based on the provided script file.

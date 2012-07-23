@@ -259,10 +259,17 @@ class RulesScript implements RulesScriptAPI {
 
   @Override
   void validate(Closure<Map<String, Object>> closure) {
+    throw new UnsupportedOperationException()
   }
 
   @Override
   void rules(Closure<Void> closure) {
+    throw new UnsupportedOperationException()
+  }
+
+  @Override
+  SubrulesSeq skip(String... converters) {
+    throw new UnsupportedOperationException()
   }
 
 }

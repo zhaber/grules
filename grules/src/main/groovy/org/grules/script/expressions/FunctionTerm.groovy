@@ -1,5 +1,7 @@
 package org.grules.script.expressions
 
+import org.codehaus.groovy.runtime.MethodClosure
+
 /**
  * A term implemented as a function call.
  */
@@ -11,6 +13,11 @@ class FunctionTerm implements Term {
   FunctionTerm(Closure closure, String name) {
     this.closure = closure
     this.name = name
+  }
+
+  FunctionTerm(MethodClosure methodClosure) {
+    this.closure = methodClosure
+    this.name = methodClosure.method
   }
 
   @Override

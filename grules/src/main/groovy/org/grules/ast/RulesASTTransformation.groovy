@@ -25,6 +25,7 @@ import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.grules.functions.lib.CommonFunctions
 import org.grules.functions.lib.DateFunctions
 import org.grules.functions.lib.MathFunctions
+import org.grules.functions.lib.SecurityFunctions
 import org.grules.functions.lib.StringFunctions
 import org.grules.functions.lib.TypeFunctions
 import org.grules.functions.lib.UserFunctions
@@ -46,7 +47,7 @@ import org.grules.script.expressions.SubrulesSeqWrapper
 class RulesASTTransformation extends GrulesASTTransformation {
 
   private static final List<Class> IMPORT_CLASSES = [CommonFunctions,
-    DateFunctions, StringFunctions, TypeFunctions, UserFunctions, MathFunctions]
+    DateFunctions, StringFunctions, TypeFunctions, UserFunctions, MathFunctions, SecurityFunctions]
   private static final String RULES_SUFFIX = 'Grules'
 
   /**

@@ -3,7 +3,7 @@ package org.grules
 import org.grules.functions.lib.CommonFunctions
 import org.grules.script.expressions.ClosureTerm
 import org.grules.script.expressions.Subrule
-import org.grules.script.expressions.SubrulesFactory
+import org.grules.script.expressions.SubruleFactory
 import org.grules.script.expressions.SubrulesSeq
 import org.grules.script.expressions.Term
 import org.grules.script.expressions.TildeTerm
@@ -75,6 +75,6 @@ class TestRuleEntriesFactory {
 	}
 
 	static Subrule createSubrule() {
-		SubrulesFactory.create(createTrimConverter())
+		SubruleFactory.create(createTrimConverter())
 	}
 }

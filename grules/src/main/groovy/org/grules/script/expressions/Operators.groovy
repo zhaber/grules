@@ -15,14 +15,14 @@ class Operators {
      * Binds an error message to a current subrule.
      */
     Subrule getAt(String message) {
-      SubrulesFactory.create(this, new ValidationErrorProperties(message))
+      SubruleFactory.create(this, new ValidationErrorProperties(message))
     }
 
     /**
       * Binds a redirect URL to a current subrule.
      */
     Subrule getAt(ValidationErrorProperties errorProperties) {
-      SubrulesFactory.create(this, errorProperties)
+      SubruleFactory.create(this, errorProperties)
     }
 
     /**
@@ -123,14 +123,14 @@ class Operators {
       * Binds an error message to a subrule implemented as a closure.
       */
     Subrule getAt(String message) {
-      SubrulesFactory.create(new ClosureTerm(this), new ValidationErrorProperties(message))
+      SubruleFactory.create(new ClosureTerm(this), new ValidationErrorProperties(message))
     }
 
     /**
      * Binds a redirect URL to a subrule implemented as a closure.
      */
     Subrule getAt(ValidationErrorProperties errorProperties) {
-      SubrulesFactory.create(new ClosureTerm(this), errorProperties)
+      SubruleFactory.create(new ClosureTerm(this), errorProperties)
     }
 
     /**

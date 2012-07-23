@@ -12,7 +12,7 @@ class ValidationException extends GrulesException {
   }
 
   ValidationException(String message) {
-    this.errorProperties = new ValidationErrorProperties((ValidationErrorProperties.MESSAGE_ERROR_PROPERTY): message)
+    this.errorProperties = new ValidationErrorProperties(message)
   }
 
   ValidationException(Map<String, Object> errorProperties) {

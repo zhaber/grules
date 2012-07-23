@@ -9,10 +9,7 @@ import org.grules.ValidationException
  */
 class SubrulesSeq {
 
-  final static List<Subrule> DEFAULT_SUBRULES = GrulesInjector.config.defaultConverters.collect {Closure closure ->
-    SubrulesFactory.create(closure)
-  }
-
+  private static final List<Subrule> DEFAULT_SUBRULES = GrulesInjector.config.defaultFunctions
   private final List<Subrule> subrules = DEFAULT_SUBRULES.collect()
 
   /**
@@ -58,7 +55,7 @@ class SubrulesSeq {
    * Wraps the given rule expression into a subrule and adds it to the subrules sequence.
    */
   SubrulesSeq add(expression) {
-    subrules << SubrulesFactory.create(expression)
+    subrules << SubruleFactory.create(expression)
     this
   }
 

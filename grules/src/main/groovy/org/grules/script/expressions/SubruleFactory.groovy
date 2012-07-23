@@ -5,10 +5,10 @@ import org.grules.ValidationErrorProperties
 /**
  * Factory for conversion and validation subrules.
  */
-class SubrulesFactory {
+class SubruleFactory {
 
   /**
-   * Creates a subrule based on the given term.
+   * Creates a subrule based on the given term and error properties.
    *
    * @param term a term
    * @param errorProperties error properties
@@ -17,6 +17,18 @@ class SubrulesFactory {
   static Subrule create(Term term, ValidationErrorProperties errorProperties) {
      new Subrule(term, errorProperties)
   }
+
+  /**
+   * Creates a subrule based on the given term and an error message.
+   *
+   * @param term a term
+   * @param errorMessage an error message
+   * @return a subrule
+   */
+  static Subrule create(Term term, String errorMessage) {
+     new Subrule(term, new ValidationErrorProperties(errorMessage))
+  }
+
 
   /**
    * Creates a subrule based on the given term.
@@ -31,7 +43,7 @@ class SubrulesFactory {
   /**
    * Creates a subrule by wrapping a closure to a validation term.
    *
-   * @param closure a validation closure
+   * @param closure a validation or conversion closure
    * @return a subrule
    */
   static Subrule create(Closure closure) {

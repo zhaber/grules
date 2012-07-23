@@ -1,10 +1,10 @@
 package org.grules
 
 class ValidationErrorProperties {
-  final static String INPUT_ELEMENT_ERROR_PROPERTY = 'element'
-  final static String REDIRECT_URL_ERROR_PROPERTY = 'url'
-  final static String MESSAGE_ERROR_PROPERTY = 'msg'
-  final static String VALUE_ERROR_PROPERTY = 'value'
+  final static String INPUT_ELEMENT = 'element'
+  final static String REDIRECT_URL = 'url'
+  final static String MESSAGE = 'msg'
+  final static String VALUE = 'value'
   final static String SUBRULE_INDEX = 'subruleIndex'
   final static String FUNCTION_NAME = 'functionName'
 
@@ -19,11 +19,11 @@ class ValidationErrorProperties {
   }
 
   ValidationErrorProperties(String message, Map<String, Object> errorProperties) {
-    this.errorProperties = [(MESSAGE_ERROR_PROPERTY): message] + errorProperties
+    this.errorProperties = [(MESSAGE): message] + errorProperties
   }
 
   ValidationErrorProperties(String message) {
-    this.errorProperties = [(MESSAGE_ERROR_PROPERTY): message]
+    this.errorProperties = [(MESSAGE): message]
   }
 
   void merge(ValidationErrorProperties errorerrorProperties) {
@@ -44,73 +44,73 @@ class ValidationErrorProperties {
   }
 
   /**
-   * An error message that has to be shown on validation error event.
+   * An error message string.
    */
   String getMessage() {
-    errorProperties[MESSAGE_ERROR_PROPERTY]
+    errorProperties[MESSAGE]
   }
 
   /**
-   * Sets an error message that has to be shown on validation error event.
+   * Sets an error message string.
    */
   void setMessage(String message) {
-    errorProperties[MESSAGE_ERROR_PROPERTY] = message
+    errorProperties[MESSAGE] = message
   }
 
   /**
    * A redirect URL that has to used on validation error event.
    */
   String getRedirectUrl() {
-    errorProperties[ValidationErrorProperties.REDIRECT_URL_ERROR_PROPERTY]
+    errorProperties[ValidationErrorProperties.REDIRECT_URL]
   }
 
   /**
    * Checks if the validation error specifies an input element that has to used on validation error event.
    */
   boolean hasInputElement() {
-    errorProperties.containsKey(INPUT_ELEMENT_ERROR_PROPERTY)
+    errorProperties.containsKey(INPUT_ELEMENT)
   }
 
   /**
    * Checks if the validation error specifies an error message that has to be shown on validation error event.
    */
   boolean hasMessage() {
-    errorProperties.containsKey(MESSAGE_ERROR_PROPERTY)
+    errorProperties.containsKey(MESSAGE)
   }
 
   /**
    * Checks if the validation error specifies a redirect URL that has to used on validation error event.
    */
   boolean hasRedirectUrl() {
-    errorProperties.containsKey(REDIRECT_URL_ERROR_PROPERTY)
+    errorProperties.containsKey(REDIRECT_URL)
   }
 
   /**
    * A redirect URL that has to used on validation error event.
    */
   String getInputElement() {
-    errorProperties[INPUT_ELEMENT_ERROR_PROPERTY]
+    errorProperties[INPUT_ELEMENT]
   }
 
   /**
    * Checks if the validation error specifies a property value.
    */
   boolean hasValue() {
-    errorProperties.containsKey(VALUE_ERROR_PROPERTY)
+    errorProperties.containsKey(VALUE)
   }
 
   /**
    * Value of an invalid property.
    */
   String getValue() {
-    errorProperties[VALUE_ERROR_PROPERTY]
+    errorProperties[VALUE]
   }
 
   /**
    * Sets value of an invalid property.
    */
   void setValue(value) {
-    errorProperties[VALUE_ERROR_PROPERTY] = value
+    errorProperties[VALUE] = value
   }
 
   /**

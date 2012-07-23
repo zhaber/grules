@@ -15,7 +15,7 @@ class Config {
   static final String LOGGER_HANDLER_PARAMETER_NAME = 'loggerHandler'
   static final String GROUPS_PARAMETER_NAME = 'groups'
   static final String RESOURCE_BUNDLE_PARAMETER_NAME = 'resourceBundlePath'
-  static final String DEFAULT_CONVERTERS_PARAMETER_NAME = 'defaultConverters'
+  static final String DEFAULT_FUNCTIONS_PARAMETER_NAME = 'defaultFunctions'
 
   Config(Map<String, Object> properties) {
     this.parameters = properties
@@ -56,8 +56,8 @@ class Config {
   }
 
   /** Sequence of converters that must be applied to all parameters. */
-  List<Closure> getDefaultConverters() {
-    parameters[DEFAULT_CONVERTERS_PARAMETER_NAME]
+  List<Closure> getDefaultFunctions() {
+    parameters[DEFAULT_FUNCTIONS_PARAMETER_NAME]
   }
 
   /** Returns all configuration parameters as a string. */

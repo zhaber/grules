@@ -10,7 +10,7 @@ import spock.lang.Specification
 
 class SubrulesSeqTest extends Specification{
 
- Subrule failedSubrule
+  Subrule failedSubrule
 
 	def "Apply subrules sequence from one subrule to valid term"() {
 		setup:
@@ -168,7 +168,7 @@ class SubrulesSeqTest extends Specification{
 		setup:
 			def closure = {}
 			def subruleSeq = SubrulesSeqWrapper.wrap(closure)
-      def defaultConvertersSize = DEFAULT_CONFIG.defaultConverters.size()
+      def defaultConvertersSize = DEFAULT_CONFIG.defaultFunctions.size()
 		expect:
 			(subruleSeq.subrules[defaultConvertersSize].term as ClosureTerm).closure == closure
 	}

@@ -13,7 +13,7 @@ class SubruleTest extends Specification{
 	def "Apply validation subrule to valid term"() {
 		setup:
 		  def validatorTerm = createIsIntegerValidator()
-		  def subrule = SubrulesFactory.create(validatorTerm)
+		  def subrule = SubruleFactory.create(validatorTerm)
 		when:
 		  subrule.apply(VALID_INTEGER_STRING)
 		then:
@@ -23,7 +23,7 @@ class SubruleTest extends Specification{
 	def "Apply validation subrule to invalid term"() {
 		setup:
 		  def validatorTerm = createIsIntegerValidator()
-		  def subrule = SubrulesFactory.create(validatorTerm, new ValidationErrorProperties())
+		  def subrule = SubruleFactory.create(validatorTerm, new ValidationErrorProperties())
 		when:
 		  subrule.apply(INVALID_PARAMETER_VALUE)
 		then:
@@ -33,7 +33,7 @@ class SubruleTest extends Specification{
 	def "Apply conversion subrule to valid term"() {
 		setup:
 		  def conversionTerm = createTrimConverter()
-		  def subrule = SubrulesFactory.create(conversionTerm)
+		  def subrule = SubruleFactory.create(conversionTerm)
 		when:
 		  subrule.apply(DEFAULT_VALUE)
 		then:
@@ -43,7 +43,7 @@ class SubruleTest extends Specification{
 	def "Apply conversion subrule to invalid term"() {
 		setup:
 		  def converterTerm = createToIntConverter()
-		  def subrule = SubrulesFactory.create(converterTerm, new ValidationErrorProperties())
+		  def subrule = SubruleFactory.create(converterTerm, new ValidationErrorProperties())
 		when:
 		  subrule.apply(INVALID_PARAMETER_VALUE)
 		then:
@@ -52,7 +52,7 @@ class SubruleTest extends Specification{
 
 	def "create for term"() {
 		setup:
-		  def subrule = SubrulesFactory.create(createValidationTerm())
+		  def subrule = SubruleFactory.create(createValidationTerm())
 		expect:
 		  subrule.term instanceof Term
 	}
@@ -60,21 +60,21 @@ class SubruleTest extends Specification{
 	def "create for closure"() {
 		setup:
 		  def closure = {}
-		  def subrule = SubrulesFactory.create(closure)
+		  def subrule = SubruleFactory.create(closure)
 		expect:
 		  (subrule.term as ClosureTerm).closure == closure
 	}
 	
 	def "create for null"() {
 		when:
-		  SubrulesFactory.create(null)
+		  SubruleFactory.create(null)
 		then:
 		  thrown(InvalidSubruleException)
 	}
 	
 	def "create for invalid subrule"() {
 		when:
-		  SubrulesFactory.create(0)
+		  SubruleFactory.create(0)
 		then:
 		  thrown(InvalidSubruleException)
 	}
