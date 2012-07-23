@@ -2,7 +2,7 @@ Grules is a rule engine for data preprocessing (validation and canonicalization)
 
 ```java
 // isEmail is a Groovy method that takes an email value as its parameter
-email isEmail ["Not valid email"]
+email isEmail ["Invalid email"]
 
 // invalidLoginErr and dupLoginErr are String error messages
 login isLogin [invalidLoginErr] >> isUnique [dupLoginErr] 
