@@ -13,12 +13,12 @@ class StringFunctionsTest extends Specification {
 	static final String INTEGER_STRING = '1'
 	static final String ALPHANUM_STRING = STRING + INTEGER_STRING
 	static final String SUB_STRING = SUFFIX
-	
+
 	StringFunctions stringFunctions = new StringFunctions()
-	
+
 	def "capitalize"() {
 		expect:
-		  stringFunctions.capitalize(LOWERCASE_STRING + SUFFIX) == UPPERCASE_STRING + SUFFIX 
+		  stringFunctions.capitalize(LOWERCASE_STRING + SUFFIX) == UPPERCASE_STRING + SUFFIX
 	}
 
 	def "contains"() {
@@ -84,10 +84,10 @@ class StringFunctionsTest extends Specification {
 		expect:
 		  stringFunctions.matches(STRING, '.*')
 	}
-	
+
 	def "replace"() {
 		expect:
-		  stringFunctions.replace(STRING, SUFFIX, '') == PREFIX
+		  stringFunctions.replaceAll(STRING, SUFFIX, '') == PREFIX
 	}
 
 	def "substring"() {
@@ -99,7 +99,7 @@ class StringFunctionsTest extends Specification {
 		expect:
 		  stringFunctions.startsWith(STRING, PREFIX)
 	}
-	
+
 	def "toLowerCase"() {
 		expect:
 		stringFunctions.toLowerCase(UPPERCASE_STRING)
@@ -113,5 +113,5 @@ class StringFunctionsTest extends Specification {
 	def "trim"() {
 		expect:
 		  stringFunctions.trim(' ') == ''
-	} 
+	}
 }

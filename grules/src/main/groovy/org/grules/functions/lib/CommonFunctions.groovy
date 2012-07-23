@@ -1,7 +1,7 @@
 package org.grules.functions.lib
 
-import org.grules.ast.Converter
-import org.grules.ast.Functions
+import org.grules.functions.Converter
+import org.grules.functions.Functions
 
 /**
  * Standard grules converters and validators.
@@ -9,43 +9,116 @@ import org.grules.ast.Functions
 @Functions
 class CommonFunctions {
 
-  boolean eq(value1, value2) {
-    value1 == value2
+  /**
+   * Checks that all values are members of the list.
+   */
+  boolean areIn(List values, List list) {
+    isEvery(values) {isIn(it, list)}
   }
 
+  /**
+   * Checks that all values are members of the set.
+   */
+  boolean areIn(List values, Set list) {
+    isEvery(values) {isIn(it, list)}
+  }
+
+  /**
+   * @see isEqual
+   */
+  boolean eq(value, object) {
+    isEqual(value, object)
+  }
+
+  /**
+   * Returns an opposite value wrapped into {@link org.grules.functions.ConverterBooleanResult}: <code>true</code> for
+   * <code>false</code> and <code>false</code> for <code>true</code>.
+   */
   @Converter
   Boolean inverse(Boolean value) {
     !value
   }
 
+  /**
+   * Checks that at least one member is true according to the Groovy Truth
+   */
+  boolean isAny(List values) {
+    values.any()
+  }
+
+  /**
+   * Checks that at least one member is valid according to the predicate.
+   */
   boolean isAny(List values, Closure validator) {
     values.any(validator)
   }
 
-  boolean isFalse(value) {
-    !value
+  /**
+   * Checks that the list contains no members.
+   */
+  boolean isEmpty(List values) {
+    values.isEmpty()
   }
 
-  boolean isEmpty(List value) {
-    value.isEmpty()
-  }
-
+  /**
+   * Checks that the string matches <code>\/\s*\/</code>.
+   */
   boolean isEmpty(String value) {
     value.isEmpty()
   }
 
+  /**
+   * Checks that a value is equal to the specified object.
+   */
+  boolean isEqual(value, object) {
+    value == object
+  }
+
+  /**
+   * Checks that all list members are valid according to the predicate.
+   */
   boolean isEvery(List values, Closure validator) {
     values.every(validator)
   }
 
-  boolean isIn(value, List objects) {
-    value in objects
+  /**
+   * Checks that all list members are true according to the Groovy Truth.
+   */
+  boolean isEvery(List values) {
+    values.every()
   }
 
+  /**
+   * Checks that a value coerces to boolean <code>false</code>.
+   */
+  boolean isFalse(value) {
+    !value
+  }
+
+  /**
+   * Checks that a value is equal to any member of the specified list.
+   */
+  boolean isIn(value, List list) {
+    value in list
+  }
+
+  /**
+   * Checks that a value is equal to any member of the specified set.
+   */
+  boolean isIn(value, Set set) {
+    value in set
+  }
+
+  /**
+   * Returns the passed value.
+s   */
   def nop(value) {
     value
   }
 
+  /**
+   * Checks that a value coerces to boolean <code>true</code>.
+   */
   boolean isTrue(value) {
     value
   }

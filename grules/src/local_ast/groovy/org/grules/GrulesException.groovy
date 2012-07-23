@@ -1,4 +1,4 @@
-package org.grules.ast
+package org.grules
 
 import groovy.transform.InheritConstructors
 

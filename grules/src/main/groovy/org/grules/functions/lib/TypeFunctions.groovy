@@ -5,23 +5,18 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 
 import org.grules.ValidationException
-import org.grules.ast.Converter
-import org.grules.ast.Functions
+import org.grules.functions.Converter
+import org.grules.functions.Functions
 
 /**
- * Standard grules converters and validators.
+ * Standard type converters.
  */
 @Functions
 class TypeFunctions {
 
-  boolean isPositive(Number value) {
-    value > 0
-  }
-
-  boolean isNonnegative(Number value) {
-    value >= 0
-  }
-
+  /**
+   * Parse a String into a BigDecimal.
+   */
   BigDecimal toBigDecimal(String value) {
     if (value.isBigDecimal()) {
       value.toBigDecimal()
@@ -30,11 +25,24 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Returns true if a value coerces to <code>true</code> and <code>false</code> otherwise..
+   */
   @Converter
   Boolean toBoolean(value) {
     value ? true : false
   }
 
+  /**
+   * Returns the first string character.
+   */
+  Character toChar(String string) {
+    string[0]
+  }
+
+  /**
+   * Parses a value to produce a date.
+   */
   Date toDate(String value, String pattern, Locale locale = Locale.default) {
     DateFormat dateFormatter = new SimpleDateFormat(pattern, locale)
     try {
@@ -44,6 +52,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a Double.
+   */
   Double toDouble(String value) {
     if (value.isDouble()) {
       value.toDouble()
@@ -52,6 +63,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Returns the enum constant of the specified enum type with the specified name.
+   */
   Enum toEnum(String value, Class enumClass) {
     try {
       value.asType(enumClass)
@@ -60,6 +74,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a Float.
+   */
   Float toFloat(String value) {
     if (value.isFloat()) {
       value.toFloat()
@@ -68,6 +85,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a nonnegative BigDecimal.
+   */
   BigDecimal toNonnegativeBigDecimal(String value) {
     BigDecimal bigDecimalValue = toBigDecimal(value)
     if (bigDecimalValue >= 0) {
@@ -77,6 +97,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a nonnegative Double.
+   */
   Double toNonnegativeDouble(String value) {
     Double doubleValue = toDouble(value)
     if (doubleValue >= 0) {
@@ -86,6 +109,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a nonnegative Float.
+   */
   Float toNonnegativeFloat(String value) {
     Float floatValue = toFloat(value)
     if (floatValue >= 0) {
@@ -94,6 +120,10 @@ class TypeFunctions {
       throw new ValidationException()
     }
   }
+
+  /**
+   * Parse a String into a positive BigDecimal.
+   */
   BigDecimal toPositiveBigDecimal(String value) {
     BigDecimal bigDecimalValue = toBigDecimal(value)
     if (bigDecimalValue > 0) {
@@ -103,6 +133,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a positive Double.
+   */
   Double toPositiveDouble(String value) {
     Double doubleValue = toDouble(value)
     if (doubleValue > 0) {
@@ -112,6 +145,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a positive Float.
+   */
   Float toPositiveFloat(String value) {
     Float floatValue = toFloat(value)
     if (floatValue > 0) {
@@ -121,6 +157,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a Long.
+   */
   Long toLong(String value) {
     if (value.isLong()) {
       value.toLong()
@@ -129,6 +168,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a natural Long.
+   */
   Long toNaturalLong(String value) {
     Long longValue = toLong(value)
     if (longValue >= 0) {
@@ -138,6 +180,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a positive Long.
+   */
   Long toPositiveLong(String value) {
     Long longValue = toLong(value)
     if (longValue > 0) {
@@ -147,6 +192,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into an Integer.
+   */
   Integer toInt(String value) {
     if (value.isInteger()) {
       value.toInteger()
@@ -155,6 +203,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a natural Integer.
+   */
   Integer toNaturalInt(String value) {
     Integer intValue = toInt(value)
     if (intValue >= 0) {
@@ -164,6 +215,9 @@ class TypeFunctions {
     }
   }
 
+  /**
+   * Parse a String into a positive Integer.
+   */
   Integer toPositiveInt(String value) {
     Integer intValue = toInt(value)
     if (intValue > 0) {

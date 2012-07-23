@@ -4,4 +4,4 @@ import static org.grules.TestScriptEntities.*
 
 number = VALID_INTEGER
 
-"$PARAMETER_NAME" eq(number)
+"$PARAMETER_NAME" isEqual(number)

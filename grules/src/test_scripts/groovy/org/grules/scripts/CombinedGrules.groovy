@@ -6,7 +6,7 @@ id toPositiveInt >> !isEven && isOdd
 
 closure {it == PARAMETER_VALUE}
 
-withDefaultValue[PARAMETER_VALUE] eq($closure)
+withDefaultValue[PARAMETER_VALUE] isEqual($closure)
 
 equalToWithDefaultValue eq(withDefaultValue)
 
