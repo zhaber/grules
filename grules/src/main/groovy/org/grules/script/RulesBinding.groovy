@@ -85,16 +85,13 @@ class RulesBinding extends Binding {
    * @param missingPropertyClosure closure called when some parameter is missing
    */
   void addParameters(Map<String, Map<String, Object>> parameters, Closure<Object> missingPropertyClosure) {
-    variables << GROUPS.collectEntries {
-      String group ->
-      Map<String, Object> dirtyParametersValuesVariables
+    variables << GROUPS.collectEntries { String group ->
+      Map<String, Object> dirtyParametersValuesVariables = [:]
       if (parameters.containsKey(group)) {
-        dirtyParametersValuesVariables = parameters[group].collectEntries {
+        dirtyParametersValuesVariables += parameters[group].collectEntries {
           String key, value ->
           [(toDirtyParameterName(normalizeParameterName(key))): value]
         }
-      } else {
-        dirtyParametersValuesVariables = [:]
       }
       [(group): dirtyParametersValuesVariables.withDefault {
           String name ->
@@ -122,7 +119,7 @@ class RulesBinding extends Binding {
   /**
    * Returns only parameters variables.
    */
-  private Map<String, Map<String, Object>> getParameters() {
+  private Map<String, Map<String, Object>> fetchParameters() {
     variables.findAll {String name, value -> name in GROUPS}
   }
 
@@ -135,10 +132,10 @@ class RulesBinding extends Binding {
   }
 
   /**
-   * Returns clean values for all parameters.
+   * Returns clean values for all clean parameters.
    */
   Map<String, Map<String, Object>> fetchCleanParametersValues() {
-    parameters.collectEntries {
+    fetchParameters().collectEntries {
       String group, Map<String, Object> groupParameters ->
       Map<String, Object> parametersDirtyValuesVariables = groupParameters.findAll {
         String name, value ->
@@ -165,7 +162,7 @@ class RulesBinding extends Binding {
    * Fetches parameters that were not validated by the rules script.
    */
   Map<String, Map<String, String>> fetchNotValidatedParameters() {
-    parameters.collectEntries {	String group, Map<String, Object> groupParameters ->
+    fetchParameters().collectEntries {	String group, Map<String, Object> groupParameters ->
       Map<String, String> notValidatedParameters = (groupParameters.findAll {
         String parameterName, parameterValue ->
         isDirtyParameterName(parameterName) && !groupParameters.containsKey(parseDirtyParameterName(parameterName))

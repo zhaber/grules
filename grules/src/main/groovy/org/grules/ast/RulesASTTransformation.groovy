@@ -7,9 +7,13 @@ import org.codehaus.groovy.ast.ModuleNode
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
+import org.codehaus.groovy.ast.expr.CastExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.Expression
+import org.codehaus.groovy.ast.expr.GStringExpression
 import org.codehaus.groovy.ast.expr.ListExpression
+import org.codehaus.groovy.ast.expr.MapEntryExpression
+import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.ast.expr.NotExpression
 import org.codehaus.groovy.ast.expr.UnaryMinusExpression
@@ -22,6 +26,7 @@ import org.codehaus.groovy.runtime.MethodClosure
 import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
 import org.codehaus.groovy.transform.GroovyASTTransformation
+import org.grules.Grules
 import org.grules.functions.lib.CommonFunctions
 import org.grules.functions.lib.DateFunctions
 import org.grules.functions.lib.MathFunctions
@@ -250,17 +255,59 @@ class RulesASTTransformation extends GrulesASTTransformation {
     }
   }
 
+  private static String fetchParameterName(VariableExpression expression) {
+    expression.name
+  }
+
+  private static String fetchParameterName(GStringExpression expression) {
+    expression.text.replaceFirst(/^\$/, '')
+  }
+
   private static Expression createRuleApplicationExpression(MethodCallExpression methodCallExpression,
-      Expression rule) {
+      Expression ruleExpression) {
     Expression objectExpression = methodCallExpression.objectExpression
-    Expression ruleClosureExpression = GrulesASTFactory.createClosureExpression(rule)
+    Expression ruleClosureExpression = GrulesASTFactory.createClosureExpression(ruleExpression)
     if (objectExpression == VariableExpression.THIS_EXPRESSION) {
       Expression parameterExpression = methodCallExpression.method
       List<Expression> arguments = [parameterExpression, ruleClosureExpression]
       GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToRequiredParameter, arguments)
     } else if (objectExpression instanceof ListExpression) {
-      List<Expression> arguments = [objectExpression, ruleClosureExpression]
-      GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToParametersGroup, arguments)
+      ListExpression listExpression = objectExpression
+      List<String> parametersNames = []
+      List<Expression> requiredParameters = []
+      Map<String, Expression> optionalParameters = [:]
+      listExpression.expressions.each {Expression expression ->
+        if (GrulesASTUtils.isArrayItemExpression(expression)) {
+          BinaryExpression binaryExpression = expression
+          Expression parameterNameExpression = binaryExpression.leftExpression
+          parametersNames << fetchParameterName(parameterNameExpression)
+          optionalParameters << [(parameterNameExpression): binaryExpression.rightExpression]
+        } else {
+          parametersNames << fetchParameterName(expression)
+          requiredParameters << expression
+        }
+      }
+      Expression ruleNameExpression = new ConstantExpression(parametersNames.join(Grules.COMBINED_PARAMETERS_SEPARATOR))
+      List<Expression> requiredParametersExpressions = requiredParameters.collect {Expression parameterNameExpression ->
+        if (parameterNameExpression instanceof VariableExpression) {
+          new ConstantExpression((parameterNameExpression as VariableExpression).name)
+        } else if (parameterNameExpression instanceof GStringExpression) {
+          parameterNameExpression
+        } else {
+          throw new IllegalStateException(parameterNameExpression.class)
+        }
+      }
+      Expression requiredParametersListExpression = new ListExpression(requiredParametersExpressions)
+      ClassNode setClassNode = ClassHelper.make(Set)
+      Expression requiredParametersExpression = new CastExpression(setClassNode, requiredParametersListExpression)
+      List<MapEntryExpression> optionalParametersMapEntryExpressions = optionalParameters.collect {
+        Expression parameterNameExpression, Expression valueExpression ->
+        new MapEntryExpression(parameterNameExpression, valueExpression)
+      }
+      Expression optionalParametersExpression = new MapExpression(optionalParametersMapEntryExpressions)
+      List<Expression> arguments = [ruleNameExpression, requiredParametersExpression, optionalParametersExpression,
+          ruleClosureExpression]
+      GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToParametersList, arguments)
     } else if (objectExpression instanceof BinaryExpression) {
       BinaryExpression binaryExpression = objectExpression
       List<Expression> arguments = []

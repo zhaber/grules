@@ -161,18 +161,20 @@ class RulesScript implements RulesScriptAPI {
   @Override
   void applyRuleToParametersList(String ruleName, Set<String> requiredParameters,
       Map<String, Object> optionalParameters, Closure<SubrulesSeq> subrulesSeqClosure) {
-    Map<String, Object> requiredParametersValues = requiredParameters.collect {String parameterName ->
-      variablesBinding.fetchValue(currentGroup, parameterName)
+    Map<String, Object> requiredParametersValues = requiredParameters.collectEntries {String parameterName ->
+      [(parameterName): variablesBinding.fetchValue(currentGroup, parameterName)]
     }
     Set<String> missingRuleRequiredParameters = ((requiredParametersValues.findAll {String parameterName, value ->
       value == ''
     }) as Map<String, Object>).keySet()
     if (missingRuleRequiredParameters.isEmpty()) {
-      Map<String, Object> optionalParametersValues = optionalParameters.collect {String name, defaultValue ->
-        def parameterValue = variablesBinding.fetchValue(currentGroup, name)
-        parameterValue == '' ? defaultValue : parameterValue
+      Map<String, Object> optionalParametersValues = optionalParameters.collectEntries {
+          String parameterName, defaultValue ->
+        def parameterValue = variablesBinding.fetchValue(currentGroup, parameterName)
+        [(parameterName): parameterValue == '' ? defaultValue : parameterValue]
       }
-      applyRule(ruleName, requiredParametersValues.values() + optionalParametersValues.values(), subrulesSeqClosure)
+      List<Object> parametersValues = requiredParametersValues.values() + optionalParametersValues.values()
+      applyRule(ruleName, parametersValues, subrulesSeqClosure)
     } else {
       missingRuleRequiredParameters.each { String parameterName ->
         missingRequiredParameters[currentGroup].add(parameterName)

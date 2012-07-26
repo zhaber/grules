@@ -122,4 +122,11 @@ s   */
   boolean isTrue(value) {
     value
   }
+
+  /**
+   * @see DefaultGroovyMethods#join(java.util.Collection, String)
+   */
+  def join(Collection<Object> values, String separator) {
+    values.join(separator)
+  }
 }

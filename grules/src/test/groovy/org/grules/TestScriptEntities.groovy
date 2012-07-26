@@ -37,4 +37,5 @@ class TestScriptEntities {
 	static final String GROUP_AUX = HttpRequestParametersGroup.GET.name()
 	static final Level CONFIG_LOG_LEVEL = Level.INFO
   static final OnValidationEventAction NOT_VALIDATED_PARAMETERS_ACTION = DEFAULT_CONFIG.notValidatedParametersAction
+  static final String JOIN_SEPARATOR = ' '
 }

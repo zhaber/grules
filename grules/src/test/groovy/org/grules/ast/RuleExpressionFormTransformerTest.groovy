@@ -15,13 +15,13 @@ import org.grules.GrulesLogger
 import spock.lang.Specification
 
 class RuleExpressionFormTransformerTest extends Specification {
-	
+
 	GrulesASTTransformationLogger logger
 	RulesASTTransformation astTransformation
 	AstBuilder builder
 	CompilePhase phase
 	Expression complexRuleExpression
-	
+
 	def a = 'a'
 	def b = 'b'
 	def c = 'c'
@@ -34,7 +34,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 	def j = 'j'
 	def k = 'k'
 	def l = 'l'
-	
+
 	def setup() {
 		logger = Mock()
 		logger.write(_) >> {}
@@ -47,7 +47,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 			(a || b) && c >> d || e >> (f || g) >> h && i || j >> ~(k && !l)
 		})
 	}
-	
+
 	def "convertToInfixExpression for expressions with one operand"() {
 		setup:
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
@@ -57,7 +57,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 		expect:
 			checkVariable(infixExpression[0], a)
 	}
-	
+
 	def "convertToInfixExpression for expressions with one operator"() {
 		setup:
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
@@ -70,7 +70,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 			checkToken(infixExpression[p++], LOGICAL_OR)
 			checkVariable(infixExpression[p], b)
 	}
-	
+
 	def "convertToInfixExpression for not"() {
 		setup:
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
@@ -89,7 +89,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 			checkVariable(infixExpression[p++], c)
 			checkToken(infixExpression[p], RIGHT_PARENTHESIS)
 	}
-	
+
 	def "convertToInfixExpression for expression with error"() {
 		setup:
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
@@ -100,7 +100,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 			infixExpression.size == 1
 			infixExpression[0] == ruleExpression
 	}
-	
+
 	def "convertToInfixExpression for expressions with parentheses"() {
 		setup:
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
@@ -117,7 +117,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 			checkToken(infixExpression[p++],LOGICAL_AND)
 			checkVariable(infixExpression[p], c)
 	}
-	
+
 	def "convertToInfixExpression for expressions with redundant parentheses"() {
 		setup:
 			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
@@ -132,7 +132,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 			checkToken(infixExpression[p++], LOGICAL_OR)
 			checkVariable(infixExpression[p], c)
 	}
-		
+
 	def "convertToInfixExpression for complex rule expression"() {
 		setup:
 			def infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(complexRuleExpression)
@@ -184,7 +184,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 			checkToken(postfixExpression[p++], NOT)
 			checkToken(postfixExpression[p], BITWISE_NEGATION)
 	}
-	
+
 	def "infixToPostfix for complex rule expression"() {
 		setup:
 			def infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(complexRuleExpression)
@@ -217,10 +217,10 @@ class RuleExpressionFormTransformerTest extends Specification {
 			checkToken(postfixExpression[p++], BITWISE_NEGATION)
 			checkToken(postfixExpression[p], RIGHT_SHIFT)
 	}
-	
+
 	def "postfixExpressionToTree for complex rule expression"() {
 		BinaryExpression binaryExpression = RuleExpressionFormTransformer.convertPrecedences(complexRuleExpression)
-		 assert binaryExpression.leftExpression instanceof BinaryExpression
+		assert binaryExpression.leftExpression instanceof BinaryExpression
 		BinaryExpression beforeJ = binaryExpression.leftExpression
 		assert beforeJ.leftExpression instanceof BinaryExpression
 		BinaryExpression beforeG = beforeJ.leftExpression
@@ -255,6 +255,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 		checkVariable(kAndNotL.leftExpression, k)
 		assert kAndNotL.rightExpression instanceof NotExpression
 		checkVariable((kAndNotL.rightExpression as NotExpression).expression, l)
+    expect: true
 	}
 
 }

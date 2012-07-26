@@ -87,10 +87,10 @@ class TypeFunctions {
    * Returns the first string character.
    */
   Character toChar(String string) {
-    if (string.length() > 0) {
-      string[0]
-    } else {
+    if (string.isEmpty()) {
       throw new ValidationException()
+    } else {
+      string[0]
     }
   }
 

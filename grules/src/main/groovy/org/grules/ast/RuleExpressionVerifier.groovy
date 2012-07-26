@@ -46,13 +46,17 @@ class RuleExpressionVerifier {
     }
   }
 
-  static boolean isValidRuleParameter(Expression expression) {
+  private static boolean isValidRuleApplicationMethodNameExpression(Expression expression) {
     if (expression instanceof ConstantExpression) {
       List<Method> inheritedMethods = (Script.methods as List<Method>) + (RulesScriptAPI.methods as List<Method>)
       !((expression as ConstantExpression).value in inheritedMethods*.name)
     } else {
-      expression instanceof GStringExpression || expression instanceof VariableExpression
+      isValidParameterNameExpression(expression)
     }
+  }
+
+  private static boolean isValidParameterNameExpression(Expression expression) {
+    expression instanceof GStringExpression || expression instanceof VariableExpression
   }
 
   static boolean isValidRuleMethodCallExpression(MethodCallExpression methodCallExpression) {
@@ -64,9 +68,16 @@ class RuleExpressionVerifier {
     boolean validArguments
     if (objectExpression == VariableExpression.THIS_EXPRESSION) {
       validObjectExpression = true
-      validMethod = isValidRuleParameter(method)
+      validMethod = isValidRuleApplicationMethodNameExpression(method)
     } else if (objectExpression instanceof ListExpression) {
-      validObjectExpression = true
+      ListExpression listExpression = objectExpression
+      validObjectExpression = listExpression.expressions.every {Expression expression ->
+        if (isValidParameterNameExpression(expression)) {
+          true
+        } else if (expression instanceof BinaryExpression) {
+          isValidParameterBinaryExpression(expression)
+        }
+      }
       if (method instanceof ConstantExpression) {
         String methodName = (method as ConstantExpression).value
         validMethod = methodName ==	MetaClassImpl.CLOSURE_CALL_METHOD
@@ -75,12 +86,15 @@ class RuleExpressionVerifier {
       }
     } else if (objectExpression instanceof BinaryExpression) {
       validMethod = true
-      BinaryExpression binaryExpression = objectExpression
-      boolean ruleParameterIsValid = isValidRuleParameter(binaryExpression.leftExpression)
-      validObjectExpression = binaryExpression.operation.type == Types.LEFT_SQUARE_BRACKET && ruleParameterIsValid
+      validObjectExpression = isValidParameterBinaryExpression(objectExpression)
     }
     validArguments = arguments.expressions.size() == 1 && isValidRuleExpression(arguments.expressions[0])
     validObjectExpression && validMethod && validArguments
+  }
+
+  private static boolean isValidParameterBinaryExpression(BinaryExpression parameterExpression) {
+    boolean ruleParameterIsValid = isValidParameterNameExpression(parameterExpression.leftExpression)
+    parameterExpression.operation.type == Types.LEFT_SQUARE_BRACKET && ruleParameterIsValid
   }
 
   static boolean isValidRuleExpression(Expression expression) {

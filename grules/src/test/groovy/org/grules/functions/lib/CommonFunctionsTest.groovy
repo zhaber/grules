@@ -53,6 +53,13 @@ class CommonFunctionsTest extends Specification {
 			commonFunctions.isIn(PARAMETER_VALUE, [PARAMETER_VALUE, INVALID_PARAMETER_VALUE])
 	}
 
+  def "join"() {
+    setup:
+      def joinResult = PARAMETER_VALUE + JOIN_SEPARATOR + PARAMETER_VALUE_AUX
+    expect:
+      commonFunctions.join([PARAMETER_VALUE, PARAMETER_VALUE_AUX], JOIN_SEPARATOR) == joinResult
+  }
+
 	def "nop"() {
 		expect:
 			commonFunctions.nop(PARAMETER_VALUE) == PARAMETER_VALUE
