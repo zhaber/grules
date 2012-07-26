@@ -13,6 +13,12 @@ import org.grules.script.RulesScriptResult
 class Grules {
 
   /**
+   * Name for rule application with combined parameters is built by concatenation of their names using
+   * {@link COMBINED_PARAMETERS_SEPARATOR} as a separator.
+   */
+  static final String COMBINED_PARAMETERS_SEPARATOR = ','
+
+  /**
    * Runs a rules script against grouped parameters. The parameters are defined as a map which keys are group names and
    * values are maps of (paramater name -> parameter value) pairs. Usage example:
    * <code><br><br>

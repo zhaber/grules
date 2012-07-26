@@ -26,7 +26,7 @@ project.ext {
   buildLibDir = 'lib'
   configDir = 'config'
   codenarcConfigPath = "$configDir/codenarc.groovy"
-  codenarcScriptsConfigPath = "$configDir/codenarc_scripts.groovy"
+  codenarcTestConfigPath = "$configDir/codenarc_test.groovy"
 }
 
 sourceSets*.output.each {it.classesDir = buildDir; it.resourcesDir = buildDir}
@@ -72,7 +72,9 @@ tasks.withType(CodeNarc).all { codeNarcTask ->
   codeNarcTask.configFile = file(project.codenarcConfigPath)
 }
 
-codenarcTest_scripts.configFile = file(project.codenarcScriptsConfigPath)
+codenarcTest_scripts.configFile = file(project.codenarcTestConfigPath)
+codenarcTest_integration.configFile = file(project.codenarcTestConfigPath)
+codenarcTest.configFile = file(project.codenarcTestConfigPath)
 
 task compileAll(dependsOn: [compileGroovy, compileTestGroovy, compileTest_integrationGroovy]) << {}
 

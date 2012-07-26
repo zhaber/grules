@@ -153,14 +153,31 @@ class RulesScript implements RulesScriptAPI {
   /**
    * Applies a rule to a list of parameters.
    *
-   * @param names list with parameters names
-   * @param name how the rule should appear in a preprocessing report
+   * @param ruleName a name of the rule used for reports
+   * @param requiredParameters a set of required parameters
+   * @param optionalParameters a map of parameters names and their default values
    * @param subrulesSeqClosure closure that returns a subrules sequence
    */
   @Override
-  void applyRuleToParametersGroup(List<String> names, String ruleName, Closure<SubrulesSeq> subrulesSeqClosure) {
-    List<String> parameterValues = names.collect { String name ->	variablesBinding.fetchValue(currentGroup, name) }
-    applyRule(names.toString(), parameterValues, subrulesSeqClosure)
+  void applyRuleToParametersList(String ruleName, Set<String> requiredParameters,
+      Map<String, Object> optionalParameters, Closure<SubrulesSeq> subrulesSeqClosure) {
+    Map<String, Object> requiredParametersValues = requiredParameters.collect {String parameterName ->
+      variablesBinding.fetchValue(currentGroup, parameterName)
+    }
+    Set<String> missingRuleRequiredParameters = ((requiredParametersValues.findAll {String parameterName, value ->
+      value == ''
+    }) as Map<String, Object>).keySet()
+    if (missingRuleRequiredParameters.isEmpty()) {
+      Map<String, Object> optionalParametersValues = optionalParameters.collect {String name, defaultValue ->
+        def parameterValue = variablesBinding.fetchValue(currentGroup, name)
+        parameterValue == '' ? defaultValue : parameterValue
+      }
+      applyRule(ruleName, requiredParametersValues.values() + optionalParametersValues.values(), subrulesSeqClosure)
+    } else {
+      missingRuleRequiredParameters.each { String parameterName ->
+        missingRequiredParameters[currentGroup].add(parameterName)
+      }
+    }
   }
 
   /**
@@ -189,27 +206,35 @@ class RulesScript implements RulesScriptAPI {
   @Override
   void applyRuleToOptionalParameter(String parameterName, Closure<SubrulesSeq> subrulesSeqClosure, defaultValue) {
     def parameterValue = variablesBinding.fetchValue(currentGroup, parameterName)
-    if (parameterValue != '') {
-      applyRule(parameterName, parameterValue, subrulesSeqClosure)
-    } else {
-      variablesBinding.addCleanParameterValue(parameterName, defaultValue, currentGroup)
-    }
+    applyRule(parameterName, parameterValue == '' ? defaultValue : parameterValue, subrulesSeqClosure)
   }
 
+  /**
+   * Construct an error properties map.
+   */
   ValidationErrorProperties e(Map<String, Object> properties) {
     new ValidationErrorProperties(properties)
   }
 
-  ValidationErrorProperties e(String message, Map<String, Object> properties) {
-    new ValidationErrorProperties(message, properties)
+  /**
+   * Construct an error properties map.
+   */
+  ValidationErrorProperties e(String errorMessage, Map<String, Object> properties) {
+    new ValidationErrorProperties(errorMessage, properties)
   }
 
-  ValidationErrorProperties e(Map<String, Object> properties, String message) {
-    new ValidationErrorProperties(message, properties)
+  /**
+   * Construct an error properties map.
+   */
+  ValidationErrorProperties e(Map<String, Object> properties, String errorMessage) {
+    new ValidationErrorProperties(errorMessage, properties)
   }
 
-  ValidationErrorProperties e(String message) {
-    new ValidationErrorProperties(message)
+  /**
+   * Construct an error properties map.
+   */
+  ValidationErrorProperties e(String errorMessage) {
+    new ValidationErrorProperties(errorMessage)
   }
 
   /**

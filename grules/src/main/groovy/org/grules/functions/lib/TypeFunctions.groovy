@@ -26,7 +26,7 @@ class TypeFunctions {
   }
 
   /**
-   * Returns true if a value coerces to <code>true</code> and <code>false</code> otherwise..
+   * Returns true if a value coerces to <code>true</code> and <code>false</code> otherwise.
    */
   @Converter
   Boolean toBoolean(value) {
@@ -34,10 +34,64 @@ class TypeFunctions {
   }
 
   /**
+   * Returns a list of booleans, whose elements identify which elements of the specified <code>values</code> list coerce
+   * to <code>true</code>.
+   */
+  List<Boolean> toBooleanList(List values) {
+    values.collect {Object value -> toBoolean(value).value}
+  }
+
+  /**
+   * Converts a list of string to a list of integers.
+   */
+  List<Character> toCharList(List<String> values) {
+    values.collect {String value -> toChar(value)}
+  }
+
+  /**
+   * Converts a list of string to a list of integers.
+   */
+  List<Integer> toIntList(List<String> values) {
+    values.collect {String value -> toInt(value)}
+  }
+
+  /**
+   * Converts a list of string to a list of longs.
+   */
+  List<Long> toLongList(List<String> values) {
+    values.collect {String value -> toLong(value)}
+  }
+
+  /**
+   * Converts a list of string to a list of big decimals.
+   */
+  List<BigDecimal> toBigDecimalList(List<String> values) {
+    values.collect {String value -> toBigDecimal(value)}
+  }
+
+  /**
+   * Converts a list of string to a list of floats.
+   */
+  List<Float> toFloatList(List<String> values) {
+    values.collect {String value -> toFloat(value)}
+  }
+
+  /**
+   * Converts a list of string to a list of doubles.
+   */
+  List<Double> toDoubleList(List<String> values) {
+    values.collect {String value -> toDouble(value)}
+  }
+
+  /**
    * Returns the first string character.
    */
   Character toChar(String string) {
-    string[0]
+    if (string.length() > 0) {
+      string[0]
+    } else {
+      throw new ValidationException()
+    }
   }
 
   /**

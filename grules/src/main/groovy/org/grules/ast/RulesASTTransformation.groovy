@@ -81,6 +81,9 @@ class RulesASTTransformation extends GrulesASTTransformation {
     log('Source code:')
   }
 
+  /**
+   * Visits each statement transform suitable ones to a rule applications.
+   */
   private List<ExpressionStatement> visitStatements(List<Statement> statements) {
     statements.findAll {Statement statement ->
       if (!(statement instanceof ExpressionStatement)) {

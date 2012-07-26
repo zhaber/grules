@@ -10,11 +10,19 @@ ruleset {
   ruleset('rulesets/generic.xml')
   ruleset('rulesets/groovyism.xml')
   ruleset('rulesets/imports.xml')
+  ruleset('rulesets/junit.xml') {
+    exclude 'JUnitPublicNonTestMethod'
+  }
   ruleset('rulesets/logging.xml')
-  ruleset('rulesets/naming.xml')
+  ruleset('rulesets/naming.xml') {
+    exclude 'FactoryMethodName'
+    exclude 'MethodName'
+  }
   ruleset('rulesets/security.xml')
   ruleset('rulesets/serialization.xml')
-  ruleset('rulesets/size.xml')
+  ruleset('rulesets/size.xml') {
+    exclude 'MethodCount'
+  }
   ruleset('rulesets/unnecessary.xml') {
     exclude 'UnnecessaryPackageReference'
     exclude 'UnnecessaryPublicModifier'

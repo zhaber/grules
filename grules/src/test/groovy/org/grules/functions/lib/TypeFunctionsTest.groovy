@@ -48,9 +48,29 @@ class TypeFunctionsTest extends Specification {
 			!(typeFunctions.toBoolean(0) as ConverterBooleanResult).value
 	}
 
-  def "toCharacter"() {
+  def "toBooleanList"() {
+    setup:
+      def booleanList = ['', 1]
+    expect:
+      typeFunctions.toBooleanList(booleanList).first() instanceof Boolean
+      typeFunctions.toBooleanList(booleanList) == [false, true]
+  }
+
+  def "toChar"() {
     expect:
       typeFunctions.toChar('ab') == 'a' as char
+  }
+
+  def "toChar invalid"() {
+    when:
+      typeFunctions.toChar('')
+    then:
+      thrown(ValidationException)
+  }
+
+  def "toCharList"() {
+    expect:
+      typeFunctions.toCharList(['ab', 'c']) == ['a' as char, 'c' as char]
   }
 
   def "toDate"() {
@@ -69,8 +89,15 @@ class TypeFunctionsTest extends Specification {
 
 	def "toDouble"() {
 		expect:
+      typeFunctions.toDouble(BIGDECIMAL_STRING) instanceof Double
 			typeFunctions.toDouble(BIGDECIMAL_STRING) == BIGDECIMAL.doubleValue()
 	}
+
+  def "toDoubleList"() {
+    expect:
+      typeFunctions.toDoubleList([BIGDECIMAL_STRING]).first() instanceof Double
+      typeFunctions.toDoubleList([BIGDECIMAL_STRING]) == [BIGDECIMAL.doubleValue()]
+  }
 
 	def "toEnum"() {
 		expect:
@@ -86,7 +113,14 @@ class TypeFunctionsTest extends Specification {
 
   def "toFloat"() {
     expect:
+      typeFunctions.toFloat(BIGDECIMAL_STRING) instanceof Float
       typeFunctions.toFloat(BIGDECIMAL_STRING) == BIGDECIMAL.floatValue()
+  }
+
+  def "toFloatList"() {
+    expect:
+      typeFunctions.toFloatList([BIGDECIMAL_STRING]).first() instanceof Float
+      typeFunctions.toFloatList([BIGDECIMAL_STRING]) == [BIGDECIMAL.floatValue()]
   }
 
 	def "toNonnegativeBigDecimal"() {
@@ -140,8 +174,15 @@ class TypeFunctionsTest extends Specification {
 
 	def "toLong"() {
 		expect:
+      typeFunctions.toLong(LONG_STRING) instanceof Long
 			typeFunctions.toLong(LONG_STRING) == LONG
 	}
+
+  def "toLongList"() {
+    expect:
+      typeFunctions.toLongList([LONG_STRING]).first() instanceof Long
+      typeFunctions.toLongList([LONG_STRING]) == [LONG]
+  }
 
 	def "toNaturalLong"() {
 		when:
@@ -166,8 +207,15 @@ class TypeFunctionsTest extends Specification {
 
 	def "toInt"() {
 		expect:
-			typeFunctions.toLong(INTEGER_STRING) == INTEGER
+      typeFunctions.toInt(INTEGER_STRING) instanceof Integer
+			typeFunctions.toInt(INTEGER_STRING) == INTEGER
 	}
+
+  def "toIntList"() {
+    expect:
+      typeFunctions.toIntList([INTEGER_STRING]).first() instanceof Integer
+      typeFunctions.toIntList([INTEGER_STRING]) == [INTEGER]
+  }
 
 	def "toNaturalInt"() {
 		when:
