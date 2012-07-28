@@ -1,6 +1,10 @@
-package org.grules.script.expressions
+package org.grules.config
 
 import org.codehaus.groovy.runtime.MethodClosure
+import org.grules.script.expressions.ClosureTerm
+import org.grules.script.expressions.FunctionTerm
+import org.grules.script.expressions.Subrule
+import org.grules.script.expressions.SubruleFactory
 
 class DefaultFunctionFactory {
 

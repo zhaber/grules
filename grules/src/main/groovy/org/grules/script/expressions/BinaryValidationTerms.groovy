@@ -16,7 +16,7 @@ abstract class BinaryValidationTerm implements Term {
     this.rightTerm = rightTerm
   }
 
-  static void checkBooleanReturnValue(value, Term term) {
+  protected static void checkBooleanReturnValue(value, Term term) {
     if (!(value instanceof Boolean)) {
       if (term instanceof FunctionTerm) {
         throw new InvalidBooleanTermException(value, (term as FunctionTerm).name)

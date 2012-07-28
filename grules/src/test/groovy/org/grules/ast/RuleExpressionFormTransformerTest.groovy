@@ -43,14 +43,14 @@ class RuleExpressionFormTransformerTest extends Specification {
 		GrulesLogger.turnOff()
 		builder = new AstBuilder()
 		phase = CompilePhase.CONVERSION
-		complexRuleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+		complexRuleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 			(a || b) && c >> d || e >> (f || g) >> h && i || j >> ~(k && !l)
 		})
 	}
 
 	def "convertToInfixExpression for expressions with one operand"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				a
 			})
 			List infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)
@@ -60,7 +60,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 
 	def "convertToInfixExpression for expressions with one operator"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				a || b
 			})
 			List infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)
@@ -73,7 +73,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 
 	def "convertToInfixExpression for not"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				!a || !(b && c)
 			})
 			List infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)
@@ -92,7 +92,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 
 	def "convertToInfixExpression for expression with error"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				a[b]
 			})
 			List infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)
@@ -103,7 +103,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 
 	def "convertToInfixExpression for expressions with parentheses"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				(a || b) && c
 			})
 			List infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)
@@ -120,7 +120,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 
 	def "convertToInfixExpression for expressions with redundant parentheses"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				(a && b) || c
 			})
 			List infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)
@@ -173,7 +173,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 
 	def "infixToPostfixExpression for not and bitwise expression"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				~!a
 			})
 			def infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)

@@ -5,7 +5,6 @@ import java.util.logging.Level
 import org.grules.StdoutConsoleHandler
 import org.grules.functions.lib.StringFunctions
 import org.grules.http.HttpRequestParametersGroup
-import org.grules.script.expressions.DefaultFunctionFactory
 
 /**
  * The factory creates a grules configuration object from a groovy file or class.

@@ -23,6 +23,8 @@ weight toPositiveBigDecimal [decimalErr] >> {round(it / 1000)}
 endDate isAfterNow && isBefore(deadline) && {it.day != 1}
 ```
 
+<a href="https://github.com/zhaber/grules/wiki/_pages">Wiki documentation</a> <br>
+
 To build the project, you should run the following command in the grules folder:
 
     ./gradlew

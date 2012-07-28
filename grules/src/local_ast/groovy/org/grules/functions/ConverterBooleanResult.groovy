@@ -5,7 +5,7 @@ package org.grules.functions
  */
 class ConverterBooleanResult {
 
-   final boolean value
+   final Boolean value
 
    /**
     * Returns the passed value wrapped in ConverterBooleanResult.
@@ -27,7 +27,12 @@ class ConverterBooleanResult {
      value
    }
 
-   private ConverterBooleanResult(value) {
+   /**
+    * Constructs a wrapper for a result returned from of a boolean converter.
+    *
+    * @param value wrapped value
+    */
+   private ConverterBooleanResult(Boolean value) {
      this.value = value
    }
 }

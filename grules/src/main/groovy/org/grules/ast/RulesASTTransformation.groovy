@@ -18,7 +18,9 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.ast.expr.NotExpression
 import org.codehaus.groovy.ast.expr.UnaryMinusExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
+import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.ExpressionStatement
+import org.codehaus.groovy.ast.stmt.IfStatement
 import org.codehaus.groovy.ast.stmt.Statement
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
@@ -72,53 +74,65 @@ class RulesASTTransformation extends GrulesASTTransformation {
       }
       ClassNode classNode = moduleNode.classes[0]
       init(classNode.name)
-       visit(moduleNode, classNode)
+      visit(moduleNode, classNode)
     }
   }
 
   @Override
   void visitModule(ModuleNode moduleNode, node) {
     List<Statement> statements = moduleNode.statementBlock.statements
-    List<ExpressionStatement> rules = visitStatements(statements)
-    rules.each { ExpressionStatement ruleExpressionStatement ->
-      visitLabel(statements, ruleExpressionStatement)
+    for (int i = 0; i < statements.size; i++) {
+      Statement statement = statements[i]
+      if (statement.statementLabel != null) {
+        log('Creating method call for group', statement.statementLabel)
+        MethodCallExpression changeGroupMethodCall = GrulesASTFactory.createMethodCall(
+            RulesScriptAPI.&changeGroup, [new ConstantExpression(statement.statementLabel)])
+        statements.add(i++, new ExpressionStatement(changeGroupMethodCall))
+        log('Added method call', (RulesScriptAPI.&changeGroup as MethodClosure).method +
+            "($statement.statementLabel)")
+      }
+      visitStatement(statement)
     }
-    log('Source code:')
   }
 
-  /**
-   * Visits each statement transform suitable ones to a rule applications.
-   */
-  private List<ExpressionStatement> visitStatements(List<Statement> statements) {
-    statements.findAll {Statement statement ->
-      if (!(statement instanceof ExpressionStatement)) {
-        return false
-      }
-      ExpressionStatement expressionStatement = statement
-      Expression ruleApplicationExpression = expressionStatement.expression
-      switch (ruleApplicationExpression) {
-        case BinaryExpression:
-          BinaryExpression binaryExpression = ruleApplicationExpression
-          if (!RuleExpressionVerifier.isFirstExpressionMethodCall(binaryExpression)) {
-            return false
-          }
-          BinaryExpression firstMethodCallBinaryExpression = fetchFirstMethodCallBinaryExpression(binaryExpression)
-          ruleApplicationExpression = firstMethodCallBinaryExpression.leftExpression
-          ArgumentListExpression argumentListExpression = (ruleApplicationExpression as MethodCallExpression).arguments
-          firstMethodCallBinaryExpression.leftExpression = argumentListExpression.expressions[0]
-          argumentListExpression.expressions[0] = binaryExpression
-          break
-        case MethodCallExpression:
-          break
-        default:
-          return false
-      }
-      if (!RuleExpressionVerifier.isValidRuleMethodCallExpression(ruleApplicationExpression)) {
-        return false
-      }
-      expressionStatement.expression = convertToRuleExpression(ruleApplicationExpression)
-      true
+  private void visitStatement(Statement statement) {
+    log("Skipping statement $statement")
+  }
+
+  private void visitStatement(IfStatement ifStatement) {
+    visitStatement(ifStatement.ifBlock)
+    visitStatement(ifStatement.elseBlock)
+  }
+
+  private void visitStatement(BlockStatement blockStatement) {
+    blockStatement.statements.each {Statement statement ->
+      visitStatement(statement)
     }
+  }
+
+  private void visitStatement(ExpressionStatement statement) {
+    Expression ruleApplicationExpression = statement.expression
+    switch (ruleApplicationExpression) {
+      case BinaryExpression:
+        BinaryExpression binaryExpression = ruleApplicationExpression
+        if (!RuleExpressionVerifier.isFirstExpressionMethodCall(binaryExpression)) {
+          return
+        }
+        BinaryExpression firstMethodCallBinaryExpression = fetchFirstMethodCallBinaryExpression(binaryExpression)
+        ruleApplicationExpression = firstMethodCallBinaryExpression.leftExpression
+        ArgumentListExpression argumentListExpression = (ruleApplicationExpression as MethodCallExpression).arguments
+        firstMethodCallBinaryExpression.leftExpression = argumentListExpression.expressions[0]
+        argumentListExpression.expressions[0] = binaryExpression
+        break
+      case MethodCallExpression:
+        break
+      default:
+        return
+    }
+    if (!RuleExpressionVerifier.isValidRuleMethodCallExpression(ruleApplicationExpression)) {
+      return
+    }
+    statement.expression = convertToRuleExpression(ruleApplicationExpression)
   }
 
   /**
@@ -321,18 +335,6 @@ class RulesASTTransformation extends GrulesASTTransformation {
       GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToOptionalParameter, arguments)
     } else {
       throw new IllegalStateException(objectExpression.class)
-    }
-  }
-
-  private void visitLabel(List<Statement> statements, ExpressionStatement statement) {
-    if (statement.statementLabel != null) {
-      Integer groupLabelStatementIndex = statements.indexOf(statement)
-      log('Creating method call for group', statement.statementLabel)
-      MethodCallExpression changeGroupMethodCall = GrulesASTFactory.createMethodCall(
-          RulesScriptAPI.&changeGroup, [new ConstantExpression(statement.statementLabel)])
-      statements.add(groupLabelStatementIndex, new ExpressionStatement(changeGroupMethodCall))
-      log('Added method call', (RulesScriptAPI.&changeGroup as MethodClosure).method +
-            "($statement.statementLabel)")
     }
   }
 

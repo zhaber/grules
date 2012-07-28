@@ -12,20 +12,20 @@ import org.codehaus.groovy.control.CompilePhase
 import spock.lang.Specification
 
 class ClosureWrapperTest extends Specification {
-	
+
 	AstBuilder builder
 	CompilePhase phase
-	
+
 	def a = 'a'
 	def b = 'b'
-	
+
 	def setup() {
 		builder = new AstBuilder()
 		phase = CompilePhase.CONVERSION
 	}
-	
+
 	def "wrapInClosures for method"() {
-		def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+		def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 			a(b)
 		})
 		ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
@@ -36,10 +36,10 @@ class ClosureWrapperTest extends Specification {
 		fetchClosureExpression(fetchArguments(ruleExpression)[0]) instanceof MethodCallExpression
 		fetchArguments(fetchClosureExpression(fetchArguments(ruleExpression)[0])).size == 2
 	}
-	
+
 	def "wrapInClosures for bitwise negation expression"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				~{a}
 			})
 			ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)

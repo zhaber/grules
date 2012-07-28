@@ -4,6 +4,8 @@ import static org.codehaus.groovy.syntax.Types.*
 import static org.grules.TestScriptEntities.*
 import static org.grules.ast.ASTTestUtils.*
 
+import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.ModuleNode
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.CastExpression
@@ -18,7 +20,7 @@ import org.codehaus.groovy.ast.expr.UnaryMinusExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.ExpressionStatement
-import org.codehaus.groovy.ast.stmt.Statement
+import org.codehaus.groovy.ast.stmt.IfStatement
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.runtime.MethodClosure
 import org.codehaus.groovy.syntax.Token
@@ -54,36 +56,53 @@ class RulesASTTransformationTest extends Specification {
 		phase = CompilePhase.CONVERSION
 	}
 
+  def isTransformed(List<BlockStatement> statementBlocks) {
+    ExpressionStatement statement = statementBlocks[0].statements[0]
+    def expression = statement.expression
+    astTransformation.visitStatement(statement)
+    expression != statement.expression
+  }
+
 	def "Object method calls are not included in rules"() {
-		setup:
-			List<BlockStatement> blockStatements = builder.buildFromCode(phase) {
-				wait a
-			}
 		expect:
-			astTransformation.visitStatements(blockStatements[0].statements).isEmpty()
+			!isTransformed(builder.buildFromCode(phase) {
+				wait a
+			})
 	}
 
 	def "Grules method calls are not included in rules"() {
-		setup:
-			List<BlockStatement> blockStatements = builder.buildFromCode(phase) {
-				'include' a
-			}
-		expect:
-			astTransformation.visitStatements(blockStatements[0].statements).isEmpty()
+    expect:
+      !isTransformed(builder.buildFromCode(phase) {
+        'include' a
+      })
 	}
 
 	def "Methods called on list are treated as rules"() {
-		setup:
-			List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
-				[] a
-			}
 		expect:
-			astTransformation.visitStatements(statementBlocks[0].statements).size == 1
+			isTransformed(builder.buildFromCode(phase) {
+				[] a
+			})
 	}
+
+  def "If condition is transformed"() {
+    setup:
+      List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
+        if (a) {
+          b c
+        }
+      }
+      IfStatement statement = statementBlocks[0].statements[0]
+      BlockStatement ifBlockExpressionStatement = statement.ifBlock
+      ExpressionStatement expressionStatement = ifBlockExpressionStatement.statements[0]
+      def expression = expressionStatement.expression
+      astTransformation.visitStatement(statement)
+    expect:
+      expression != expressionStatement.expression
+  }
 
   def "Combined required and optional parameters are transformed to API method parameters"() {
     setup:
-       def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+      def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
         [a[b], c] d
       })
       def methodCall = astTransformation.createRuleApplicationExpression(ruleExpression, ConstantExpression.NULL)
@@ -98,21 +117,17 @@ class RulesASTTransformationTest extends Specification {
   }
 
 	def "Methods called on GStrings are treated as rules"() {
-		setup:
-			List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
-				"$PARAMETER_NAME" a
-			}
 		expect:
-			astTransformation.visitStatements(statementBlocks[0].statements).size == 1
+			isTransformed(builder.buildFromCode(phase) {
+				"$PARAMETER_NAME" a
+			})
 	}
 
 	def "Methods called on GStrings are treated as rules (with default value)"() {
-		setup:
-			List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
-				"$PARAMETER_NAME"[DEFAULT_VALUE] a
-			}
 		expect:
-			astTransformation.visitStatements(statementBlocks[0].statements).size == 1
+			isTransformed(builder.buildFromCode(phase) {
+				"$PARAMETER_NAME"[DEFAULT_VALUE] a
+			})
 	}
 
 
@@ -121,8 +136,9 @@ class RulesASTTransformationTest extends Specification {
 			List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
 				"$PARAMETER_NAME" {} >> a
 			}
-	    ExpressionStatement ruleStatement = astTransformation.visitStatements(statementBlocks[0].statements)[0]
-			Expression ruleExpression = ruleStatement.expression
+      ExpressionStatement statement = statementBlocks[0].statements[0]
+	    astTransformation.visitStatement(statement)
+			Expression ruleExpression = statement.expression
 		expect:
 		  ruleExpression instanceof MethodCallExpression
 			fetchArguments(ruleExpression).size == 2
@@ -131,7 +147,7 @@ class RulesASTTransformationTest extends Specification {
 
 	def "createApplyRuleMethodCall with defaultParameters"() {
 		setup:
-		  def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+		  def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 			  "$PARAMETER_NAME"[DEFAULT_VALUE] a
 		  })
 		  def methodCall = astTransformation.createRuleApplicationExpression(ruleExpression, ConstantExpression.NULL)
@@ -140,10 +156,9 @@ class RulesASTTransformationTest extends Specification {
 		  ((methodCall as MethodCallExpression).method as ConstantExpression).value == methodName
 	}
 
-
 	def "convertToRuleOperations for conjunction and disjunction"() {
 		setup:
-  		def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+  		def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 	  		a || b && c >> d
  		  })
 		  ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
@@ -158,7 +173,7 @@ class RulesASTTransformationTest extends Specification {
 
 	def "convertToRuleOperations for not expression"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				!(a && b) || c [d] >> e
 			})
 			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
@@ -199,7 +214,7 @@ class RulesASTTransformationTest extends Specification {
 
 	def "addSequenceWrapper for right shift expression"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				a >> {b}
 			})
 			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
@@ -217,7 +232,7 @@ class RulesASTTransformationTest extends Specification {
 
 	def "liftErrors for atom expression"() {
 		setup:
-			def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 				a
 			})
 			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
@@ -228,7 +243,7 @@ class RulesASTTransformationTest extends Specification {
 
 	def "liftErrors"() {
 		setup:
-		  def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+		  def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 			  a >> b [c] >> d && e [f]
 		  })
 			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
@@ -244,17 +259,19 @@ class RulesASTTransformationTest extends Specification {
 
 	def "Labels are converted to change group methods"() {
 		setup:
-			List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
+		  List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
 				POST: "$PARAMETER_NAME" {}
 			}
-			List<Statement> statements = statementBlocks[0].statements
-			astTransformation.visitLabel(statements, statements[0])
+      ModuleNode moduleNode = Mock()
+      ClassNode classNode = Mock()
+      moduleNode.statementBlock >> statementBlocks[0]
+			astTransformation.visitModule(moduleNode, classNode)
 		expect:
-			statements.size > 1
+			statementBlocks[0].statements.size > 1
 	}
 
 	def "createRuleExpression"() {
-		def ruleExpression = fetchStatementBlocksExpression(builder.buildFromCode(phase) {
+		def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 			"$PARAMETER_NAME" a && b [c] >> d
 		})
 		MethodCallExpression ruleApplicationExpression = astTransformation.convertToRuleExpression(ruleExpression)
@@ -279,4 +296,5 @@ class RulesASTTransformationTest extends Specification {
 		assert ruleBinaryExpression.rightExpression instanceof ConstructorCallExpression
     expect: true
 	}
+
 }
