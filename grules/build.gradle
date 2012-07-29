@@ -89,7 +89,7 @@ task initProject << {
 
 task initEclipseProject(dependsOn: [initProject, eclipseClasspath]) << {}
 
-build.dependsOn = [testAll, check, sourcesJar, jar]
+build.dependsOn = [testAll, check, sourcesJar, jar, groovydoc]
 
 task wrapper(type: Wrapper) {
   gradleVersion = '1.0'
@@ -103,6 +103,8 @@ artifacts {
 signing {
   sign configurations.archives
 }
+
+groovydoc.destinationDir = file('docs')
 
 uploadArchives {
   repositories {

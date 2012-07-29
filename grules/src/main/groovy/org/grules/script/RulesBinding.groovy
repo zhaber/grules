@@ -79,7 +79,7 @@ class RulesBinding extends Binding {
   }
 
   /**
-   * Adds variables for input parameters. All values are converted to string.
+   * Adds variables for input parameters.
    *
    * @param parameters input parameters
    * @param missingPropertyClosure closure called when some parameter is missing
@@ -100,6 +100,20 @@ class RulesBinding extends Binding {
     }
   }
 
+  /**
+   * Adds a variable for the specified parameter.
+   *
+   * @param name a parameter name
+   * @param value a parameter value
+   * @param group a parameter group
+   */
+  void addParameter(String name, value, String group) {
+    variables[group][toDirtyParameterName(normalizeParameterName(name))] = value
+  }
+
+  /**
+   * Adds variables to a script environment.
+   */
   void addCustomVariables(Map<String, Object> customVariables) {
     variables << customVariables
   }
@@ -119,7 +133,7 @@ class RulesBinding extends Binding {
   /**
    * Returns only parameters variables.
    */
-  private Map<String, Map<String, Object>> fetchParameters() {
+  Map<String, Map<String, Object>> fetchParameters() {
     variables.findAll {String name, value -> name in GROUPS}
   }
 

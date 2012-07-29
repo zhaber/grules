@@ -105,10 +105,17 @@ class RulesScript implements RulesScriptAPI {
   }
 
   /**
-   * Parameters that passed preprocessing by the rules script.
+   * Returns parameters that passed preprocessing by the rules script.
    */
   Map<String, Map<String, Object>> fetchCleanParameters() {
     variablesBinding.fetchCleanParametersValues()
+  }
+
+  /**
+   * Returns all script variables that are not parameters.
+   */
+  Map<String, Object> fetchEnvironment() {
+    variables - variablesBinding.fetchParameters()
   }
 
   /**
@@ -214,6 +221,7 @@ class RulesScript implements RulesScriptAPI {
   /**
    * Construct an error properties map.
    */
+  @Override
   ValidationErrorProperties e(Map<String, Object> properties) {
     new ValidationErrorProperties(properties)
   }
@@ -221,6 +229,7 @@ class RulesScript implements RulesScriptAPI {
   /**
    * Construct an error properties map.
    */
+  @Override
   ValidationErrorProperties e(String errorMessage, Map<String, Object> properties) {
     new ValidationErrorProperties(errorMessage, properties)
   }
@@ -228,6 +237,7 @@ class RulesScript implements RulesScriptAPI {
   /**
    * Construct an error properties map.
    */
+  @Override
   ValidationErrorProperties e(Map<String, Object> properties, String errorMessage) {
     new ValidationErrorProperties(errorMessage, properties)
   }
@@ -235,6 +245,7 @@ class RulesScript implements RulesScriptAPI {
   /**
    * Construct an error properties map.
    */
+  @Override
   ValidationErrorProperties e(String errorMessage) {
     new ValidationErrorProperties(errorMessage)
   }
@@ -297,6 +308,11 @@ class RulesScript implements RulesScriptAPI {
   @Override
   SubrulesSeq skip(String... converters) {
     throw new UnsupportedOperationException()
+  }
+
+  @Override
+  void addParameter(String name, value) {
+    variablesBinding.addParameter(name, value, currentGroup)
   }
 
 }

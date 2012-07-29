@@ -1,6 +1,7 @@
 package org.grules.ast
 
 import org.codehaus.groovy.ast.ASTNode
+import org.codehaus.groovy.ast.AnnotationNode
 import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.ModuleNode
@@ -9,6 +10,7 @@ import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
 import org.codehaus.groovy.ast.expr.CastExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
+import org.codehaus.groovy.ast.expr.DeclarationExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.GStringExpression
 import org.codehaus.groovy.ast.expr.ListExpression
@@ -36,6 +38,7 @@ import org.grules.functions.lib.SecurityFunctions
 import org.grules.functions.lib.StringFunctions
 import org.grules.functions.lib.TypeFunctions
 import org.grules.functions.lib.UserFunctions
+import org.grules.script.Parameter
 import org.grules.script.RulesScriptAPI
 import org.grules.script.expressions.SubrulesSeqWrapper
 
@@ -110,29 +113,45 @@ class RulesASTTransformation extends GrulesASTTransformation {
     }
   }
 
+  private Expression transformExpression(Expression expression) {
+    expression
+  }
+
+  private Expression transformExpression(DeclarationExpression declarationExpression) {
+    boolean isParameter = declarationExpression.annotations.any {AnnotationNode annotationNode ->
+      annotationNode.classNode.name == Parameter.simpleName
+    }
+    if (isParameter) {
+      String parameterName = (declarationExpression.leftExpression as VariableExpression).name
+      Expression parameterNameExpression = new ConstantExpression(parameterName)
+      Expression value = declarationExpression.rightExpression
+      GrulesASTFactory.createMethodCall(RulesScriptAPI.&addParameter, [parameterNameExpression, value])
+    } else {
+      declarationExpression
+    }
+  }
+
+  private Expression transformExpression(MethodCallExpression methodCallExpression) {
+    if (!RuleExpressionVerifier.isValidRuleMethodCallExpression(methodCallExpression)) {
+      return methodCallExpression
+    }
+    convertToRuleExpression(methodCallExpression)
+  }
+
+  private Expression transformExpression(BinaryExpression binaryExpression) {
+    if (!RuleExpressionVerifier.isFirstExpressionMethodCall(binaryExpression)) {
+      return binaryExpression
+    }
+    BinaryExpression firstMethodCallBinaryExpression = fetchFirstMethodCallBinaryExpression(binaryExpression)
+    MethodCallExpression methodCallExpression = firstMethodCallBinaryExpression.leftExpression
+    ArgumentListExpression argumentListExpression = methodCallExpression.arguments
+    firstMethodCallBinaryExpression.leftExpression = argumentListExpression.expressions[0]
+    argumentListExpression.expressions[0] = binaryExpression
+    transformExpression(methodCallExpression)
+  }
+
   private void visitStatement(ExpressionStatement statement) {
-    Expression ruleApplicationExpression = statement.expression
-    switch (ruleApplicationExpression) {
-      case BinaryExpression:
-        BinaryExpression binaryExpression = ruleApplicationExpression
-        if (!RuleExpressionVerifier.isFirstExpressionMethodCall(binaryExpression)) {
-          return
-        }
-        BinaryExpression firstMethodCallBinaryExpression = fetchFirstMethodCallBinaryExpression(binaryExpression)
-        ruleApplicationExpression = firstMethodCallBinaryExpression.leftExpression
-        ArgumentListExpression argumentListExpression = (ruleApplicationExpression as MethodCallExpression).arguments
-        firstMethodCallBinaryExpression.leftExpression = argumentListExpression.expressions[0]
-        argumentListExpression.expressions[0] = binaryExpression
-        break
-      case MethodCallExpression:
-        break
-      default:
-        return
-    }
-    if (!RuleExpressionVerifier.isValidRuleMethodCallExpression(ruleApplicationExpression)) {
-      return
-    }
-    statement.expression = convertToRuleExpression(ruleApplicationExpression)
+    statement.expression = transformExpression(statement.expression)
   }
 
   /**

@@ -14,5 +14,7 @@ class VariablesTest extends Specification {
       RulesScriptResult result = Grules.applyRules(VariablesGrules, [(PARAMETER_NAME): VALID_INTEGER])
     expect:
       result.cleanParameters.containsKey(PARAMETER_NAME)
+      result.variables.containsKey(VARIABLE_NAME)
+      !result.variables.containsKey(PARAMETER_NAME)
   }
 }

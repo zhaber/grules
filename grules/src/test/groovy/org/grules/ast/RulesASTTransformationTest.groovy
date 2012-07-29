@@ -25,6 +25,7 @@ import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.runtime.MethodClosure
 import org.codehaus.groovy.syntax.Token
 import org.grules.GrulesLogger
+import org.grules.script.Parameter;
 import org.grules.script.RulesScriptAPI
 import org.grules.script.expressions.SubrulesSeqWrapper
 
@@ -98,6 +99,18 @@ class RulesASTTransformationTest extends Specification {
       astTransformation.visitStatement(statement)
     expect:
       expression != expressionStatement.expression
+  }
+
+  def "Parameter annotation"() {
+    setup:
+    List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
+      @Parameter
+      a = b
+    }
+    ExpressionStatement statement = statementBlocks[0].statements[0]
+    astTransformation.visitStatement(statement)
+  expect:
+    statement.expression instanceof MethodCallExpression
   }
 
   def "Combined required and optional parameters are transformed to API method parameters"() {
@@ -296,5 +309,4 @@ class RulesASTTransformationTest extends Specification {
 		assert ruleBinaryExpression.rightExpression instanceof ConstructorCallExpression
     expect: true
 	}
-
 }

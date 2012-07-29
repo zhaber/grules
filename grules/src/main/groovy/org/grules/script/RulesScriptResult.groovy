@@ -68,7 +68,8 @@ class RulesScriptResultFetcher {
         capitalizeParametersMap(notValidatedParameters, originalParameters),
         capitalizeParametersSet(rulesScript.missingRequiredParameters, originalParameters),
         capitalizeParametersMap(rulesScript.invalidParameters, originalParameters),
-        capitalizeParametersSet(rulesScript.parametersWithMissingDependency, originalParameters))
+        capitalizeParametersSet(rulesScript.parametersWithMissingDependency, originalParameters),
+        rulesScript.variables)
   }
 
   /**
@@ -82,7 +83,7 @@ class RulesScriptResultFetcher {
     Map<String, ValidationErrorProperties> invalidParameters = MapUtils.nullToEmpty(result.invalidParameters[group])
     Set<String> parametersWithMissingDependency = SetUtils.nullToEmpty(result.parametersWithMissingDependency[group])
     new RulesScriptResult(cleanParameters, notValidatedParameters, missingRequiredParameters, invalidParameters,
-        parametersWithMissingDependency)
+        parametersWithMissingDependency, result.variables)
   }
 }
 
@@ -91,15 +92,17 @@ class RulesScriptResultFetcher {
  */
 interface RulesScriptResultAPI {
   /** Parameters that passed validation */
-  abstract getCleanParameters()
+  def getCleanParameters()
   /** Parameters for which a preprocessing rule was not found */
-  abstract getNotValidatedParameters()
+  def getNotValidatedParameters()
   /** Parameters that are missing from input but required by a rules script. */
-  abstract getMissingRequiredParameters()
+  def getMissingRequiredParameters()
   /** Parameters that did no pass validation */
-  abstract getInvalidParameters()
+  def getInvalidParameters()
   /** Parameters that depend on other parameters that are invalid or missing from input. */
-  abstract getParametersWithMissingDependency()
+  def getParametersWithMissingDependency()
+  /** All script variables */
+  Map<String, Object> getVariables()
 }
 
 @TupleConstructor
@@ -114,6 +117,8 @@ class RulesScriptGroupResult implements RulesScriptResultAPI {
   final Map<String, Map<String, ValidationErrorProperties>> invalidParameters
   /** {@inheritDoc} */
   final Map<String, Set<String>> parametersWithMissingDependency
+  /** {@inheritDoc} */
+  final Map<String, Object> variables
 }
 
 @TupleConstructor
@@ -128,4 +133,6 @@ class RulesScriptResult implements RulesScriptResultAPI {
   final Map<String, ValidationErrorProperties> invalidParameters
   /** {@inheritDoc} */
   final Set<String> parametersWithMissingDependency
+  /** {@inheritDoc} */
+  final Map<String, Object> variables
 }

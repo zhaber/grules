@@ -2,6 +2,6 @@ package org.grules.scripts
 
 import static org.grules.TestScriptEntities.*
 
-number = VALID_INTEGER
+binding.variables[VARIABLE_NAME] = VALID_INTEGER
 
-"$PARAMETER_NAME" isEqual(number)
+"$PARAMETER_NAME" isEqual(binding.variables[VARIABLE_NAME])

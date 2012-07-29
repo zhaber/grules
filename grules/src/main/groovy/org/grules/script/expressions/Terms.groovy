@@ -1,5 +1,8 @@
 package org.grules.script.expressions
 
+/**
+ * A rule term.
+ */
 interface Term {
 
   /**

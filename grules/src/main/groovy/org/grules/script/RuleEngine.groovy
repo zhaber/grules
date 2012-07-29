@@ -120,12 +120,12 @@ class RuleEngine {
     if (config.notValidatedParametersAction != OnValidationEventAction.IGNORE) {
       switch (config.notValidatedParametersAction) {
         case OnValidationEventAction.ERROR:
-            throw notValidatedParametersException
+          throw notValidatedParametersException
         case OnValidationEventAction.LOG:
-            GrulesLogger.warn("Missing parameters: $notValidatedParametersException.parameters")
-            break
+          GrulesLogger.warn("Missing parameters: $notValidatedParametersException.parameters")
+          break
         default:
-            throw new ConfigException("Unknown action value ($config.notValidatedParametersAction)")
+          throw new ConfigException("Unknown action value ($config.notValidatedParametersAction)")
       }
     }
   }
