@@ -17,6 +17,10 @@ import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
 import org.grules.script.RulesScriptAPI
 
+
+/**
+ * A helper class that checks validity of a rule expression.
+ */
 class RuleExpressionVerifier {
 
   static boolean isValidRuleBinaryOperation(Token token) {
