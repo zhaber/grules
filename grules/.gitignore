@@ -1,8 +1,8 @@
 .classpath
 .project
 /bin
+/lib
 /.gradle
 /.groovy
 /.externalToolBuilders
 /.settings
-/lib/*

@@ -1,9 +1,0 @@
-org.grules
-org.grules.ast
-org.grules.config
-org.grules.functions
-org.grules.functions.lib
-org.grules.http
-org.grules.script
-org.grules.script.expressions
-org.grules.utils
