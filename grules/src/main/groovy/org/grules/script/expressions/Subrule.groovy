@@ -1,8 +1,11 @@
 package org.grules.script.expressions
 
+import org.codehaus.groovy.reflection.MixinInMetaClass
+import org.codehaus.groovy.runtime.HandleMetaClass
 import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
 import org.grules.functions.ConverterBooleanResult
+import org.grules.utils.ClassUtils;
 
 /**
  * A subrule expression (parts of a rule between ">>" operators).
@@ -23,13 +26,15 @@ class Subrule {
   @Override
   def apply(value) {
     def applicationResult = term.apply(value)
-    if (applicationResult instanceof Boolean && !(term instanceof TildeTerm)) {
-      if (!applicationResult) {
-        throw new ValidationException()
+    if (applicationResult instanceof Boolean) {
+      if (ClassUtils.hasMixin(applicationResult, ConverterBooleanResult) || term instanceof TildeTerm) {
+        applicationResult
+      } else {
+        if (!applicationResult) {
+          throw new ValidationException()
+        }
+        value
       }
-      value
-    } else if (applicationResult instanceof ConverterBooleanResult) {
-      (applicationResult as ConverterBooleanResult).value
     } else {
       applicationResult
     }

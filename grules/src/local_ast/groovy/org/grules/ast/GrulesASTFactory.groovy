@@ -59,6 +59,20 @@ class GrulesASTFactory {
   }
 
   /**
+   * Creates an instance method call.
+   *
+   * @param objectExpression object on which method is called
+   * @param methodClosure method that is called
+   * @param arguments method arguments
+   * @return method call expression
+   */
+  static MethodCallExpression createMethodCall(Expression objectExpression, MethodClosure methodClosure,
+      List<Expression> arguments) {
+    Expression argumentsExpression = new ArgumentListExpression(arguments)
+    new MethodCallExpression(objectExpression, new ConstantExpression(methodClosure.method), argumentsExpression)
+  }
+
+  /**
    * Creates a static method call that calls the given method closure.
    *
    * @param clazz owner class

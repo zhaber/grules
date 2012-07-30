@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class SetUtilsTest extends Specification {
 
-	def "nullToEmptyTest"() {
+	def "nullToEmpty"() {
 	setup:
 	  def set = [] as Set
 	expect:

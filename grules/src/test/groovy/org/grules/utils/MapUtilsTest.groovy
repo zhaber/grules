@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class MapUtilsTest extends Specification {
 
-	def "nullToEmptyTest"() {
+	def "nullToEmpty"() {
 	setup:
 	  def map = [:]
 	expect:

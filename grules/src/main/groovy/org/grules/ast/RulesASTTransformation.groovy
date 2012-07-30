@@ -56,8 +56,8 @@ import org.grules.script.expressions.SubrulesSeqWrapper
 @GroovyASTTransformation(phase = CompilePhase.CONVERSION)
 class RulesASTTransformation extends GrulesASTTransformation {
 
-  private static final List<Class> IMPORT_CLASSES = [CommonFunctions,
-    DateFunctions, StringFunctions, TypeFunctions, UserFunctions, MathFunctions, SecurityFunctions]
+  private static final List<Class> IMPORT_CLASSES = [CommonFunctions, DateFunctions, StringFunctions, TypeFunctions,
+      UserFunctions, MathFunctions, SecurityFunctions]
   private static final String RULES_SUFFIX = 'Grules'
 
   /**

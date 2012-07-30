@@ -9,7 +9,7 @@ import org.grules.ValidationException
 import spock.lang.Specification
 
 class SubruleTest extends Specification{
-	
+
 	def "Apply validation subrule to valid term"() {
 		setup:
 		  def validatorTerm = createIsIntegerValidator()
@@ -20,17 +20,17 @@ class SubruleTest extends Specification{
 		  notThrown(ValidationException)
 	}
 
-	def "Apply validation subrule to invalid term"() {
+	def "When internal validator fails subrule application throws validation exception"() {
 		setup:
-		  def validatorTerm = createIsIntegerValidator()
-		  def subrule = SubruleFactory.create(validatorTerm, new ValidationErrorProperties())
+		  def failValidatorTerm = createFailValidationTerm()
+		  def subrule = SubruleFactory.create(failValidatorTerm, new ValidationErrorProperties())
 		when:
-		  subrule.apply(INVALID_PARAMETER_VALUE)
+		  subrule.apply(PARAMETER_VALUE)
 		then:
 		  thrown(ValidationException)
 	}
-	
-	def "Apply conversion subrule to valid term"() {
+
+	def "Apply conversion subrule to valid value"() {
 		setup:
 		  def conversionTerm = createTrimConverter()
 		  def subrule = SubruleFactory.create(conversionTerm)
@@ -40,7 +40,7 @@ class SubruleTest extends Specification{
 		  notThrown(ValidationException)
 	}
 
-	def "Apply conversion subrule to invalid term"() {
+	def "Apply conversion subrule to invalid value"() {
 		setup:
 		  def converterTerm = createToIntConverter()
 		  def subrule = SubruleFactory.create(converterTerm, new ValidationErrorProperties())
@@ -56,7 +56,7 @@ class SubruleTest extends Specification{
 		expect:
 		  subrule.term instanceof Term
 	}
-		
+
 	def "create for closure"() {
 		setup:
 		  def closure = {}
@@ -64,14 +64,14 @@ class SubruleTest extends Specification{
 		expect:
 		  (subrule.term as ClosureTerm).closure == closure
 	}
-	
+
 	def "create for null"() {
 		when:
 		  SubruleFactory.create(null)
 		then:
 		  thrown(InvalidSubruleException)
 	}
-	
+
 	def "create for invalid subrule"() {
 		when:
 		  SubruleFactory.create(0)
