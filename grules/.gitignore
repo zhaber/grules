@@ -2,7 +2,6 @@
 .project
 /bin
 /docs
-/lib
 /.gradle
 /.groovy
 /.externalToolBuilders

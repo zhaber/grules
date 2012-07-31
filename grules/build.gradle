@@ -105,6 +105,7 @@ signing {
 }
 
 groovydoc.destinationDir = file('docs')
+groovydoc.windowTitle = 'Grules'
 
 uploadArchives {
   repositories {
