@@ -31,7 +31,7 @@
         <hr>
 
         <section id="main_content">
-		  Grules is a rule engine for data preprocessing (validation and canonicalization). The rules are specified via internal Groovy DSL, which has a concise and simple syntax. For example:
+		  Grules is a rule engine for data preprocessing (validation and canonicalization). The rules are specified via internal Groovy DSL, which has a concise and simple syntax. For example:<br>
 		  <pre>
 // isEmail is a Groovy/Java method that takes an email value as its parameter
 email isEmail ["Invalid email"]
@@ -52,10 +52,9 @@ termsCondition[""] !isEmpty [m.agreeToTerms]
 weight toPositiveBigDecimal [decimalErr] >> {round(it / 1000)}
 
 // Grules supports logical operators
-endDate isAfterNow && isBefore(deadline) && {it.day != 1}
-		  </pre>
-		  <p><a href="http://zhaber.github.com/grules/docs/index.html">Groovydoc</a></p><br>
-		  <p><a href="https://github.com/zhaber/grules/wiki">Wiki documentation</a></p><br>
+endDate isAfterNow && isBefore(deadline) && {it.day != 1}</pre>
+		  <p><a href="http://zhaber.github.com/grules/docs/index.html">Groovydoc</a></p>
+		  <p><a href="https://github.com/zhaber/grules/wiki">Wiki documentation</a></p>
 		  <p><a href="http://www.youtube.com/watch?v=6RYbDRY6cvQ">Introduction video</a></p>
 
         </section>
