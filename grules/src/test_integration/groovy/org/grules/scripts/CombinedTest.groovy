@@ -2,7 +2,7 @@ package org.grules.scripts
 
 import static org.grules.TestScriptEntities.*
 
-import org.grules.Grules
+import org.grules.GrulesAPI
 import org.grules.GrulesLogger
 import org.grules.script.RulesScriptResult
 
@@ -21,7 +21,7 @@ class CombinedTest extends Specification {
         closure: PARAMETER_VALUE,
         equalToWithDefaultValue: PARAMETER_VALUE,
         invalidParameter: INVALID_PARAMETER_VALUE]
-      RulesScriptResult scriptResult = Grules.applyRules(CombinedGrules, parameters)
+      RulesScriptResult scriptResult = GrulesAPI.applyRules(CombinedGrules, parameters)
     expect:
       scriptResult.cleanParameters['id'] == VALID_INTEGER
       scriptResult.cleanParameters['closure'] == PARAMETER_VALUE

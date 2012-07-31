@@ -4,10 +4,10 @@ import static org.grules.TestRuleEntriesFactory.*
 import static org.grules.TestScriptEntities.*
 
 import org.grules.EmptyRulesScript
-import org.grules.Grules
+import org.grules.GrulesAPI
 import org.grules.GrulesInjector
-import org.grules.config.Config
-import org.grules.config.ConfigFactory
+import org.grules.config.GrulesConfig
+import org.grules.config.GrulesConfigFactory
 import org.grules.config.OnValidationEventAction
 
 import spock.lang.Specification
@@ -19,23 +19,23 @@ class TestRulesScript extends Script {
 }
 
 class RuleEngineTest extends Specification {
-	
+
 	RulesScript rulesScript
-	
+
 	def setup() {
 		rulesScript = Mock()
 	}
-	
+
 	RuleEngine createRuleEngineWithValidationErrorAction() {
-		def config = ConfigFactory.createDefaultConfig()
-		config.parameters.put(Config.NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME, OnValidationEventAction.ERROR)
+		def config = new GrulesConfigFactory().createConfig()
+		config.parameters.put(GrulesConfig.NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME, OnValidationEventAction.ERROR)
 		new RuleEngine(config, new RulesScriptFactory())
 	}
 
 	def runMainScript() {
 		RuleEngine ruleEngine = new RuleEngine(GrulesInjector.config, new RulesScriptFactory() {
 			@Override
-			RulesScript newInstanceMain(Class<? extends Script> scriptClass, Map<String, Map<String, Object>> parameters, 
+			RulesScript newInstanceMain(Class<? extends Script> scriptClass, Map<String, Map<String, Object>> parameters,
 		      Map<String, Object> environment) {
 				rulesScript
 			}
@@ -46,14 +46,14 @@ class RuleEngineTest extends Specification {
 	def "Create new preprocessor for grouped parameters"() {
 		setup:
 		  def parameters = [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]]
-			RulesScriptGroupResult result = Grules.applyGroupRules(TestRulesScript, parameters)
+			RulesScriptGroupResult result = GrulesAPI.applyGroupRules(TestRulesScript, parameters)
 		expect:
 			result.cleanParameters == [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]]
 	}
-	
+
 	def "Create new preprocessor for default group"() {
 		setup:
-			RulesScriptResult result = Grules.applyRules(TestRulesScript, [(PARAMETER_NAME): PARAMETER_VALUE])
+			RulesScriptResult result = GrulesAPI.applyRules(TestRulesScript, [(PARAMETER_NAME): PARAMETER_VALUE])
 		expect:
 			result.cleanParameters == [(PARAMETER_NAME): PARAMETER_VALUE]
 	}
@@ -67,17 +67,17 @@ class RuleEngineTest extends Specification {
 		  NotValidatedParametersFlatException e = thrown(NotValidatedParametersException)
 			e.parameters == [(PARAMETER_NAME): PARAMETER_VALUE]
 	}
-	
+
 	def "NotValidatedParametersException is thrown when there is parameter without rule (for grouped parameters)"() {
 		setup:
 			def preprocessor = createRuleEngineWithValidationErrorAction().newGroupExecutor(EmptyRulesScript, [:])
 		when:
-			preprocessor((GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]) 
+			preprocessor((GROUP): [(PARAMETER_NAME): PARAMETER_VALUE])
 		then:
 			NotValidatedParametersGroupException e = thrown(NotValidatedParametersException)
 			e.parameters.containsKey(GROUP)
 	}
-	
+
 	def "runMainScript runs the scriptClass"() {
 		when:
   	  runMainScript()
@@ -93,7 +93,7 @@ class RuleEngineTest extends Specification {
 		then:
 		  notThrown(MissingMethodException)
 	}
-	
+
 	def "runMainScript mixes in term operators"() {
 		setup:
 		  rulesScript.applyRules() >> {createValidationTerm()['']}
@@ -111,7 +111,7 @@ class RuleEngineTest extends Specification {
 		then:
 		  notThrown(MissingMethodException)
 	}
-	
+
 	def "runMainScript mixes in closure operators"() {
 		setup:
 		  rulesScript.applyRules() >> {{->} | {->}}
@@ -119,5 +119,5 @@ class RuleEngineTest extends Specification {
 		  runMainScript()
 		then:
 		  notThrown(MissingMethodException)
-	} 
+	}
 }

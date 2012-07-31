@@ -143,8 +143,8 @@ class Operators {
   }
 
   /**
-   * <code>>></code> operator that combines two subrules in a sequence such that a result of application of a first subrule is
-   * passed to a second subrule.
+   * <code>>></code> operator that combines two subrules in a sequence such that a result of application of a first 
+   * subrule is passed to a second subrule.
    */
   @Category(SubrulesSeq)
   class SubrulesSeqOperators {

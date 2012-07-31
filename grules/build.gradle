@@ -7,7 +7,6 @@ apply plugin: 'signing'
 defaultTasks 'build'
 
 buildDir = 'bin'
-
 group = 'org.grules'
 version = '0.1'
 
@@ -27,6 +26,8 @@ project.ext {
   configDir = 'config'
   codenarcConfigPath = "$configDir/codenarc.groovy"
   codenarcTestConfigPath = "$configDir/codenarc_test.groovy"
+  groovyDocSources = [sourceSets.main.allGroovy, sourceSets.local_ast.allGroovy]
+  groovyDocWindowTitle = 'Grules'
 }
 
 sourceSets*.output.each {it.classesDir = buildDir; it.resourcesDir = buildDir}
@@ -105,7 +106,18 @@ signing {
 }
 
 groovydoc.destinationDir = file('docs')
-groovydoc.windowTitle = 'Grules'
+groovydoc.windowTitle = groovyDocWindowTitle
+groovydoc.source groovyDocSources
+
+task docsRelease(type:Groovydoc) {
+  group = "Documentation"
+  windowTitle = groovyDocWindowTitle
+  description = 'Generates Groovydoc API documentation for the grules source code and copies it to the' +
+      'github pages repository.'
+  source sourceSets.main.allGroovy, sourceSets.local_ast.allGroovy
+  destinationDir = file('../../ghpages/grules/docs')
+  classpath = sourceSets.main.compileClasspath + sourceSets.local_ast.compileClasspath
+}
 
 uploadArchives {
   repositories {

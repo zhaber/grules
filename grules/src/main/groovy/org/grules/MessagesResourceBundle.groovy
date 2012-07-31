@@ -1,6 +1,6 @@
 package org.grules
 
-import org.grules.config.Config
+import org.grules.config.GrulesConfig
 
 import com.google.inject.Inject
 
@@ -12,7 +12,7 @@ class MessagesResourceBundle {
   final Map<String, String> messages
 
   @Inject
-  MessagesResourceBundle(Config config) {
+  MessagesResourceBundle(GrulesConfig config) {
     String bundlePath = config.resourceBundlePath
     try {
       ResourceBundle resourceBundle = ResourceBundle.getBundle(bundlePath)

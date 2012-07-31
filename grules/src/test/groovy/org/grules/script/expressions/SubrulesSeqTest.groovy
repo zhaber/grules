@@ -168,7 +168,7 @@ class SubrulesSeqTest extends Specification{
 		setup:
 			def closure = {}
 			def subruleSeq = SubrulesSeqWrapper.wrap(closure)
-      def defaultConvertersSize = DEFAULT_CONFIG.defaultFunctions.size()
+      def defaultConvertersSize = CONFIG.defaultFunctions.size()
 		expect:
 			(subruleSeq.subrules[defaultConvertersSize].term as ClosureTerm).closure == closure
 	}

@@ -1,11 +1,9 @@
 package org.grules.script.expressions
 
-import org.codehaus.groovy.reflection.MixinInMetaClass
-import org.codehaus.groovy.runtime.HandleMetaClass
 import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
 import org.grules.functions.ConverterBooleanResult
-import org.grules.utils.ClassUtils;
+import org.grules.utils.ClassUtils
 
 /**
  * A subrule expression (parts of a rule between ">>" operators).

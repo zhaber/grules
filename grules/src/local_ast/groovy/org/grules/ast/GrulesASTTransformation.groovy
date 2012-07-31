@@ -3,11 +3,11 @@ package org.grules.ast
 import groovy.inspect.swingui.AstNodeToScriptVisitor
 
 import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.GroovyClassVisitor
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.ModuleNode
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.codehaus.groovy.transform.ASTTransformation
-import org.codehaus.groovy.ast.GroovyClassVisitor
 
 /**
  * The class is common ancestor for grules script transformations.

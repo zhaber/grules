@@ -6,7 +6,7 @@ import java.util.logging.Level
 import java.util.logging.LogRecord
 import java.util.logging.Logger
 
-import org.grules.config.Config
+import org.grules.config.GrulesConfig
 
 /**
  * A common logger for all rule engine events.
@@ -14,7 +14,7 @@ import org.grules.config.Config
 class GrulesLogger {
 
   private static final Logger LOGGER = Logger.getLogger('grules')
-  private static final Config CONFIG = GrulesInjector.config
+  private static final GrulesConfig CONFIG = GrulesInjector.config
 
   static {
     LOGGER.level = CONFIG.logLevel

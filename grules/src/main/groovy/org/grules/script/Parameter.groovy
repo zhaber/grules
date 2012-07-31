@@ -5,8 +5,6 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 
-import org.codehaus.groovy.transform.GroovyASTTransformationClass
-
 /**
  * Indicates that the variable is a parameter.
  */

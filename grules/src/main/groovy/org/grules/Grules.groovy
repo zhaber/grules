@@ -1,20 +1,18 @@
 package org.grules
 
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.Cookie
 
 import org.grules.script.RulesScriptGroupResult
 import org.grules.script.RulesScriptResult
 
-
 /**
- * API class for interacting with grules functionality.
+ * The main class for interacting with grules functionality.
  */
 class Grules {
 
   /**
    * Name for rule application with combined parameters is built by concatenation of their names using
-   * {@link COMBINED_PARAMETERS_SEPARATOR} as a separator.
+   * <code>COMBINED_PARAMETERS_SEPARATOR}</code> as a separator.
    */
   static final String COMBINED_PARAMETERS_SEPARATOR = ','
 
@@ -29,10 +27,9 @@ class Grules {
    * @param environment custom functions and variables
    * @return result of rules application
    */
-  static RulesScriptGroupResult applyGroupRules(Class<? extends Script> rulesScript,
+  RulesScriptGroupResult applyGroupRules(Class<? extends Script> rulesScript,
       Map<String, Map<String, Object>> parameters, Map<String, Object> environment = [:]) {
-    Closure<RulesScriptGroupResult> preprocessor = newGroupRulesApplicator(rulesScript, environment)
-    preprocessor(parameters)
+    GrulesAPI.applyGroupRules(rulesScript, parameters, environment)
   }
 
   /**
@@ -46,10 +43,9 @@ class Grules {
    * @param environment custom functions and variables
    * @return result of rules application
    */
-  static RulesScriptResult applyRules(Class<? extends Script> rulesScript, Map<String, Object> parameters,
+  RulesScriptResult applyRules(Class<? extends Script> rulesScript, Map<String, Object> parameters,
       Map<String, Object> environment = [:]) {
-    Closure<RulesScriptResult> preprocessor = newRulesApplicator(rulesScript, environment)
-    preprocessor(parameters)
+    GrulesAPI.newRulesApplicator(rulesScript, parameters, environment)
   }
 
   /**
@@ -63,9 +59,9 @@ class Grules {
    * @param environment custom functions and variables
    * @return closure that runs the script
    */
-  static Closure<RulesScriptGroupResult> newGroupRulesApplicator(Class<? extends Script> rulesScript,
+  Closure<RulesScriptGroupResult> newGroupRulesApplicator(Class<? extends Script> rulesScript,
       Map<String, Object> environment = [:]) {
-    GrulesInjector.ruleEngine.newGroupExecutor(rulesScript, environment)
+    GrulesAPI.newGroupRulesApplicator(rulesScript, environment)
   }
 
   /**
@@ -79,9 +75,9 @@ class Grules {
    * @param environment custom functions and variables
    * @return closure that runs the script
    */
-  static Closure<RulesScriptResult> newRulesApplicator(Class<? extends Script> rulesScript,
+  Closure<RulesScriptResult> newRulesApplicator(Class<? extends Script> rulesScript,
       Map<String, Object> environment = [:]) {
-    GrulesInjector.ruleEngine.newExecutor(rulesScript, environment)
+    GrulesAPI.newRulesApplicator(rulesScript, environment)
   }
 
   /**
@@ -90,11 +86,8 @@ class Grules {
    * @param request HTTP request object
    * @return map with headers
    */
-  static Map<String, Map<String, Object>> fetchRequestHeaders(HttpServletRequest request) {
-    Enumeration<String> headerNames = request.headerNames
-    headerNames.toList().collectEntries {  String name ->
-      [(name): request.getHeader(name)]
-    }
+  Map<String, Map<String, Object>> fetchRequestHeaders(HttpServletRequest request) {
+    GrulesAPI.fetchRequestHeaders(request)
   }
 
  /**
@@ -104,11 +97,9 @@ class Grules {
   * @param listParameters collection of parameters that represent list of values not a single string
   * @return map with parameters, where key is a parameter name and value is a string or a list of strings
   */
-  static Map<String, Map<String, Object>> fetchRequestParameters(HttpServletRequest request,
+  Map<String, Map<String, Object>> fetchRequestParameters(HttpServletRequest request,
       List<String> listParameters = []) {
-    request.parameterMap.collectEntries { String name, String[] values ->
-       [(name): name in listParameters ? values as List<String> : values[0]]
-    }
+    GrulesAPI.fetchRequestParameters(request, listParameters)
   }
 
  /**
@@ -117,9 +108,8 @@ class Grules {
   * @param request HTTP request object
   * @return map with cookies
   */
-  static Map<String, Map<String, String>> fetchRequestCookies(HttpServletRequest request) {
-    (request.cookies as List<Cookie>).collectEntries { Cookie cookie ->
-        [(cookie.name): cookie.value]
-    }
+  Map<String, Map<String, String>> fetchRequestCookies(HttpServletRequest request) {
+    GrulesAPI.fetchRequestCookies(request)
   }
+
 }

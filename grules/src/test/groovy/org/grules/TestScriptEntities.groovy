@@ -2,14 +2,14 @@ package org.grules
 
 import java.util.logging.Level
 
-import org.grules.config.Config
-import org.grules.config.ConfigFactory
-import org.grules.http.HttpRequestParametersGroup
+import org.grules.config.GrulesConfig
+import org.grules.config.GrulesConfigFactory
 import org.grules.config.OnValidationEventAction
+import org.grules.http.HttpRequestParametersGroup
 
 class TestScriptEntities {
 
-  static final Config DEFAULT_CONFIG = new ConfigFactory().createDefaultConfig()
+  static final GrulesConfig CONFIG = new GrulesConfigFactory().createDefaultConfig()
 
 	static final List FALSE_PARAMETER = []
 	static final String PARAMETER_NAME = 'parameterName'
@@ -33,9 +33,9 @@ class TestScriptEntities {
 	static final String VALID_PARAMETER = VALID_INTEGER_STRING
 	static final String INVALID_PARAMETER_VALUE = '1a'
 	static final String SUBRULES_SEQ_NAME = 'subrulesSeqName'
-	static final String GROUP = DEFAULT_CONFIG.defaultGroup
+	static final String GROUP = CONFIG.defaultGroup
 	static final String GROUP_AUX = HttpRequestParametersGroup.GET.name()
 	static final Level CONFIG_LOG_LEVEL = Level.INFO
-  static final OnValidationEventAction NOT_VALIDATED_PARAMETERS_ACTION = DEFAULT_CONFIG.notValidatedParametersAction
+  static final OnValidationEventAction NOT_VALIDATED_PARAMETERS_ACTION = CONFIG.notValidatedParametersAction
   static final String JOIN_SEPARATOR = ' '
 }

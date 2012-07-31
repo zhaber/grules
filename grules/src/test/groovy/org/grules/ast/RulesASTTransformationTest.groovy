@@ -25,7 +25,7 @@ import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.runtime.MethodClosure
 import org.codehaus.groovy.syntax.Token
 import org.grules.GrulesLogger
-import org.grules.script.Parameter;
+import org.grules.script.Parameter
 import org.grules.script.RulesScriptAPI
 import org.grules.script.expressions.SubrulesSeqWrapper
 
@@ -106,6 +106,7 @@ class RulesASTTransformationTest extends Specification {
     List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
       @Parameter
       a = b
+      a c
     }
     ExpressionStatement statement = statementBlocks[0].statements[0]
     astTransformation.visitStatement(statement)

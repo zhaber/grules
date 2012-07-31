@@ -1,6 +1,6 @@
 package org.grules
 
-import org.grules.config.Config
+import org.grules.config.GrulesConfig
 import org.grules.script.RuleEngine
 
 import com.google.inject.Guice
@@ -17,8 +17,8 @@ class GrulesInjector {
     INJECTOR.getInstance(RuleEngine)
   }
 
-  static Config getConfig() {
-    INJECTOR.getInstance(Config)
+  static GrulesConfig getConfig() {
+    INJECTOR.getInstance(GrulesConfig)
   }
 
   static MessagesResourceBundle getMessagesResourceBundle() {

@@ -5,8 +5,8 @@ import spock.lang.Specification
 
 class ConfigFactoryTest extends Specification {
 
-	def "Default config read"() {
+	def "Default config can be read"() {
 		expect:
-		  DEFAULT_CONFIG.logLevel == ConfigFactory.DEFATULT_CONFIG[Config.LOG_LEVEL_PARAMETER_NAME]
+		  CONFIG.logLevel == DefaultGrulesConfig.INSTANCE.parameters[GrulesConfig.LOG_LEVEL_PARAMETER_NAME]
 	}
 }

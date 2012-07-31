@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutionException
 
 import org.grules.GrulesLogger
 import org.grules.ValidationErrorProperties
-import org.grules.config.Config
+import org.grules.config.GrulesConfig
 import org.grules.config.ConfigException
 import org.grules.config.OnValidationEventAction
 import org.grules.script.expressions.Operators
@@ -19,11 +19,11 @@ import com.google.inject.Inject
  */
 class RuleEngine {
 
-  private final Config config
+  private final GrulesConfig config
   private final RulesScriptFactory rulesScriptFactory
 
   @Inject
-  RuleEngine(Config config, RulesScriptFactory rulesScriptFactory) {
+  RuleEngine(GrulesConfig config, RulesScriptFactory rulesScriptFactory) {
     this.config = config
     this.rulesScriptFactory = rulesScriptFactory
   }

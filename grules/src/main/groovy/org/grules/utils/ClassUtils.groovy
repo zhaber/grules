@@ -1,4 +1,4 @@
-package org.grules.utils;
+package org.grules.utils
 
 import org.codehaus.groovy.reflection.MixinInMetaClass
 import org.codehaus.groovy.runtime.HandleMetaClass

@@ -3,12 +3,15 @@ package org.grules.config
 import java.util.logging.Handler
 import java.util.logging.Level
 
+import org.grules.GrulesException
+
 /**
- * A singleton class with grules configuration parameters.
+ * Grules configuration parameters.
  */
-class Config {
+class GrulesConfig extends Config {
 
   private final Map<String, Object> parameters
+
   static final String NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME = 'notValidatedParametersAction'
   static final String DEFAULT_GROUP_PARAMETER_NAME = 'defaultGroup'
   static final String LOG_LEVEL_PARAMETER_NAME = 'logLevel'
@@ -17,7 +20,7 @@ class Config {
   static final String RESOURCE_BUNDLE_PARAMETER_NAME = 'resourceBundlePath'
   static final String DEFAULT_FUNCTIONS_PARAMETER_NAME = 'defaultFunctions'
 
-  Config(Map<String, Object> properties) {
+  GrulesConfig(Map<String, Object> properties) {
     this.parameters = properties
   }
 
@@ -25,7 +28,7 @@ class Config {
   String getDefaultGroup() {
     String group = parameters[DEFAULT_GROUP_PARAMETER_NAME]
     if (!(group in groups)) {
-      throw new ConfigException("Group $group is not in group list $groups")
+      throw new GrulesException("Group $group is not in group list $groups")
     }
     group
   }
@@ -45,7 +48,7 @@ class Config {
     parameters[LOGGER_HANDLER_PARAMETER_NAME]
   }
 
-  /** Action performed when there is no rule for some parameter. */
+  /** Action performed when there is no defined rule for some input parameter. */
   OnValidationEventAction getNotValidatedParametersAction() {
     parameters[NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME]
   }
@@ -60,9 +63,8 @@ class Config {
     parameters[DEFAULT_FUNCTIONS_PARAMETER_NAME]
   }
 
-  /** Returns all configuration parameters as a string. */
   @Override
-  String toString() {
+  Map<String, Object> getParameters() {
     parameters
   }
 }

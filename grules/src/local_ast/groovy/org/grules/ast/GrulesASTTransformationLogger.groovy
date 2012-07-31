@@ -1,13 +1,14 @@
 package org.grules.ast
 
 import org.codehaus.groovy.control.io.NullWriter
+import org.grules.config.AstTransformationConfigFactory
 
 /**
  * A logger for grules script transformations.
  */
 class GrulesASTTransformationLogger implements Closeable {
 
-  private static final String LOG_DIR = '/tmp/grules'
+  private static final String LOG_DIR = (new AstTransformationConfigFactory()).createConfig().compilerLogPath
   protected final Writer writer
 
   GrulesASTTransformationLogger(String filename) {

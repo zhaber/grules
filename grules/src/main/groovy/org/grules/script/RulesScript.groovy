@@ -3,7 +3,7 @@ package org.grules.script
 import org.grules.GrulesInjector
 import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
-import org.grules.config.Config
+import org.grules.config.GrulesConfig
 import org.grules.script.expressions.InvalidValidatorException
 import org.grules.script.expressions.SubrulesSeq
 
@@ -13,7 +13,7 @@ import org.grules.script.expressions.SubrulesSeq
  */
 class RulesScript implements RulesScriptAPI {
 
-  private static final Config CONFIG = GrulesInjector.config
+  private static final GrulesConfig CONFIG = GrulesInjector.config
   private static final Set<String> GROUPS = CONFIG.groups
   private static final RuleEngine RULE_ENGINE = GrulesInjector.ruleEngine
 
