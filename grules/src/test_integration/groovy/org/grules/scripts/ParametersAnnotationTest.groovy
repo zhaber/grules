@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class ParametersAnnotationTest extends Specification {
 
-  def "Parameter annotations"() {
+  def "Parameter annotation"() {
     setup:
       RulesScriptResult result = GrulesAPI.applyRules(ParameterAnnotationGrules, [:])
     expect:

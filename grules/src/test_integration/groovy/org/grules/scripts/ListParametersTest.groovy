@@ -16,7 +16,7 @@ class ListParametersTest extends Specification {
       def ruleName = 'PARAMETER_NAME' + Grules.COMBINED_PARAMETERS_SEPARATOR + 'PARAMETER_NAME_AUX'
     expect:
       result.cleanParameters.containsKey(ruleName)
-      result.cleanParameters[ruleName] == PARAMETER_VALUE + JOIN_SEPARATOR + DEFAULT_VALUE
+      result.cleanParameters[ruleName] == FUNCTION_FOR_LIST([PARAMETER_VALUE, DEFAULT_VALUE])
   }
 
 }

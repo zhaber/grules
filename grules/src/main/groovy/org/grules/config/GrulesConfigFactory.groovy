@@ -6,7 +6,7 @@ package org.grules.config
 class GrulesConfigFactory implements ConfigFactory {
 
   /**
-   * Creates a grules configuration based on the provided script file.
+   * Creates a grules configuration based on the specified script file.
    */
   @Override
   GrulesConfig createConfig(Class<? extends Script> configClass) {
@@ -14,7 +14,7 @@ class GrulesConfigFactory implements ConfigFactory {
   }
 
   /**
-   * Creates a grules configuration based on the script file located at the given path.
+   * Creates a grules configuration based on the script file.
    */
   @Override
   GrulesConfig createConfig() {

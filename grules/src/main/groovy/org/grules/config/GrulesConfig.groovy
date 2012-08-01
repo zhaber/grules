@@ -24,7 +24,9 @@ class GrulesConfig extends Config {
     this.parameters = properties
   }
 
-  /** Group to use when no group is specified. */
+  /**
+   * Group to use when no group is specified.
+   */
   String getDefaultGroup() {
     String group = parameters[DEFAULT_GROUP_PARAMETER_NAME]
     if (!(group in groups)) {
@@ -33,36 +35,49 @@ class GrulesConfig extends Config {
     group
   }
 
-  /** Set of available groups. */
+  /**
+   * Set of available groups.
+   */
   Set<String> getGroups() {
     parameters[GROUPS_PARAMETER_NAME] as Set
   }
 
-  /** Level of logging used by the rule engine. */
+  /**
+   * Level of logging used by the rule engine.
+   */
   Level getLogLevel() {
     parameters[LOG_LEVEL_PARAMETER_NAME]
   }
 
-  /** Logger handler used by the rule engine. */
+  /**
+   * Logger handler used by the rule engine.
+   */
   Handler getLoggerHandler() {
     parameters[LOGGER_HANDLER_PARAMETER_NAME]
   }
 
-  /** Action performed when there is no defined rule for some input parameter. */
+  /**
+   * Action performed when there is no defined rule for some input parameter.
+   */
   OnValidationEventAction getNotValidatedParametersAction() {
     parameters[NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME]
   }
 
-  /** Resource bundle for error messages. */
+  /**
+   * Resource bundle for error messages.
+   */
   String getResourceBundlePath() {
     parameters[RESOURCE_BUNDLE_PARAMETER_NAME]
   }
 
-  /** Sequence of converters that must be applied to all parameters. */
+  /**
+   * Sequence of converters that must be applied to all parameters.
+   */
   List<Closure> getDefaultFunctions() {
     parameters[DEFAULT_FUNCTIONS_PARAMETER_NAME]
   }
 
+  /** {@inheritDoc} */
   @Override
   Map<String, Object> getParameters() {
     parameters

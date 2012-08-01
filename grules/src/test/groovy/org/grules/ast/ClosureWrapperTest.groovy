@@ -43,7 +43,7 @@ class ClosureWrapperTest extends Specification {
 				~{a}
 			})
 			ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
-			ruleExpression = RulesASTTransformation.liftErrors(ruleExpression)
+			ruleExpression = RulesAstTransformation.liftErrors(ruleExpression)
 			ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
 		expect:
 			ruleExpression instanceof BitwiseNegationExpression

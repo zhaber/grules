@@ -16,6 +16,7 @@ import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
 import org.grules.script.RulesScriptAPI
+import org.grules.utils.AstUtils
 
 
 /**
@@ -30,7 +31,7 @@ class RuleExpressionVerifier {
   static boolean isAtomExpression(Expression expression) {
     if (expression instanceof BinaryExpression) {
       BinaryExpression binaryExpression = expression
-      GrulesASTUtils.isArrayItemExpression(binaryExpression) && isAtomExpression(binaryExpression.leftExpression)
+      AstUtils.isArrayItemExpression(binaryExpression) && isAtomExpression(binaryExpression.leftExpression)
     } else {
       !(expression instanceof NotExpression) && !(expression instanceof BitwiseNegationExpression)
     }
@@ -103,7 +104,7 @@ class RuleExpressionVerifier {
 
   static boolean isValidRuleExpression(Expression expression) {
     if (expression instanceof BinaryExpression) {
-      if (GrulesASTUtils.isArrayItemExpression(expression)) {
+      if (AstUtils.isArrayItemExpression(expression)) {
         isValidRuleExpression((expression as BinaryExpression).leftExpression)
       }	else {
         BinaryExpression binaryExpression = expression

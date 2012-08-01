@@ -13,6 +13,7 @@ import org.codehaus.groovy.ast.expr.ClassExpression
 import org.codehaus.groovy.ast.expr.ClosureExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression
+import org.codehaus.groovy.ast.expr.DeclarationExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
@@ -26,6 +27,7 @@ import org.codehaus.groovy.runtime.MethodClosure
 import org.codehaus.groovy.syntax.Token
 import org.grules.GrulesLogger
 import org.grules.script.Parameter
+import org.grules.script.Rule
 import org.grules.script.RulesScriptAPI
 import org.grules.script.expressions.SubrulesSeqWrapper
 
@@ -34,7 +36,7 @@ import spock.lang.Specification
 class RulesASTTransformationTest extends Specification {
 
 	GrulesASTTransformationLogger logger
-	RulesASTTransformation astTransformation
+	RulesAstTransformation astTransformation
 	AstBuilder builder
 	CompilePhase phase
 	Expression complexRuleExpression
@@ -50,7 +52,7 @@ class RulesASTTransformationTest extends Specification {
 	def setup() {
 		logger = Mock()
 		logger.write(_) >> {}
-		astTransformation = new RulesASTTransformation()
+		astTransformation = new RulesAstTransformation()
 		astTransformation.init('test')
 		GrulesLogger.turnOff()
 		builder = new AstBuilder()
@@ -112,6 +114,24 @@ class RulesASTTransformationTest extends Specification {
     astTransformation.visitStatement(statement)
   expect:
     statement.expression instanceof MethodCallExpression
+  }
+
+  def "Rule annotation"() {
+    setup:
+    List<BlockStatement> statementBlocks = builder.buildFromCode(phase) {
+      @Rule
+      a = {b,c -> {->}}
+      a d
+    }
+    ExpressionStatement statement = statementBlocks[0].statements[0]
+    astTransformation.visitStatement(statement)
+    ClosureExpression closureExpression = (statement.expression as DeclarationExpression).rightExpression
+    Expression expression = ((closureExpression.code as BlockStatement).statements[0] as ExpressionStatement).expression
+  expect:
+    expression instanceof MethodCallExpression
+    fetchArguments(expression).size == 1
+    fetchArguments(expression)[0] instanceof VariableExpression
+    (fetchArguments(expression)[0] as VariableExpression).name == b
   }
 
   def "Combined required and optional parameters are transformed to API method parameters"() {
@@ -176,7 +196,7 @@ class RulesASTTransformationTest extends Specification {
 	  		a || b && c >> d
  		  })
 		  ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
-		  BinaryExpression binaryRuleExpression = RulesASTTransformation.convertToRuleOperators(ruleExpression)
+		  BinaryExpression binaryRuleExpression = RulesAstTransformation.convertToRuleOperators(ruleExpression)
 		  BinaryExpression aOrBAndC = binaryRuleExpression.leftExpression
 		  BinaryExpression bAndC = aOrBAndC.rightExpression
 	  expect:
@@ -191,8 +211,8 @@ class RulesASTTransformationTest extends Specification {
 				!(a && b) || c [d] >> e
 			})
 			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
-			ruleExpression = RulesASTTransformation.liftErrors(ruleExpression)
-			BinaryExpression convertedRuleExpression = RulesASTTransformation.convertToRuleOperators(ruleExpression)
+			ruleExpression = RulesAstTransformation.liftErrors(ruleExpression)
+			BinaryExpression convertedRuleExpression = RulesAstTransformation.convertToRuleOperators(ruleExpression)
 			BinaryExpression aAndBOrCD = convertedRuleExpression.leftExpression
 			BinaryExpression aAndBOrC = aAndBOrCD.leftExpression
 		expect:
@@ -203,7 +223,7 @@ class RulesASTTransformationTest extends Specification {
 	def "addSequenceWrapper for MethodCallExpression"() {
 		setup:
 			MethodCallExpression functionCallExpression = Mock()
-			def ruleExpression = RulesASTTransformation.addSequenceWrapper(functionCallExpression)
+			def ruleExpression = RulesAstTransformation.addSequenceWrapper(functionCallExpression)
 			MethodCallExpression wrapperCallExpression = ruleExpression
 			def wrapperMethodName = (SubrulesSeqWrapper.&wrap as MethodClosure).method
 		expect:
@@ -220,7 +240,7 @@ class RulesASTTransformationTest extends Specification {
 			Token token = Mock()
 			token.type >> LEFT_SQUARE_BRACKET
 			arrayItemExpression.operation >> token
-			def ruleExpression = RulesASTTransformation.addSequenceWrapper(arrayItemExpression)
+			def ruleExpression = RulesAstTransformation.addSequenceWrapper(arrayItemExpression)
 			MethodCallExpression wrapperCallExpression = ruleExpression
 		expect:
 			fetchArguments(wrapperCallExpression)[0] == arrayItemExpression
@@ -232,9 +252,9 @@ class RulesASTTransformationTest extends Specification {
 				a >> {b}
 			})
 			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
-			ruleExpression = RulesASTTransformation.liftErrors(ruleExpression)
+			ruleExpression = RulesAstTransformation.liftErrors(ruleExpression)
 			ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
-			ruleExpression = RulesASTTransformation.addSequenceWrapper(ruleExpression)
+			ruleExpression = RulesAstTransformation.addSequenceWrapper(ruleExpression)
 			assert ruleExpression instanceof BinaryExpression
 			BinaryExpression aRightShiftB = ruleExpression
 			def a = aRightShiftB.leftExpression
@@ -250,7 +270,7 @@ class RulesASTTransformationTest extends Specification {
 				a
 			})
 			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
-			ruleExpression = RulesASTTransformation.liftErrors(ruleExpression)
+			ruleExpression = RulesAstTransformation.liftErrors(ruleExpression)
 		expect:
 		  ruleExpression instanceof VariableExpression
 	}
@@ -261,7 +281,7 @@ class RulesASTTransformationTest extends Specification {
 			  a >> b [c] >> d && e [f]
 		  })
 			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
-		  BinaryExpression expressionWithLiftedErrors = RulesASTTransformation.liftErrors(ruleExpression)
+		  BinaryExpression expressionWithLiftedErrors = RulesAstTransformation.liftErrors(ruleExpression)
 			BinaryExpression aRightShiftBC = expressionWithLiftedErrors.leftExpression
 	  expect:
 		  checkVariable(aRightShiftBC.leftExpression, a)
@@ -288,7 +308,7 @@ class RulesASTTransformationTest extends Specification {
 		def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
 			"$PARAMETER_NAME" a && b [c] >> d
 		})
-		MethodCallExpression ruleApplicationExpression = astTransformation.convertToRuleExpression(ruleExpression)
+		MethodCallExpression ruleApplicationExpression = astTransformation.convertToRuleApplicationExpression(ruleExpression)
 		ClosureExpression closureExpression = fetchArguments(ruleApplicationExpression)[1]
 		BinaryExpression ruleBinaryExpression = fetchClosureExpression(closureExpression)
 		assert ruleBinaryExpression.leftExpression instanceof MethodCallExpression
@@ -304,7 +324,7 @@ class RulesASTTransformationTest extends Specification {
 		assert fetchArguments(ab.leftExpression)[0] instanceof ClosureExpression
 		assert fetchClosureExpression(fetchArguments(ab.leftExpression)[0]) instanceof MethodCallExpression
 		VariableExpression itVariable = fetchArguments(fetchClosureExpression(fetchArguments(ab.leftExpression)[0]))[0]
-		assert itVariable.name == GrulesASTFactory.IT_NAME
+		assert itVariable.name == ExpressionFactory.IT_NAME
 		assert ab.rightExpression instanceof ConstructorCallExpression
 		assert aBC.rightExpression instanceof VariableExpression
 		assert ruleBinaryExpression.rightExpression instanceof ConstructorCallExpression

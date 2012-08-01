@@ -1,7 +1,6 @@
 package org.grules.functions.lib
 
 import static org.grules.TestScriptEntities.*
-import org.grules.functions.ConverterBooleanResult
 import spock.lang.Specification
 
 class CommonFunctionsTest extends Specification {
@@ -21,7 +20,7 @@ class CommonFunctionsTest extends Specification {
 
 	def "inverse"() {
 		expect:
-			(commonFunctions.inverse(false) as ConverterBooleanResult).value
+			commonFunctions.inverse(false)
 	}
 
 	def "isAny"() {

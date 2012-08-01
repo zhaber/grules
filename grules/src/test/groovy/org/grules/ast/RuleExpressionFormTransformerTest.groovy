@@ -17,7 +17,7 @@ import spock.lang.Specification
 class RuleExpressionFormTransformerTest extends Specification {
 
 	GrulesASTTransformationLogger logger
-	RulesASTTransformation astTransformation
+	RulesAstTransformation astTransformation
 	AstBuilder builder
 	CompilePhase phase
 	Expression complexRuleExpression
@@ -38,7 +38,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 	def setup() {
 		logger = Mock()
 		logger.write(_) >> {}
-		astTransformation = new RulesASTTransformation()
+		astTransformation = new RulesAstTransformation()
 		astTransformation.init('test')
 		GrulesLogger.turnOff()
 		builder = new AstBuilder()

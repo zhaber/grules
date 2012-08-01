@@ -38,4 +38,6 @@ class TestScriptEntities {
 	static final Level CONFIG_LOG_LEVEL = Level.INFO
   static final OnValidationEventAction NOT_VALIDATED_PARAMETERS_ACTION = CONFIG.notValidatedParametersAction
   static final String JOIN_SEPARATOR = ' '
+  static final Closure FUNCTION_FOR_LIST = {list -> list.join(JOIN_SEPARATOR)}
+  static final Closure FUNCTION_FOR_TWO_ARGUMENTS = {value1, value2 -> value1 + value2}
 }

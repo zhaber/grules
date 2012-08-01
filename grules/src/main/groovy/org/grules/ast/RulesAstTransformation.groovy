@@ -1,7 +1,6 @@
 package org.grules.ast
 
 import org.codehaus.groovy.ast.ASTNode
-import org.codehaus.groovy.ast.AnnotationNode
 import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.ModuleNode
@@ -9,6 +8,7 @@ import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
 import org.codehaus.groovy.ast.expr.CastExpression
+import org.codehaus.groovy.ast.expr.ClosureExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.DeclarationExpression
 import org.codehaus.groovy.ast.expr.Expression
@@ -39,8 +39,11 @@ import org.grules.functions.lib.StringFunctions
 import org.grules.functions.lib.TypeFunctions
 import org.grules.functions.lib.UserFunctions
 import org.grules.script.Parameter
+import org.grules.script.Rule
 import org.grules.script.RulesScriptAPI
+import org.grules.script.expressions.SubrulesSeq
 import org.grules.script.expressions.SubrulesSeqWrapper
+import org.grules.utils.AstUtils
 
 /**
  * Transformations of an abstract syntax tree for rules scripts.
@@ -54,7 +57,7 @@ import org.grules.script.expressions.SubrulesSeqWrapper
  * - transform "~" operator to a conversion closure
  */
 @GroovyASTTransformation(phase = CompilePhase.CONVERSION)
-class RulesASTTransformation extends GrulesASTTransformation {
+class RulesAstTransformation extends GrulesAstTransformation {
 
   private static final List<Class> IMPORT_CLASSES = [CommonFunctions, DateFunctions, StringFunctions, TypeFunctions,
       UserFunctions, MathFunctions, SecurityFunctions]
@@ -88,7 +91,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
       Statement statement = statements[i]
       if (statement.statementLabel != null) {
         log('Creating method call for group', statement.statementLabel)
-        MethodCallExpression changeGroupMethodCall = GrulesASTFactory.createMethodCall(
+        MethodCallExpression changeGroupMethodCall = ExpressionFactory.createMethodCall(
             RulesScriptAPI.&changeGroup, [new ConstantExpression(statement.statementLabel)])
         statements.add(i++, new ExpressionStatement(changeGroupMethodCall))
         log('Added method call', (RulesScriptAPI.&changeGroup as MethodClosure).method +
@@ -118,14 +121,25 @@ class RulesASTTransformation extends GrulesASTTransformation {
   }
 
   private Expression transformExpression(DeclarationExpression declarationExpression) {
-    boolean isParameter = declarationExpression.annotations.any {AnnotationNode annotationNode ->
-      annotationNode.classNode.name == Parameter.simpleName
-    }
-    if (isParameter) {
+    if (AstUtils.hasAnnotation(declarationExpression, Parameter)) {
       String parameterName = (declarationExpression.leftExpression as VariableExpression).name
       Expression parameterNameExpression = new ConstantExpression(parameterName)
       Expression value = declarationExpression.rightExpression
-      GrulesASTFactory.createMethodCall(RulesScriptAPI.&addParameter, [parameterNameExpression, value])
+      ExpressionFactory.createMethodCall(RulesScriptAPI.&addParameter, [parameterNameExpression, value])
+    } else if (AstUtils.hasAnnotation(declarationExpression, Rule)) {
+      ClosureExpression closureExpression = declarationExpression.rightExpression
+      ExpressionStatement ruleStatement = (closureExpression.code as BlockStatement).statements[0]
+      Expression ruleExpression = convertToRuleExpression(ruleStatement.expression)
+      Expression parameter = {
+        if (closureExpression.parameters.length > 0) {
+          new VariableExpression(closureExpression.parameters[0])
+        } else {
+          ExpressionFactory.createItVariable()
+        }
+      }()
+      List<Expression> arguments = [parameter]
+      ruleStatement.expression = ExpressionFactory.createMethodCall(ruleExpression, SubrulesSeq.&apply, arguments)
+      declarationExpression
     } else {
       declarationExpression
     }
@@ -135,7 +149,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
     if (!RuleExpressionVerifier.isValidRuleMethodCallExpression(methodCallExpression)) {
       return methodCallExpression
     }
-    convertToRuleExpression(methodCallExpression)
+    convertToRuleApplicationExpression(methodCallExpression)
   }
 
   private Expression transformExpression(BinaryExpression binaryExpression) {
@@ -155,31 +169,40 @@ class RulesASTTransformation extends GrulesASTTransformation {
   }
 
   /**
-   * Parses rule expression AST tree and makes precedence of right shift operator lower than conjunction and
-   * disjunction.
+   * Parses expression AST tree and transforms it to a rule application expression.
    *
-   * @param infixExpression subrules sequence in infix form
-   * @return converted rule expression with correct operator precedence
+   * @param methodCallExpression method call expression that has to be converted to a rule application expression
+   * @return rule application expression
    */
-  private Expression convertToRuleExpression(MethodCallExpression methodCallExpression) {
-    Expression ruleExpression = (methodCallExpression.arguments as ArgumentListExpression).expressions[0]
+  private Expression convertToRuleApplicationExpression(MethodCallExpression methodCallExpression) {
+    ArgumentListExpression arguments = methodCallExpression.arguments
+    Expression ruleExpression = convertToRuleExpression(arguments.expressions[0])
+    Expression ruleApplicationExpression = createRuleApplicationExpression(methodCallExpression, ruleExpression)
+    log('Rule application expression', ruleApplicationExpression)
+    ruleApplicationExpression
+  }
+
+  /**
+   * Parses rule expression AST tree and transforms it to a rule expression.
+   *
+   * @param ruleExpression rule expression
+   * @return converted rule expression
+   */
+  private Expression convertToRuleExpression(Expression ruleExpression) {
     log('Original rule', ruleExpression)
     ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
     log('Rule with changed precedences of &, |, and >> operators', ruleExpression)
     ruleExpression = liftErrors(ruleExpression)
     ruleExpression = convertToRuleOperators(ruleExpression)
     ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
-    ruleExpression = addSequenceWrapper(ruleExpression)
-    Expression ruleApplicationExpression = createRuleApplicationExpression(methodCallExpression, ruleExpression)
-    log('Rule application expression', ruleApplicationExpression)
-    ruleApplicationExpression
+    addSequenceWrapper(ruleExpression)
   }
 
   private static Expression liftErrors(Expression expression) {
     if (RuleExpressionVerifier.isAtomExpression(expression)) {
       expression
     } else {
-      if (GrulesASTUtils.isRightShift(expression)) {
+      if (AstUtils.isRightShift(expression)) {
         BinaryExpression binaryExpression = expression
         Expression leftSubrule = liftErrors(binaryExpression.leftExpression)
         Expression rightSubrule = liftErrors(binaryExpression.rightExpression)
@@ -204,7 +227,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
   }
 
   private static boolean hasError(Expression expression) {
-    if (GrulesASTUtils.isArrayItemExpression(expression)) {
+    if (AstUtils.isArrayItemExpression(expression)) {
       true
     } else if (expression instanceof BinaryExpression) {
       hasError((expression as BinaryExpression).rightExpression)
@@ -218,7 +241,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
   }
 
   private static Expression fetchError(Expression expression) {
-    if (GrulesASTUtils.isArrayItemExpression(expression)) {
+    if (AstUtils.isArrayItemExpression(expression)) {
       (expression as BinaryExpression).rightExpression
     } else if (expression instanceof BinaryExpression) {
       fetchError((expression as BinaryExpression).rightExpression)
@@ -232,7 +255,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
   }
 
   private static Expression removeError(Expression expression) {
-    if (GrulesASTUtils.isArrayItemExpression(expression)) {
+    if (AstUtils.isArrayItemExpression(expression)) {
       (expression as BinaryExpression).leftExpression
     } else if (expression instanceof BinaryExpression) {
       BinaryExpression binaryExpression = expression
@@ -264,7 +287,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
     } else if (expression instanceof BitwiseNegationExpression) {
       Expression innerExpression = convertToRuleOperators((expression as BitwiseNegationExpression).expression)
       new BitwiseNegationExpression(innerExpression)
-    } else if (GrulesASTUtils.isArrayItemExpression(expression)) {
+    } else if (AstUtils.isArrayItemExpression(expression)) {
       BinaryExpression binaryExpression = expression
       Expression leftExpression = convertToRuleOperators(binaryExpression.leftExpression)
       new BinaryExpression(leftExpression, binaryExpression.operation, binaryExpression.rightExpression)
@@ -299,18 +322,18 @@ class RulesASTTransformation extends GrulesASTTransformation {
   private static Expression createRuleApplicationExpression(MethodCallExpression methodCallExpression,
       Expression ruleExpression) {
     Expression objectExpression = methodCallExpression.objectExpression
-    Expression ruleClosureExpression = GrulesASTFactory.createClosureExpression(ruleExpression)
+    Expression ruleClosureExpression = ExpressionFactory.createClosureExpression(ruleExpression)
     if (objectExpression == VariableExpression.THIS_EXPRESSION) {
       Expression parameterExpression = methodCallExpression.method
       List<Expression> arguments = [parameterExpression, ruleClosureExpression]
-      GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToRequiredParameter, arguments)
+      ExpressionFactory.createMethodCall(RulesScriptAPI.&applyRuleToRequiredParameter, arguments)
     } else if (objectExpression instanceof ListExpression) {
       ListExpression listExpression = objectExpression
       List<String> parametersNames = []
       List<Expression> requiredParameters = []
       Map<String, Expression> optionalParameters = [:]
       listExpression.expressions.each {Expression expression ->
-        if (GrulesASTUtils.isArrayItemExpression(expression)) {
+        if (AstUtils.isArrayItemExpression(expression)) {
           BinaryExpression binaryExpression = expression
           Expression parameterNameExpression = binaryExpression.leftExpression
           parametersNames << fetchParameterName(parameterNameExpression)
@@ -340,7 +363,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
       Expression optionalParametersExpression = new MapExpression(optionalParametersMapEntryExpressions)
       List<Expression> arguments = [ruleNameExpression, requiredParametersExpression, optionalParametersExpression,
           ruleClosureExpression]
-      GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToParametersList, arguments)
+      ExpressionFactory.createMethodCall(RulesScriptAPI.&applyRuleToParametersList, arguments)
     } else if (objectExpression instanceof BinaryExpression) {
       BinaryExpression binaryExpression = objectExpression
       List<Expression> arguments = []
@@ -351,7 +374,7 @@ class RulesASTTransformation extends GrulesASTTransformation {
       }
       Expression defaultValue = binaryExpression.rightExpression
       arguments += [ruleClosureExpression, defaultValue]
-      GrulesASTFactory.createMethodCall(RulesScriptAPI.&applyRuleToOptionalParameter, arguments)
+      ExpressionFactory.createMethodCall(RulesScriptAPI.&applyRuleToOptionalParameter, arguments)
     } else {
       throw new IllegalStateException(objectExpression.class)
     }
@@ -366,12 +389,12 @@ class RulesASTTransformation extends GrulesASTTransformation {
   }
 
   private static Expression addSequenceWrapper(Expression expression) {
-    if (GrulesASTUtils.isRightShift(expression)) {
+    if (AstUtils.isRightShift(expression)) {
       BinaryExpression binaryExpression = expression
       Expression leftExpression = addSequenceWrapper(binaryExpression.leftExpression)
       new BinaryExpression(leftExpression, binaryExpression.operation, binaryExpression.rightExpression)
     } else {
-      GrulesASTFactory.createStaticMethodCall(SubrulesSeqWrapper, SubrulesSeqWrapper.&wrap, [expression])
+      ExpressionFactory.createStaticMethodCall(SubrulesSeqWrapper, SubrulesSeqWrapper.&wrap, [expression])
     }
   }
 }

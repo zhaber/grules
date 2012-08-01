@@ -19,10 +19,9 @@ import org.codehaus.groovy.runtime.MethodClosure
 /**
  * A factory for Groovy expressions used by Grules local and global AST transformations.
  */
-class GrulesASTFactory {
+class ExpressionFactory {
 
   final static String IT_NAME = 'it'
-  final static String CALL_METHOD_NAME = 'call'
 
   /**
    * Creates an instance method call that calls the given method closure.

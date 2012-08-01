@@ -15,7 +15,7 @@ import org.objectweb.asm.Opcodes
  * Transformation for a functions class. The transformation makes all instance methods static.
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
-class FunctionsASTTransformation extends GrulesASTTransformation {
+class FunctionsASTTransformation extends GrulesAstTransformation {
 
   @Override
   void visit(ASTNode[] nodes, SourceUnit source) {

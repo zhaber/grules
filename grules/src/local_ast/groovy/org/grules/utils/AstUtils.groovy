@@ -1,13 +1,15 @@
-package org.grules.ast
+package org.grules.utils
 
+import org.codehaus.groovy.ast.AnnotationNode
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.NotExpression
 import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
+import org.grules.ast.UnsupportedExpressionException
 
-class GrulesASTUtils {
+class AstUtils {
 
   /**
    * Returns token precedence.
@@ -52,6 +54,12 @@ class GrulesASTUtils {
       (expression as BinaryExpression).operation.type == Types.RIGHT_SHIFT
     } else {
       false
+    }
+  }
+
+  static boolean hasAnnotation(Expression expression, Class annotationClass) {
+    expression.annotations.any {AnnotationNode annotationNode ->
+      annotationNode.classNode.name == annotationClass.simpleName
     }
   }
 

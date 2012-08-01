@@ -6,7 +6,7 @@ import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.NotExpression
 import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
-
+import org.grules.utils.AstUtils
 
 /**
  * Transforms a rule expression between tree, infix, and postfix forms.
@@ -110,7 +110,7 @@ class RuleExpressionFormTransformer {
    * Traverses expressions child nodes and converts them to infix notation.
    */
   private static List transformChildExpressionsToInfix(Expression expression, Token operation) {
-    Integer operationPrecedence = GrulesASTUtils.fetchPrecedence(operation)
+    Integer operationPrecedence = AstUtils.fetchPrecedence(operation)
     if (expression instanceof BinaryExpression) {
       BinaryExpression binaryExpression = expression
       List leftExpression = transformToInfixExpression(binaryExpression.leftExpression, operationPrecedence)
@@ -138,9 +138,9 @@ class RuleExpressionFormTransformer {
     if (RuleExpressionVerifier.isAtomExpression(expression)) {
       return [expression]
     }
-    Token operation = GrulesASTUtils.fetchOperationToken(expression)
+    Token operation = AstUtils.fetchOperationToken(expression)
     List infixExpression = transformChildExpressionsToInfix(expression, operation)
-    if (GrulesASTUtils.fetchPrecedence(operation) >= maxPrecedence) {
+    if (AstUtils.fetchPrecedence(operation) >= maxPrecedence) {
       infixExpression
     } else {
       Integer lineNumber = expression.lineNumber

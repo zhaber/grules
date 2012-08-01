@@ -12,6 +12,7 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.ast.expr.UnaryMinusExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.grules.script.expressions.FunctionTerm
+import org.grules.utils.AstUtils
 
 /**
  * Wraps method calls into closures.
@@ -36,11 +37,11 @@ class ClosureWrapper {
    */
   static Expression wrapInClosures(MethodCallExpression expression) {
     List<Expression> arguments = (expression.arguments as ArgumentListExpression).expressions
-    arguments = [GrulesASTFactory.createItVariable()] + arguments
+    arguments = [ExpressionFactory.createItVariable()] + arguments
     Expression methodExpression = expression.method
-    Expression closureMethodCallExpression = GrulesASTFactory.createMethodCall(methodExpression, arguments)
-    Expression closure = GrulesASTFactory.createClosureExpression(closureMethodCallExpression)
-    GrulesASTFactory.createConstructorCall(FunctionTerm, [closure, methodToConstantExpression(methodExpression)])
+    Expression closureMethodCallExpression = ExpressionFactory.createMethodCall(methodExpression, arguments)
+    Expression closure = ExpressionFactory.createClosureExpression(closureMethodCallExpression)
+    ExpressionFactory.createConstructorCall(FunctionTerm, [closure, methodToConstantExpression(methodExpression)])
   }
 
   /**
@@ -48,20 +49,20 @@ class ClosureWrapper {
    */
   static Expression wrapInClosures(VariableExpression expression) {
     String variableName = (expression as VariableExpression).name
-    List<Expression> arguments = [GrulesASTFactory.createItVariable()]
-    Expression closureMethodCallExpression = GrulesASTFactory.createMethodCall(variableName, arguments)
-    Expression closure = GrulesASTFactory.createClosureExpression(closureMethodCallExpression)
-    GrulesASTFactory.createConstructorCall(FunctionTerm, [closure, new ConstantExpression(variableName)])
+    List<Expression> arguments = [ExpressionFactory.createItVariable()]
+    Expression closureMethodCallExpression = ExpressionFactory.createMethodCall(variableName, arguments)
+    Expression closure = ExpressionFactory.createClosureExpression(closureMethodCallExpression)
+    ExpressionFactory.createConstructorCall(FunctionTerm, [closure, new ConstantExpression(variableName)])
   }
 
   /**
    * Creates a method call with a name of the passed string and wraps it into a closure.
    */
   static Expression wrapInClosures(GStringExpression expression) {
-    Expression itVariable = GrulesASTFactory.createItVariable()
-    Expression closureMethodCallExpression = GrulesASTFactory.createMethodCall(expression, [itVariable])
-    Expression closure = GrulesASTFactory.createClosureExpression(closureMethodCallExpression)
-    GrulesASTFactory.createConstructorCall(FunctionTerm, [closure, expression])
+    Expression itVariable = ExpressionFactory.createItVariable()
+    Expression closureMethodCallExpression = ExpressionFactory.createMethodCall(expression, [itVariable])
+    Expression closure = ExpressionFactory.createClosureExpression(closureMethodCallExpression)
+    ExpressionFactory.createConstructorCall(FunctionTerm, [closure, expression])
   }
 
   /**
@@ -69,7 +70,7 @@ class ClosureWrapper {
    */
   static Expression wrapInClosures(BinaryExpression expression) {
     Expression leftExpression = wrapInClosures(expression.leftExpression)
-    if (GrulesASTUtils.isArrayItemExpression(expression)) {
+    if (AstUtils.isArrayItemExpression(expression)) {
       new BinaryExpression(leftExpression, expression.operation, expression.rightExpression)
     } else {
       Expression rightExpression = wrapInClosures(expression.rightExpression)

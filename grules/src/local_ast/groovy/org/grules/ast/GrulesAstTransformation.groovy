@@ -12,7 +12,7 @@ import org.codehaus.groovy.transform.ASTTransformation
 /**
  * The class is common ancestor for grules script transformations.
  */
-abstract class GrulesASTTransformation implements ASTTransformation {
+abstract class GrulesAstTransformation implements ASTTransformation {
 
   private GrulesASTTransformationLogger logger
   private GroovyClassVisitor astNodeLoggerVisitor

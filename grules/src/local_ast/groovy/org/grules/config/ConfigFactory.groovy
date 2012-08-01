@@ -6,12 +6,12 @@ package org.grules.config
 interface ConfigFactory {
 
   /**
-   * Creates a configuration based on the provided script file.
+   * Creates a configuration based on the specified script class.
    */
   Config createConfig(Class<? extends Script> configClass)
 
   /**
-   * Creates a configuration based on the script file located at the given path.
+   * Creates a configuration based on a script file.
    */
   Config createConfig()
 

@@ -3,8 +3,8 @@ package org.grules.functions.lib
 import static org.grules.TestScriptEntities.*
 
 import org.grules.ValidationException
-import org.grules.functions.ConverterBooleanResult
 import org.joda.time.DateTime
+
 import spock.lang.Specification
 
 enum TestEnum {
@@ -43,9 +43,9 @@ class TypeFunctionsTest extends Specification {
 
 	def "toBoolean"() {
 		expect:
-			!(typeFunctions.toBoolean('') as ConverterBooleanResult).value
-			(typeFunctions.toBoolean(ZERO_STRING) as ConverterBooleanResult).value
-			!(typeFunctions.toBoolean(0) as ConverterBooleanResult).value
+			!typeFunctions.toBoolean('')
+			typeFunctions.toBoolean(ZERO_STRING)
+			!typeFunctions.toBoolean(0)
 	}
 
   def "toBooleanList"() {
