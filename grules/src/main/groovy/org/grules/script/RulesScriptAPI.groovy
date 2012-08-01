@@ -5,7 +5,6 @@ import org.grules.script.expressions.SubrulesSeq
 interface RulesScriptAPI {
   void include(Class<? extends Script> includedScriptClass)
   void validate(Closure<Map<String, Object>> closure)
-  void rules(Closure<Void> closure)
   void changeGroup(String group)
   void addParameter(String name, value)
   void applyRuleToRequiredParameter(String name, Closure<SubrulesSeq> subrulesSeqClosure)

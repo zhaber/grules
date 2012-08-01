@@ -11,8 +11,16 @@ class ValidationException extends GrulesException {
     this.errorProperties = new ValidationErrorProperties()
   }
 
-  ValidationException(String message) {
-    this.errorProperties = new ValidationErrorProperties(message)
+  ValidationException(errorId) {
+    this.errorProperties = new ValidationErrorProperties(errorId)
+  }
+
+  ValidationException(errorId, String message) {
+    this.errorProperties = new ValidationErrorProperties(errorId, message)
+  }
+
+  ValidationException(errorId, String message, String parameter) {
+    this.errorProperties = new ValidationErrorProperties(errorId, message, parameter)
   }
 
   ValidationException(Map<String, Object> errorProperties) {
@@ -22,5 +30,4 @@ class ValidationException extends GrulesException {
   void addProperties(ValidationErrorProperties properties) {
     errorProperties.merge(properties)
   }
-
 }

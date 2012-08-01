@@ -1,29 +1,48 @@
 package org.grules
 
 class ValidationErrorProperties {
+  final static String PARAMETER = 'parameter'
   final static String INPUT_ELEMENT = 'element'
   final static String REDIRECT_URL = 'url'
-  final static String MESSAGE = 'msg'
+  final static String ERROR_ID = 'errorId'
+  final static String MESSAGE = 'message'
   final static String VALUE = 'value'
   final static String SUBRULE_INDEX = 'subruleIndex'
   final static String FUNCTION_NAME = 'functionName'
+  final static String EXCEPTION = 'exception'
 
   private final Map<String, Object> errorProperties
 
   ValidationErrorProperties() {
-    this.errorProperties = [:]
+    this([:])
   }
 
   ValidationErrorProperties(Map<String, Object> errorProperties) {
     this.errorProperties = errorProperties
   }
 
-  ValidationErrorProperties(String message, Map<String, Object> errorProperties) {
-    this.errorProperties = [(MESSAGE): message] + errorProperties
+  ValidationErrorProperties(errorId, Map<String, Object> errorProperties) {
+    this([(ERROR_ID): errorId] + errorProperties)
   }
 
-  ValidationErrorProperties(String message) {
-    this.errorProperties = [(MESSAGE): message]
+  ValidationErrorProperties(errorId, String message, Map<String, Object> errorProperties) {
+    this(errorId, [(MESSAGE): message] + errorProperties)
+  }
+
+  ValidationErrorProperties(errorId, String message, String parameter, Map<String, Object> errorProperties) {
+    this(errorId, message, [(PARAMETER): parameter] + errorProperties)
+  }
+
+  ValidationErrorProperties(errorId) {
+    this(errorId, [:])
+  }
+
+  ValidationErrorProperties(errorId, String message) {
+    this(errorId, message, [:])
+  }
+
+  ValidationErrorProperties(errorId, String message, String parameter) {
+    this(errorId, message, parameter, [:])
   }
 
   void merge(ValidationErrorProperties errorerrorProperties) {
@@ -51,10 +70,31 @@ class ValidationErrorProperties {
   }
 
   /**
+   * An exception that causes the error.
+   */
+  Exception getException() {
+    errorProperties[EXCEPTION]
+  }
+
+  /**
    * Sets an error message string.
    */
   void setMessage(String message) {
     errorProperties[MESSAGE] = message
+  }
+
+  /**
+   * An error code.
+   */
+  def getErrorId() {
+    errorProperties[ERROR_ID]
+  }
+
+  /**
+   * Sets an error id. It can be any object that identifies the error.
+   */
+  void setErrorId(errorId) {
+    errorProperties[ERROR_ID] = errorId
   }
 
   /**
@@ -79,6 +119,13 @@ class ValidationErrorProperties {
   }
 
   /**
+   * Checks if the validation error specifies an error id.
+   */
+  boolean hasErrorId() {
+    errorProperties.containsKey(ERROR_ID)
+  }
+
+  /**
    * Checks if the validation error specifies a redirect URL that has to used on validation error event.
    */
   boolean hasRedirectUrl() {
@@ -90,6 +137,13 @@ class ValidationErrorProperties {
    */
   String getInputElement() {
     errorProperties[INPUT_ELEMENT]
+  }
+
+  /**
+   * A name of the parameter that did not pass validation.
+   */
+  String getParameter() {
+    errorProperties[PARAMETER]
   }
 
   /**
@@ -131,7 +185,7 @@ class ValidationErrorProperties {
    * Checks if the validation error specifies any action that should be takes on validation error event.
    */
   boolean hasAction() {
-    hasRedirectUrl() || hasMessage()
+    hasRedirectUrl() || hasErrorId()
   }
 
 }

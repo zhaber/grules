@@ -26,6 +26,7 @@ class TypeFunctionsTest extends Specification {
 	static final LONG = POSITIVE_LONG
 	static final NEGATIVE_INTEGER = -POSITIVE_INTEGER
 	static final INTEGER_STRING = INTEGER.toString()
+  static final INVALID_INTEGER_STRING = INTEGER_STRING + '?'
 	static final POSITIVE_INTEGER_STRING = INTEGER_STRING
 	static final NEGATIVE_INTEGER_STRING = '-' + POSITIVE_INTEGER_STRING
 	static final NEGATIVE_BIGDECIMAL_STRING = '-' + POSITIVE_BIGDECIMAL_STRING
@@ -40,6 +41,15 @@ class TypeFunctionsTest extends Specification {
 		expect:
 			typeFunctions.toBigDecimal(BIGDECIMAL_STRING) == BIGDECIMAL
 	}
+
+  def "Validation exception internal error"() {
+    when:
+      typeFunctions.toInt(INVALID_INTEGER_STRING)
+    then:
+      ValidationException e = thrown(ValidationException)
+    expect:
+      e.errorProperties.exception instanceof NumberFormatException
+  }
 
 	def "toBoolean"() {
 		expect:

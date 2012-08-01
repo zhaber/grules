@@ -7,17 +7,17 @@ import org.grules.script.RulesScriptResult
 
 import spock.lang.Specification
 
-class ErrorMessageTest extends Specification {
+class ErrorsTest extends Specification {
 
-  def "Error messages is reported if a request parameter is invalid"() {
+  def "Error id is reported if a request parameter is invalid"() {
     setup:
       def parameters = [(PARAMETER_NAME): PARAMETER_VALUE, (PARAMETER_NAME_AUX): PARAMETER_VALUE_AUX]
-      RulesScriptResult result = GrulesAPI.applyRules(ErrorMessagesGrules, parameters)
+      RulesScriptResult result = GrulesAPI.applyRules(ErrorsGrules, parameters)
     expect:
       result.invalidParameters.containsKey(PARAMETER_NAME)
-      result.invalidParameters.get(PARAMETER_NAME).message == ERROR_MSG
+      result.invalidParameters.get(PARAMETER_NAME).errorId == ERROR_ID
       result.invalidParameters.containsKey(PARAMETER_NAME_AUX)
-      result.invalidParameters.get(PARAMETER_NAME_AUX).message == ERROR_MSG
+      result.invalidParameters.get(PARAMETER_NAME_AUX).errorId == ERROR_ID
   }
 
 }

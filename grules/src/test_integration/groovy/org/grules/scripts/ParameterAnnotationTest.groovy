@@ -7,7 +7,7 @@ import org.grules.script.RulesScriptResult
 
 import spock.lang.Specification
 
-class ParametersAnnotationTest extends Specification {
+class ParameterAnnotationTest extends Specification {
 
   def "Parameter annotation"() {
     setup:

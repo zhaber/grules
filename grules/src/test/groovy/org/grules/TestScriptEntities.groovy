@@ -24,8 +24,8 @@ class TestScriptEntities {
 	static final String CONSTANT_VALUE = 'constantValue'
 	static final String DEFAULT_VALUE = 'defaultValue'
 	static final String DATE_FORMAT = 'yyyy-MM-dd'
-	static final String ERROR_MSG = 'errorMessage'
-	static final String ERROR_MSG_AUX = 'errorMessageAux'
+	static final String ERROR_ID = 'errorId'
+  static final String ERROR_MESSAGE = 'errorMessage'
 	static final Integer VALID_INTEGER = 1
 	static final String VALID_INTEGER_STRING = VALID_INTEGER.toString()
 	static final String FUNCTION_ARGUMENT = VALID_INTEGER_STRING
@@ -39,5 +39,7 @@ class TestScriptEntities {
   static final OnValidationEventAction NOT_VALIDATED_PARAMETERS_ACTION = CONFIG.notValidatedParametersAction
   static final String JOIN_SEPARATOR = ' '
   static final Closure FUNCTION_FOR_LIST = {list -> list.join(JOIN_SEPARATOR)}
+  static final Closure FUNCTION_FOR_ONE_ARGUMENT = {it + 1}
+  static final Closure FUNCTION_FOR_ONE_ARGUMENT_AUX = {it * 2}
   static final Closure FUNCTION_FOR_TWO_ARGUMENTS = {value1, value2 -> value1 + value2}
 }

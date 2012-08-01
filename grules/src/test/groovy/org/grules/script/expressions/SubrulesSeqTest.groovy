@@ -56,14 +56,14 @@ class SubrulesSeqTest extends Specification{
 	def "Apply subrule that contains error action"() {
 		setup:
 			def subrulesSeq = new SubrulesSeq()
-			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties(ERROR_MSG))
+			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties(ERROR_ID))
 			subrulesSeq.add(failingSubrule)
 		when:
 			subrulesSeq.apply(INVALID_PARAMETER_VALUE)
 		then:
 			ValidationException e = thrown(ValidationException)
 		expect:
-		  e.errorProperties.message == ERROR_MSG
+		  e.errorProperties.errorId == ERROR_ID
 	}
 
 	def "saves subrule index"() {
@@ -90,14 +90,14 @@ class SubrulesSeqTest extends Specification{
 		then:
 			ValidationException e = thrown(ValidationException)
 		expect:
-			!e.errorProperties.hasMessage()
+			!e.errorProperties.hasErrorId()
 	}
 
 	def "Apply subrule that does not contain error action but subsequent rule does"() {
 		setup:
 			def subrulesSeq = new SubrulesSeq()
 			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties())
-			Subrule nextSubrule = createFailingSubrule(new ValidationErrorProperties(ERROR_MSG))
+			Subrule nextSubrule = createFailingSubrule(new ValidationErrorProperties(ERROR_ID))
 			subrulesSeq.add(failingSubrule)
 			subrulesSeq.add(nextSubrule)
 		when:
@@ -105,13 +105,13 @@ class SubrulesSeqTest extends Specification{
 		then:
 			ValidationException e = thrown(ValidationException)
 		expect:
-			e.errorProperties.message == ERROR_MSG
+			e.errorProperties.errorId == ERROR_ID
 	}
 
   def "Replaces placeholder with original value"() {
     setup:
       def subrulesSeq = new SubrulesSeq()
-      Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties(ERROR_MSG + '_'))
+      Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties(ERROR_ID, ERROR_MESSAGE + '_'))
       subrulesSeq.add(createToIntConverter())
       subrulesSeq.add(failingSubrule)
     when:
@@ -119,7 +119,7 @@ class SubrulesSeqTest extends Specification{
     then:
       ValidationException e = thrown(ValidationException)
     expect:
-      e.errorProperties.message == ERROR_MSG + VALID_INTEGER_STRING
+      e.errorProperties.message == ERROR_MESSAGE + VALID_INTEGER_STRING
   }
 
 	def "Apply sequence to invalid term"() {

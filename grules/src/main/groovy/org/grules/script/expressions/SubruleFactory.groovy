@@ -19,14 +19,14 @@ class SubruleFactory {
   }
 
   /**
-   * Creates a subrule based on the given term and an error message.
+   * Creates a subrule based on the given term and an error id.
    *
    * @param term a term
-   * @param errorMessage an error message
+   * @param errorId an error id
    * @return a subrule
    */
-  static Subrule create(Term term, String errorMessage) {
-     new Subrule(term, new ValidationErrorProperties(errorMessage))
+  static Subrule create(Term term, String errorId) {
+     new Subrule(term, new ValidationErrorProperties(errorId))
   }
 
 

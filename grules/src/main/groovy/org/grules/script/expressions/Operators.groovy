@@ -12,14 +12,21 @@ class Operators {
   class TermOperators {
 
     /**
-     * Binds an error message to a current subrule.
+     * Binds an error id to a subrule.
      */
-    Subrule getAt(String message) {
-      SubruleFactory.create(this, new ValidationErrorProperties(message))
+    Subrule getAt(errorId) {
+      SubruleFactory.create(this, new ValidationErrorProperties(errorId))
     }
 
     /**
-      * Binds a redirect URL to a current subrule.
+     * Binds an error id to a subrule. This method is needed to override native "get property" Groovy method.
+     */
+    Subrule getAt(String errorId) {
+      SubruleFactory.create(this, new ValidationErrorProperties(errorId))
+    }
+
+    /**
+     * Binds a error properties to a current subrule.
      */
     Subrule getAt(ValidationErrorProperties errorProperties) {
       SubruleFactory.create(this, errorProperties)
@@ -120,10 +127,18 @@ class Operators {
     }
 
     /**
-      * Binds an error message to a subrule implemented as a closure.
-      */
-    Subrule getAt(String message) {
-      SubruleFactory.create(new ClosureTerm(this), new ValidationErrorProperties(message))
+     * Binds an error id to a subrule implemented as a closure.
+     */
+    Subrule getAt(errorId) {
+      SubruleFactory.create(new ClosureTerm(this), new ValidationErrorProperties(errorId))
+    }
+
+    /**
+     * Binds an error id to a subrule implemented as a closure. This method is needed to override native
+     * "get property" Groovy method.
+     */
+    Subrule getAt(String errorId) {
+      SubruleFactory.create(new ClosureTerm(this), new ValidationErrorProperties(errorId))
     }
 
     /**
@@ -143,7 +158,7 @@ class Operators {
   }
 
   /**
-   * <code>>></code> operator that combines two subrules in a sequence such that a result of application of a first 
+   * <code>>></code> operator that combines two subrules in a sequence such that a result of application of a first
    * subrule is passed to a second subrule.
    */
   @Category(SubrulesSeq)

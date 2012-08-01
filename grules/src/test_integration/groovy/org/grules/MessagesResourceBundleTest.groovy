@@ -13,7 +13,7 @@ class MessagesResourceBundleTest extends Specification {
     setup:
       def resourceBundle = new MessagesResourceBundle(new GrulesConfigFactory().createConfig())
     expect:
-      resourceBundle.messages[TestScriptEntities.ERROR_MSG] == TestScriptEntities.ERROR_MSG
+      resourceBundle.messages[TestScriptEntities.ERROR_ID] == TestScriptEntities.ERROR_ID
   }
 
   def "MissingResourceException is not thrown if messages are not read from resource bundle"() {

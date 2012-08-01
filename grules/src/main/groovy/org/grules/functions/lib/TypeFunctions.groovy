@@ -4,6 +4,7 @@ import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 
+import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
 import org.grules.functions.Converter
 import org.grules.functions.Functions
@@ -14,14 +15,22 @@ import org.grules.functions.Functions
 @Functions
 class TypeFunctions {
 
+  static final String NEGATIVE_ERROR_ID = 'Value is negative'
+  static final String NOT_POSITIVE_ERROR_ID = 'Value is not positive'
+
+  private static Exception createValidationException(Exception e) {
+    new ValidationException([(ValidationErrorProperties.MESSAGE): e.message,
+      (ValidationErrorProperties.EXCEPTION): e])
+  }
+
   /**
    * Parse a String into a BigDecimal.
    */
   BigDecimal toBigDecimal(String value) {
-    if (value.isBigDecimal()) {
+    try {
       value.toBigDecimal()
-    } else {
-      throw new ValidationException()
+    } catch (NumberFormatException e) {
+      throw createValidationException(e)
     }
   }
 
@@ -88,7 +97,7 @@ class TypeFunctions {
    */
   Character toChar(String string) {
     if (string.isEmpty()) {
-      throw new ValidationException()
+      throw new ValidationException('String is empty')
     } else {
       string[0]
     }
@@ -102,7 +111,7 @@ class TypeFunctions {
     try {
       dateFormatter.parse(value)
     } catch (ParseException e) {
-      throw new ValidationException(e.message)
+      throw createValidationException(e)
     }
   }
 
@@ -110,10 +119,10 @@ class TypeFunctions {
    * Parse a String into a Double.
    */
   Double toDouble(String value) {
-    if (value.isDouble()) {
+    try {
       value.toDouble()
-    } else {
-      throw new ValidationException()
+    } catch (NumberFormatException e){
+      throw createValidationException(e)
     }
   }
 
@@ -124,7 +133,7 @@ class TypeFunctions {
     try {
       value.asType(enumClass)
     } catch (IllegalArgumentException e) {
-      throw new ValidationException()
+      throw new ValidationException(e.message)
     }
   }
 
@@ -132,10 +141,10 @@ class TypeFunctions {
    * Parse a String into a Float.
    */
   Float toFloat(String value) {
-    if (value.isFloat()) {
+    try {
       value.toFloat()
-    } else {
-      throw new ValidationException()
+    } catch (NumberFormatException e){
+      throw createValidationException(e)
     }
   }
 
@@ -147,7 +156,7 @@ class TypeFunctions {
     if (bigDecimalValue >= 0) {
       bigDecimalValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NEGATIVE_ERROR_ID)
     }
   }
 
@@ -159,7 +168,7 @@ class TypeFunctions {
     if (doubleValue >= 0) {
       doubleValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NEGATIVE_ERROR_ID)
     }
   }
 
@@ -171,7 +180,7 @@ class TypeFunctions {
     if (floatValue >= 0) {
       floatValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NEGATIVE_ERROR_ID)
     }
   }
 
@@ -183,7 +192,7 @@ class TypeFunctions {
     if (bigDecimalValue > 0) {
       bigDecimalValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NOT_POSITIVE_ERROR_ID)
     }
   }
 
@@ -195,7 +204,7 @@ class TypeFunctions {
     if (doubleValue > 0) {
       doubleValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NOT_POSITIVE_ERROR_ID)
     }
   }
 
@@ -207,7 +216,7 @@ class TypeFunctions {
     if (floatValue > 0) {
       floatValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NOT_POSITIVE_ERROR_ID)
     }
   }
 
@@ -215,10 +224,10 @@ class TypeFunctions {
    * Parse a String into a Long.
    */
   Long toLong(String value) {
-    if (value.isLong()) {
+    try {
       value.toLong()
-    } else {
-      throw new ValidationException()
+    } catch (NumberFormatException e){
+      throw createValidationException(e)
     }
   }
 
@@ -230,7 +239,7 @@ class TypeFunctions {
     if (longValue >= 0) {
       longValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NEGATIVE_ERROR_ID)
     }
   }
 
@@ -242,7 +251,7 @@ class TypeFunctions {
     if (longValue > 0) {
       longValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NOT_POSITIVE_ERROR_ID)
     }
   }
 
@@ -250,10 +259,10 @@ class TypeFunctions {
    * Parse a String into an Integer.
    */
   Integer toInt(String value) {
-    if (value.isInteger()) {
+    try {
       value.toInteger()
-    } else {
-      throw new ValidationException()
+    } catch (NumberFormatException e){
+      throw createValidationException(e)
     }
   }
 
@@ -265,7 +274,7 @@ class TypeFunctions {
     if (intValue >= 0) {
       intValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NEGATIVE_ERROR_ID)
     }
   }
 
@@ -277,7 +286,7 @@ class TypeFunctions {
     if (intValue > 0) {
       intValue
     } else {
-      throw new ValidationException()
+      throw new ValidationException(NOT_POSITIVE_ERROR_ID)
     }
   }
 }

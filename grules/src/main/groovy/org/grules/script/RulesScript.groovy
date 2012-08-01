@@ -297,12 +297,13 @@ class RulesScript implements RulesScriptAPI {
 
   @Override
   void validate(Closure<Map<String, Object>> closure) {
-    throw new UnsupportedOperationException()
-  }
-
-  @Override
-  void rules(Closure<Void> closure) {
-    throw new UnsupportedOperationException()
+    try {
+      closure().each {String name, value ->
+        variablesBinding.addParameter(name, value, currentGroup)
+      }
+    } catch (ValidationException e) {
+      invalidParameters[currentGroup].put(e.errorProperties.parameter, e.errorProperties)
+    }
   }
 
   @Override
@@ -314,5 +315,4 @@ class RulesScript implements RulesScriptAPI {
   void addParameter(String name, value) {
     variablesBinding.addParameter(name, value, currentGroup)
   }
-
 }
