@@ -133,4 +133,16 @@ class MathFunctionsTest extends Specification {
 		expect:
 		  mathFunctions.round(0.8) == 1
 	}
+
+  def "setLowerLimit"() {
+    expect:
+      mathFunctions.setLowerLimit(1, 2) == 2
+      mathFunctions.setLowerLimit(3, 2) == 3
+  }
+
+  def "setUpperLimit"() {
+    expect:
+      mathFunctions.setUpperLimit(1, 2) == 1
+      mathFunctions.setUpperLimit(3, 2) == 2
+  }
 }

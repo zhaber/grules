@@ -24,6 +24,13 @@ class StringFunctions {
   }
 
   /**
+   * @see {@link String#format(String, Object...)}
+   */
+  String format(String value, Object... args) {
+    String.format(value, args)
+  }
+
+  /**
    * Checks that a value ends with the specified suffix.
    */
   boolean endsWith(String value, String suffix) {
@@ -38,10 +45,24 @@ class StringFunctions {
   }
 
   /**
+   * Checks that a string matches <code>/[a-zA-Z\s]+/</code>.
+   */
+  boolean isAlphaSpace(String value) {
+    value ==~ /[a-zA-Z\s]+/
+  }
+
+  /**
    * Checks that a string matches <code>/[a-zA-Z0-9]+/</code>.
    */
   boolean isAlphanum(String value) {
     value ==~ /[a-zA-Z0-9]+/
+  }
+
+  /**
+   * Checks that a string matches <code>/[a-zA-Z0-9\s]+/</code>.
+   */
+  boolean isAlphanumSpace(String value) {
+    value ==~ /[a-zA-Z0-9\s]+/
   }
 
   /**
@@ -106,7 +127,6 @@ class StringFunctions {
   String substring(String value, Integer beginIndex, Integer endIndex = -1) {
     value[beginIndex..endIndex]
   }
-
 
   /**
    * Checks if a value starts with the specified prefix.

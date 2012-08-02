@@ -1,5 +1,7 @@
 package org.grules.functions.lib
 
+import java.text.DecimalFormat
+
 import org.grules.functions.Converter
 import org.grules.functions.Functions
 
@@ -21,6 +23,35 @@ class CommonFunctions {
    */
   boolean areIn(List values, Set list) {
     isEvery(values) {isIn(it, list)}
+  }
+
+  /**
+   * Iterates through this aggregate Object transforming each item into a new value using the <code>transform</code>
+   * closure, returning a list of transformed values.
+   *
+   * @see {@link org.codehaus.groovy.runtime.DefaultGroovyMethods#collect(java.util.Collection, groovy.lang.Closure)}
+   */
+  List collect(List values, Closure closure) {
+    // codenarc bug
+    values.collect {
+      closure(it)
+    }
+  }
+
+  /**
+   * @see {@link java.text.NumberFormat#format(double)}
+   */
+  String decimalFormat(Double value, String pattern) {
+    DecimalFormat decimalFormat = new DecimalFormat(pattern)
+    decimalFormat.format(value)
+  }
+
+  /**
+   * @see {@link java.text.NumberFormat#format(long)}
+   */
+  String decimalFormat(Long value, String pattern) {
+    DecimalFormat decimalFormat = new DecimalFormat(pattern)
+    decimalFormat.format(value)
   }
 
   /**

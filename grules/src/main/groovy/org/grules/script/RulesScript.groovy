@@ -6,6 +6,7 @@ import org.grules.ValidationException
 import org.grules.config.GrulesConfig
 import org.grules.script.expressions.InvalidValidatorException
 import org.grules.script.expressions.Skip
+import org.grules.script.expressions.Subrule
 import org.grules.script.expressions.SubrulesSeq
 import org.grules.script.expressions.SubrulesSeqWrapper
 
@@ -144,14 +145,17 @@ class RulesScript implements RulesScriptAPI {
    */
   private void applyRule(String parameterName, parameterValue, Closure<SubrulesSeq> subrulesSeqClosure) {
     try {
+      SubrulesSeq subrulesSeq = subrulesSeqClosure.call()
       def value = parameterValue
       try {
-        value = SubrulesSeqWrapper.wrap(CONFIG.defaultFunctions).apply(parameterValue)
+        List<Subrule> defaultFunctions = CONFIG.defaultFunctions.findAll { Subrule defaultFunction ->
+          !subrulesSeq.hasSkipFunction(defaultFunction)
+        }
+        value = SubrulesSeqWrapper.wrap(defaultFunctions).apply(parameterValue)
       } catch (ValidationException e) {
         e.errorProperties.subruleIndex = -e.errorProperties.subruleIndex
         throw e
       }
-      SubrulesSeq subrulesSeq = subrulesSeqClosure.call()
       def cleanValue = subrulesSeq.apply(value)
       variablesBinding.addCleanParameterValue(parameterName, cleanValue, currentGroup)
     } catch (MissingParameterException e){

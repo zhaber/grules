@@ -11,6 +11,8 @@ import org.codehaus.groovy.ast.expr.GStringExpression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.ast.expr.UnaryMinusExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
+import org.codehaus.groovy.runtime.MethodClosure
+import org.grules.script.RulesScriptAPI
 import org.grules.script.expressions.FunctionTerm
 import org.grules.utils.AstUtils
 
@@ -32,13 +34,21 @@ class ClosureWrapper {
     new ConstantExpression(stringWriter.toString())
   }
 
+  private static boolean isSkipFunction(Expression expression) {
+    String skipMethodName = (RulesScriptAPI.&skip as MethodClosure).method
+    expression instanceof ConstantExpression && (expression as ConstantExpression).value == skipMethodName
+  }
+
   /**
    * Wraps a method call into a closure.
    */
   static Expression wrapInClosures(MethodCallExpression expression) {
+    Expression methodExpression = expression.method
+    if (isSkipFunction(methodExpression)) {
+      return expression
+    }
     List<Expression> arguments = (expression.arguments as ArgumentListExpression).expressions
     arguments = [ExpressionFactory.createItVariable()] + arguments
-    Expression methodExpression = expression.method
     Expression closureMethodCallExpression = ExpressionFactory.createMethodCall(methodExpression, arguments)
     Expression closure = ExpressionFactory.createClosureExpression(closureMethodCallExpression)
     ExpressionFactory.createConstructorCall(FunctionTerm, [closure, methodToConstantExpression(methodExpression)])

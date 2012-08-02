@@ -11,9 +11,6 @@ class SubrulesSeq {
   private final List<Subrule> subrules = []
   private final List<String> skipFunctions = []
 
-  protected SubrulesSeq() {
-  }
-
   /**
    * Applies subrules in order. If validation error is thrown and the source subrule does not have an error action,
    * it is taken from the first rule that comes after it and specifies non-empty error action, and if there is no such
@@ -60,8 +57,12 @@ class SubrulesSeq {
     this
   }
 
-  void addSkipFunction(String function) {
-    skipFunctions << function
+  void addSkipFunction(String functionName) {
+    skipFunctions << functionName
+  }
+
+  boolean hasSkipFunction(Subrule functionSubrule) {
+    (functionSubrule.term instanceof FunctionTerm) && (functionSubrule.term as FunctionTerm).name in skipFunctions
   }
 
   @Override

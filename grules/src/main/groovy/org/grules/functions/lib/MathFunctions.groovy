@@ -219,4 +219,12 @@ class MathFunctions {
     Math.round(value)
   }
 
+  Number setLowerLimit(Number value, Number min) {
+    value > min ? value : min
+  }
+
+  Number setUpperLimit(Number value, Number max) {
+    value < max ? value : max
+  }
+
 }

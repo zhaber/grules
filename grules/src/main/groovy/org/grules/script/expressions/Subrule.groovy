@@ -10,7 +10,7 @@ import org.grules.utils.ClassUtils
  */
 class Subrule {
 
-  private final Term term
+  final Term term
   final ValidationErrorProperties errorProperties
 
   Subrule(Term term, ValidationErrorProperties errorProperties) {

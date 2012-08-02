@@ -31,6 +31,11 @@ class StringFunctionsTest extends Specification {
 		  stringFunctions.endsWith(STRING, SUFFIX)
 	}
 
+  def "format"() {
+    expect:
+      stringFunctions.format('%d', 1) == '1'
+  }
+
 	def "isAlpha"() {
 		expect:
 		  stringFunctions.isAlpha(ALPHA_STRING)

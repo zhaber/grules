@@ -13,6 +13,11 @@ class CommonFunctionsTest extends Specification {
       !commonFunctions.areIn([PARAMETER_VALUE, PARAMETER_VALUE_AUX], [PARAMETER_VALUE])
   }
 
+  def "decimalFormat"() {
+    expect:
+      commonFunctions.decimalFormat(1, '0.0') == '1.0'
+  }
+
 	def "eq"() {
 		expect:
 			commonFunctions.isEqual(PARAMETER_VALUE, PARAMETER_VALUE)
