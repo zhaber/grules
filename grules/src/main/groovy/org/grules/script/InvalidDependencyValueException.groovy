@@ -4,6 +4,9 @@ import groovy.transform.InheritConstructors
 
 import org.grules.GrulesException
 
+/**
+ * Signals that value on which a rule depends is invalid.
+ */
 @InheritConstructors
-class InvalidDependencyParameterException extends GrulesException {
+class InvalidDependencyValueException extends GrulesException {
 }

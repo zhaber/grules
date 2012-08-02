@@ -24,15 +24,6 @@ class SubrulesSeqTest extends Specification{
 			value == VALID_INTEGER_STRING
 	}
 
-  def "Default converters are applied"() {
-    setup:
-      def subrulesSeq = new SubrulesSeq()
-      subrulesSeq.add(createNopTerm())
-      def value = subrulesSeq.apply(' ' + PARAMETER_VALUE)
-    expect:
-      value == PARAMETER_VALUE.trim()
-  }
-
 	def "Apply subrules sequence from two subrules to valid term"() {
 		setup:
 			def subrulesSeq = new SubrulesSeq()
@@ -46,18 +37,10 @@ class SubrulesSeqTest extends Specification{
 		  value == VALID_INTEGER
 	}
 
-	private static createFailingSubrule(ValidationErrorProperties errorProperties) {
-		new Subrule({} as Term, errorProperties) {
-			@Override
-			def apply(value) {throw new ValidationException()}
-		}
-	}
-
 	def "Apply subrule that contains error action"() {
 		setup:
 			def subrulesSeq = new SubrulesSeq()
-			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties(ERROR_ID))
-			subrulesSeq.add(failingSubrule)
+			subrulesSeq.add(createFailingSubrule(new ValidationErrorProperties(ERROR_ID)))
 		when:
 			subrulesSeq.apply(INVALID_PARAMETER_VALUE)
 		then:
@@ -69,7 +52,7 @@ class SubrulesSeqTest extends Specification{
 	def "saves subrule index"() {
 		setup:
 			def subrulesSeq = new SubrulesSeq()
-			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties())
+			Subrule failingSubrule = createFailingSubrule()
 			subrulesSeq.add(createIsIntegerValidator())
 			subrulesSeq.add(failingSubrule)
 		when:
@@ -77,13 +60,13 @@ class SubrulesSeqTest extends Specification{
 		then:
 			ValidationException e = thrown(ValidationException)
 		expect:
-			e.errorProperties.subruleIndex == 1
-	}
+			e.errorProperties.subruleIndex == subrulesSeq.subrules.indexOf(failingSubrule) + 1
+ 	}
 
 	def "Apply subrule that does not contain error action"() {
 		setup:
 			def subrulesSeq = new SubrulesSeq()
-			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties())
+			Subrule failingSubrule = createFailingSubrule()
 			subrulesSeq.add(failingSubrule)
 		when:
 			subrulesSeq.apply(INVALID_PARAMETER_VALUE)
@@ -96,7 +79,7 @@ class SubrulesSeqTest extends Specification{
 	def "Apply subrule that does not contain error action but subsequent rule does"() {
 		setup:
 			def subrulesSeq = new SubrulesSeq()
-			Subrule failingSubrule = createFailingSubrule(new ValidationErrorProperties())
+			Subrule failingSubrule = createFailingSubrule()
 			Subrule nextSubrule = createFailingSubrule(new ValidationErrorProperties(ERROR_ID))
 			subrulesSeq.add(failingSubrule)
 			subrulesSeq.add(nextSubrule)
@@ -168,9 +151,8 @@ class SubrulesSeqTest extends Specification{
 		setup:
 			def closure = {}
 			def subruleSeq = SubrulesSeqWrapper.wrap(closure)
-      def defaultConvertersSize = CONFIG.defaultFunctions.size()
 		expect:
-			(subruleSeq.subrules[defaultConvertersSize].term as ClosureTerm).closure == closure
+			(subruleSeq.subrules[0].term as ClosureTerm).closure == closure
 	}
 
 	def "wrap for null"() {

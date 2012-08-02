@@ -4,6 +4,7 @@ import java.util.logging.Handler
 import java.util.logging.Level
 
 import org.grules.GrulesException
+import org.grules.script.expressions.Subrule
 
 /**
  * Grules configuration parameters.
@@ -73,7 +74,7 @@ class GrulesConfig extends Config {
   /**
    * Sequence of converters that must be applied to all parameters.
    */
-  List<Closure> getDefaultFunctions() {
+  List<Subrule> getDefaultFunctions() {
     parameters[DEFAULT_FUNCTIONS_PARAMETER_NAME]
   }
 

@@ -23,16 +23,43 @@ class SubrulesSeqWrapper {
     subrulesSeq
   }
 
-   /**
+  /**
+   * Wraps a skip subrule into a subrules sequence.
+   *
+   * @param closure a validation closure
+   */
+  static SubrulesSeq wrap(Skip skip) {
+    SubrulesSeq subrulesSeq = new SubrulesSeq()
+    skip.functions.each { String function ->
+      subrulesSeq.addSkipFunction(function)
+    }
+    subrulesSeq
+  }
+
+  /**
    * Wraps a subrule into a subrules sequence.
    *
    * @param subrule a subrule
    */
   static SubrulesSeq wrap(Subrule subrule) {
-     SubrulesSeq subrulesSeq = new SubrulesSeq()
+    SubrulesSeq subrulesSeq = new SubrulesSeq()
     subrulesSeq.add(subrule)
     subrulesSeq
   }
+
+  /**
+   * Wraps a subrules into a subrules sequence.
+   *
+   * @param subrules subrules
+   */
+  static SubrulesSeq wrap(List<Subrule> subrules) {
+    SubrulesSeq subrulesSeq = new SubrulesSeq()
+    subrules.each { Subrule subrule ->
+      subrulesSeq.add(subrule)
+    }
+    subrulesSeq
+  }
+
 
   /**
    * Wraps a term into a subrules sequence.

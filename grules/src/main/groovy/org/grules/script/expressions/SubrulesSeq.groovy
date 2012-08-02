@@ -1,6 +1,5 @@
 package org.grules.script.expressions
 
-import org.grules.GrulesInjector
 import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
 
@@ -9,8 +8,11 @@ import org.grules.ValidationException
  */
 class SubrulesSeq {
 
-  private static final List<Subrule> DEFAULT_SUBRULES = GrulesInjector.config.defaultFunctions
-  private final List<Subrule> subrules = DEFAULT_SUBRULES.collect()
+  private final List<Subrule> subrules = []
+  private final List<String> skipFunctions = []
+
+  protected SubrulesSeq() {
+  }
 
   /**
    * Applies subrules in order. If validation error is thrown and the source subrule does not have an error action,
@@ -19,11 +21,10 @@ class SubrulesSeq {
    */
   def apply(originalValue) {
     def value = originalValue
-    for (Integer i = 0; i < subrules.size; i++) {
-      Subrule subrule = subrules[i]
+    for (int i = 0; i < subrules.size; i++) {
       try {
-        value = subrule.apply(value)
-      }	catch (ValidationException e) {
+        value = subrules[i].apply(value)
+      } catch (ValidationException e) {
         Integer subruleWithValidaitonExceptionIndex = subrules.findIndexOf(i) {
           Subrule nextSubrule ->
           nextSubrule.errorProperties.hasAction()
@@ -36,7 +37,7 @@ class SubrulesSeq {
           errorProperties.message = errorProperties.message.replaceAll('_', originalValue)
         }
         errorProperties.value = originalValue
-        errorProperties.subruleIndex = i - DEFAULT_SUBRULES.size()
+        errorProperties.subruleIndex = i + 1
         throw e
       }
     }
@@ -57,6 +58,10 @@ class SubrulesSeq {
   SubrulesSeq add(expression) {
     subrules << SubruleFactory.create(expression)
     this
+  }
+
+  void addSkipFunction(String function) {
+    skipFunctions << function
   }
 
   @Override

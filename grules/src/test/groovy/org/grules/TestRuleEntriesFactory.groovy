@@ -77,4 +77,16 @@ class TestRuleEntriesFactory {
 	static Subrule createSubrule() {
 		SubruleFactory.create(createTrimConverter())
 	}
+
+  static createFailingSubrule(ValidationErrorProperties errorProperties) {
+    new Subrule({} as Term, errorProperties) {
+      @Override
+      def apply(value) {throw new ValidationException()}
+    }
+  }
+
+  static createFailingSubrule() {
+    createFailingSubrule(new ValidationErrorProperties())
+  }
+
 }

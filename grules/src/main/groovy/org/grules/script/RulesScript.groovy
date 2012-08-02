@@ -5,7 +5,9 @@ import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
 import org.grules.config.GrulesConfig
 import org.grules.script.expressions.InvalidValidatorException
+import org.grules.script.expressions.Skip
 import org.grules.script.expressions.SubrulesSeq
+import org.grules.script.expressions.SubrulesSeqWrapper
 
 
 /**
@@ -142,15 +144,22 @@ class RulesScript implements RulesScriptAPI {
    */
   private void applyRule(String parameterName, parameterValue, Closure<SubrulesSeq> subrulesSeqClosure) {
     try {
+      def value = parameterValue
+      try {
+        value = SubrulesSeqWrapper.wrap(CONFIG.defaultFunctions).apply(parameterValue)
+      } catch (ValidationException e) {
+        e.errorProperties.subruleIndex = -e.errorProperties.subruleIndex
+        throw e
+      }
       SubrulesSeq subrulesSeq = subrulesSeqClosure.call()
-      def cleanValue = subrulesSeq.apply(parameterValue)
+      def cleanValue = subrulesSeq.apply(value)
       variablesBinding.addCleanParameterValue(parameterName, cleanValue, currentGroup)
     } catch (MissingParameterException e){
       missingRequiredParameters[e.group].add(e.parameterName)
       parametersWithMissingDependency[currentGroup].add(parameterName)
     } catch (ValidationException e) {
       invalidParameters[currentGroup].put(parameterName, e.errorProperties)
-    } catch (InvalidDependencyParameterException e){
+    } catch (InvalidDependencyValueException e){
       parametersWithMissingDependency[currentGroup].add(parameterName)
     } catch (InvalidValidatorException e) {
       throw new InvalidValidatorException(e.returnValue, e.methodName, parameterName)
@@ -261,7 +270,7 @@ class RulesScript implements RulesScriptAPI {
     if (RulesBinding.isDirtyParameterName(name)) {
       throw new MissingParameterException(group, RulesBinding.parseDirtyParameterName(name))
     } else if (isProcessedParameter(group, name)) {
-      throw new InvalidDependencyParameterException()
+      throw new InvalidDependencyValueException()
     } else {
       throw new MissingPropertyException(name)
     }
@@ -295,20 +304,25 @@ class RulesScript implements RulesScriptAPI {
     variables
   }
 
+  /**
+   * A validation block.
+   */
   @Override
   void validate(Closure<Map<String, Object>> closure) {
     try {
       closure().each {String name, value ->
-        variablesBinding.addParameter(name, value, currentGroup)
+        variablesBinding.addCleanParameterValue(name, value, currentGroup)
       }
     } catch (ValidationException e) {
-      invalidParameters[currentGroup].put(e.errorProperties.parameter, e.errorProperties)
+      ValidationErrorProperties errorProperties = e.errorProperties
+      errorProperties.value = variablesBinding.fetchValue(currentGroup, e.errorProperties.parameter)
+      invalidParameters[currentGroup].put(e.errorProperties.parameter, errorProperties)
     }
   }
 
   @Override
-  SubrulesSeq skip(String... converters) {
-    throw new UnsupportedOperationException()
+  Skip skip(String... functions) {
+    new Skip(functions)
   }
 
   @Override

@@ -168,7 +168,8 @@ class ValidationErrorProperties {
   }
 
   /**
-   * An index of a failed subrule.
+   * An index of a failed subrule. Indexes start from 1. Negative index means that a default function with this index
+   * failed.
    */
   Integer getSubruleIndex() {
     errorProperties[SUBRULE_INDEX]
