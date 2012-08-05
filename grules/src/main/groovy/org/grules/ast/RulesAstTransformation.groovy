@@ -147,6 +147,15 @@ class RulesAstTransformation extends GrulesAstTransformation {
   }
 
   private Expression transformExpression(MethodCallExpression methodCallExpression) {
+    Expression methodExpression = methodCallExpression.method
+    String nolog = (RulesScriptAPI.&nolog as MethodClosure).method
+    if (methodExpression instanceof ConstantExpression && (methodExpression as ConstantExpression).value == nolog) {
+      List<Expression> expressions = (methodCallExpression.arguments as ArgumentListExpression).expressions
+      for (int i = 0; i < expressions.size; i++) {
+        expressions[i] = new ConstantExpression((expressions[i] as VariableExpression).name)
+      }
+      return methodCallExpression
+    }
     if (!RuleExpressionVerifier.isValidRuleMethodCallExpression(methodCallExpression)) {
       return methodCallExpression
     }

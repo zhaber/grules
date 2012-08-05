@@ -7,8 +7,8 @@ import java.util.concurrent.ExecutionException
 
 import org.grules.GrulesLogger
 import org.grules.ValidationErrorProperties
-import org.grules.config.GrulesConfig
 import org.grules.config.ConfigException
+import org.grules.config.GrulesConfig
 import org.grules.config.OnValidationEventAction
 import org.grules.script.expressions.Operators
 
@@ -83,11 +83,13 @@ class RuleEngine {
    * Runs an included rules script.
    */
   protected void runIncludedScript(Class<? extends Script> scriptClass,
-      List<Class<? extends Script>> scriptsChain, Binding binding, Map<String, Set<String>> missingRequiredParameters,
+      List<Class<? extends Script>> scriptsChain, Binding binding, 
+      Map<String, Set<String>> missingRequiredParameters,
       Map<String, Map<String, ValidationErrorProperties>> invalidParameters,
-      Map<String, Set<String>> parametersWithMissingDependency) {
+      Map<String, Set<String>> parametersWithMissingDependency,
+      Set<String> nologParameters) {
     RulesScript rulesScript = rulesScriptFactory.newInstanceIncluded(scriptClass, scriptsChain,
-      binding, missingRequiredParameters, invalidParameters, parametersWithMissingDependency)
+      binding, missingRequiredParameters, invalidParameters, parametersWithMissingDependency, nologParameters)
     runScript(rulesScript)
   }
 

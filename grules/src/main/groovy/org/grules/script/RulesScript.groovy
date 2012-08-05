@@ -1,6 +1,7 @@
 package org.grules.script
 
 import org.grules.GrulesInjector
+import org.grules.GrulesLogger
 import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
 import org.grules.config.GrulesConfig
@@ -9,7 +10,6 @@ import org.grules.script.expressions.Skip
 import org.grules.script.expressions.Subrule
 import org.grules.script.expressions.SubrulesSeq
 import org.grules.script.expressions.SubrulesSeqWrapper
-
 
 /**
  * Encapsulates state of a rules script.
@@ -22,6 +22,7 @@ class RulesScript implements RulesScriptAPI {
 
   private Script script
   private List<Class<? extends Script>> parentScripts
+  private Set<String> nologParameters
   private String currentGroup
   private RulesBinding variablesBinding
 
@@ -50,11 +51,12 @@ class RulesScript implements RulesScriptAPI {
    *
    * @param script main script
    * @param parameters input parameters
+   * @param environment custom variables that have to be included in the script 
    */
-  void initMain(Script script, Map<String, Map<String, Object>> parameters,
-      Map<String, Object> environment) {
+  protected void initMain(Script script, Map<String, Map<String, Object>> parameters, Map<String, Object> environment) {
     init(script)
     this.parentScripts = []
+    this.nologParameters = []
     missingRequiredParameters = [:].withDefault {[] as Set<String>}
     invalidParameters = [:].withDefault {[:] as Map<String, ValidationErrorProperties>}
     parametersWithMissingDependency = [:].withDefault {[] as Set<String>}
@@ -72,15 +74,17 @@ class RulesScript implements RulesScriptAPI {
    * @param invalidParameters parameters that did not pass validation
    * @param parametersWithMissingDependency parameters that depend on a value of another missing parameter
    */
-  void initInclude(Script script, List<Class<? extends Script>> parentScripts,
+  protected void initInclude(Script script, List<Class<? extends Script>> parentScripts,
       Map<String, Set<String>> missingRequiredParameters,	Map<String,
       Map<String, ValidationErrorProperties>> invalidParameters,
-      Map<String, Set<String>> parametersWithMissingDependency) {
+      Map<String, Set<String>> parametersWithMissingDependency,
+      Set<String> nologParameters) {
     init(script)
     this.parentScripts = parentScripts
     this.missingRequiredParameters = missingRequiredParameters
     this.invalidParameters = invalidParameters
     this.parametersWithMissingDependency = parametersWithMissingDependency
+    this.nologParameters = nologParameters
     changeGroup(currentGroup)
   }
 
@@ -132,7 +136,7 @@ class RulesScript implements RulesScriptAPI {
     }
     variablesBinding.removeGroupDirectParametersVariables(currentGroup)
     RULE_ENGINE.runIncludedScript(includedScriptClass, scriptsChain, variablesBinding, missingRequiredParameters,
-        invalidParameters, parametersWithMissingDependency)
+        invalidParameters, parametersWithMissingDependency, nologParameters)
     variablesBinding.addGroupParametersVariables(currentGroup)
   }
 
@@ -158,11 +162,18 @@ class RulesScript implements RulesScriptAPI {
       }
       def cleanValue = subrulesSeq.apply(value)
       variablesBinding.addCleanParameterValue(parameterName, cleanValue, currentGroup)
+      if (!(parameterName in nologParameters)) {
+        GrulesLogger.info(parameterName + ' = ' + parameterValue)
+      }
     } catch (MissingParameterException e){
       missingRequiredParameters[e.group].add(e.parameterName)
       parametersWithMissingDependency[currentGroup].add(parameterName)
     } catch (ValidationException e) {
       invalidParameters[currentGroup].put(parameterName, e.errorProperties)
+      if (parameterName in nologParameters) {
+        e.errorProperties.value = 'NOLOG_PARAMETER' 
+      }
+      GrulesLogger.info("Parameter $parameterName failed validation. Validation error properties: " + e.errorProperties)
     } catch (InvalidDependencyValueException e){
       parametersWithMissingDependency[currentGroup].add(parameterName)
     } catch (InvalidValidatorException e) {
@@ -332,5 +343,10 @@ class RulesScript implements RulesScriptAPI {
   @Override
   void addParameter(String name, value) {
     variablesBinding.addParameter(name, value, currentGroup)
+  }
+  
+  @Override
+  void nolog(String... parameters) {
+    nologParameters.addAll(parameters)
   }
 }

@@ -35,11 +35,12 @@ class RulesScriptFactory {
       List<Class<? extends Script>> includedParentScripts, Binding binding,
       Map<String, Set<String>> missingRequiredParameters,
       Map<String, Map<String, ValidationErrorProperties>> invalidParameters,
-      Map<String, Set<String>> parametersWithMissingDependency) {
+      Map<String, Set<String>> parametersWithMissingDependency,
+      Set<String> nologParameters) {
     Script script = newScriptInstance(scriptClass, binding)
     RulesScript rulesScript = script as RulesScript
     rulesScript.initInclude(script, includedParentScripts, missingRequiredParameters, invalidParameters,
-        parametersWithMissingDependency)
+        parametersWithMissingDependency, nologParameters)
     rulesScript
   }
 

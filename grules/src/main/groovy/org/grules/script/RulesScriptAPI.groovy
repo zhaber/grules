@@ -17,4 +17,5 @@ interface RulesScriptAPI {
   ValidationErrorProperties e(String errorMessage, Map<String, Object> properties)
   ValidationErrorProperties e(Map<String, Object> properties, String errorMessage)
   ValidationErrorProperties e(String errorMessage)
+  void nolog(String... parameters)
 }
