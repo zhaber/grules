@@ -12,6 +12,7 @@ import org.codehaus.groovy.ast.expr.GStringExpression
 import org.codehaus.groovy.ast.expr.ListExpression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.ast.expr.NotExpression
+import org.codehaus.groovy.ast.expr.TernaryExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
@@ -33,7 +34,7 @@ class RuleExpressionVerifier {
       BinaryExpression binaryExpression = expression
       AstUtils.isArrayItemExpression(binaryExpression) && isAtomExpression(binaryExpression.leftExpression)
     } else {
-      !(expression instanceof NotExpression) && !(expression instanceof BitwiseNegationExpression)
+      !(expression instanceof NotExpression) && !(expression instanceof BitwiseNegationExpression) 
     }
   }
 
@@ -47,7 +48,7 @@ class RuleExpressionVerifier {
     } else if (expression instanceof BinaryExpression) {
       isFirstExpressionMethodCall((expression as BinaryExpression).leftExpression)
     } else {
-      throw new IllegalStateException(expression.class)
+      false
     }
   }
 
@@ -117,6 +118,11 @@ class RuleExpressionVerifier {
       isValidRuleExpression((expression as NotExpression).expression)
     } else if (expression instanceof BitwiseNegationExpression) {
       isValidRuleExpression((expression as BitwiseNegationExpression).expression)
+    } else if (expression instanceof TernaryExpression) {
+      TernaryExpression ternaryExpression = expression 
+      Boolean isValidRuleTrueExpression = isValidRuleExpression(ternaryExpression.trueExpression)
+      Boolean isValidRuleFalseExpression = isValidRuleExpression(ternaryExpression.falseExpression)   
+      isValidRuleTrueExpression && isValidRuleFalseExpression   
     } else {
       [VariableExpression, ClosureExpression, MethodCallExpression, GStringExpression].any { Class clazz ->
         clazz.isInstance(expression)
@@ -124,4 +130,3 @@ class RuleExpressionVerifier {
     }
   }
 }
-

@@ -1,5 +1,6 @@
 package org.grules.ast
 
+import org.codehaus.groovy.ast.AnnotatedNode
 import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.Parameter
 import org.codehaus.groovy.ast.VariableScope
@@ -66,7 +67,7 @@ class ExpressionFactory {
    * @return method call expression
    */
   static MethodCallExpression createMethodCall(Expression objectExpression, MethodClosure methodClosure,
-      List<Expression> arguments) {
+      List<AnnotatedNode> arguments) {
     Expression argumentsExpression = new ArgumentListExpression(arguments)
     new MethodCallExpression(objectExpression, new ConstantExpression(methodClosure.method), argumentsExpression)
   }

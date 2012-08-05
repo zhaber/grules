@@ -1,9 +1,12 @@
 package org.grules.ast
 
+import groovy.transform.TupleConstructor
+
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.NotExpression
+import org.codehaus.groovy.ast.expr.TernaryExpression
 import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
 import org.grules.utils.AstUtils
@@ -13,6 +16,18 @@ import org.grules.utils.AstUtils
  */
 class RuleExpressionFormTransformer {
 
+  /**
+   * Converts precedences of the ||, &&, and >> operators
+   *
+   * @param ruleExpression a rule expression where operators have standard precedence
+   * @return a converted rule expression
+   */
+  static Expression convertPrecedences(Expression ruleExpression) {
+    List infixRuleExpression = transformToInfixExpression(ruleExpression)
+    List postfixRuleExpression = infixToPostfixExpression(infixRuleExpression)
+    postfixExpressionToTree(postfixRuleExpression)
+  }
+  
   /**
    * Returns operators precedence in rule expressions.
    */
@@ -48,12 +63,18 @@ class RuleExpressionFormTransformer {
   /**
    * Converts infix notation to postfix notation.
    */
-  private static List<Object> infixToPostfixExpression(List<Object> infixExpression){
+  private static List infixToPostfixExpression(List infixExpression){
     Stack<Token> stack = [] as Stack
     Deque<Object> postfixExpression = [] as Queue
     infixExpression.each { token ->
-      if (token instanceof Expression) {
-         postfixExpression << token
+      if (postfixExpression instanceof TernaryRuleExpression) {
+        TernaryRuleExpression ternaryExpression = token
+        List trueExpression = infixToPostfixExpression(ternaryExpression.trueExpression)
+        List falseExpression = infixToPostfixExpression(ternaryExpression.falseExpression)
+        Expression booleanExpression = ternaryExpression.booleanExpression
+        postfixExpression << new TernaryRuleExpression(booleanExpression, trueExpression, falseExpression)
+      } else if (token instanceof Expression) {
+        postfixExpression << token
       } else {
         Token operation = token
         if (stack.empty() || operation.type == Types.LEFT_PARENTHESIS) {
@@ -84,8 +105,13 @@ class RuleExpressionFormTransformer {
     Stack<Object> stack = [] as Stack
     while (!postfixExpression.isEmpty()) {
       def expression = postfixExpression.removeFirst()
-      if (expression instanceof Expression) {
-         stack << expression
+      if (expression instanceof TernaryRuleExpression) {
+        TernaryRuleExpression ternaryExpression = expression
+        Expression trueExpression = postfixExpressionToTree(ternaryExpression.trueExpression)
+        Expression falseExpression = postfixExpressionToTree(ternaryExpression.falseExpression)
+        stack << new TernaryExpression(ternaryExpression.booleanExpression, trueExpression, falseExpression)
+      } else if (expression instanceof Expression) {
+        stack << expression
       } else if (expression instanceof Token) {
         Token token = expression
         if (RuleExpressionVerifier.isValidRuleBinaryOperation(token)) {
@@ -107,27 +133,43 @@ class RuleExpressionFormTransformer {
   }
 
   /**
-   * Traverses expressions child nodes and converts them to infix notation.
+   * Traverses binary expression's child nodes and converts them to infix notation.
    */
-  private static List transformChildExpressionsToInfix(Expression expression, Token operation) {
-    Integer operationPrecedence = AstUtils.fetchPrecedence(operation)
-    if (expression instanceof BinaryExpression) {
-      BinaryExpression binaryExpression = expression
-      List leftExpression = transformToInfixExpression(binaryExpression.leftExpression, operationPrecedence)
-      List rightExpression = transformToInfixExpression(binaryExpression.rightExpression, operationPrecedence)
-      leftExpression + [operation] + rightExpression
-    } else if (expression instanceof NotExpression) {
-      List innerExpression = transformToInfixExpression((expression as NotExpression).expression, operationPrecedence)
-      [operation] + innerExpression
-    } else if (expression instanceof BitwiseNegationExpression) {
-      BitwiseNegationExpression bitwiseExpression = expression
-      List innerExpression = transformToInfixExpression(bitwiseExpression.expression, operationPrecedence)
-      [operation] + innerExpression
-    } else {
-      throw new UnsupportedExpressionException(expression.class)
-    }
+  private static List transformChildExpressionsToInfix(BinaryExpression binaryExpression, Token operation, 
+      Integer operationPrecedence) {
+    List leftExpression = transformToInfixExpression(binaryExpression.leftExpression, operationPrecedence)
+    List rightExpression = transformToInfixExpression(binaryExpression.rightExpression, operationPrecedence)
+    leftExpression + [operation] + rightExpression
   }
 
+  /**
+   * Traverses not expression's child nodes and converts them to infix notation.
+   */
+  private static List transformChildExpressionsToInfix(NotExpression notExpression, Token operation,
+      Integer operationPrecedence) {
+    List innerExpression = transformToInfixExpression(notExpression.expression, operationPrecedence)
+    [operation] + innerExpression
+  }
+      
+  /**
+   * Traverses bitwise negation expression's child nodes and converts them to infix notation.
+   */
+  private static List transformChildExpressionsToInfix(BitwiseNegationExpression bitwiseNegationExpression, 
+       Token operation, Integer operationPrecedence) {
+     List innerExpression = transformToInfixExpression(bitwiseNegationExpression.expression, operationPrecedence)
+     [operation] + innerExpression
+  }
+       
+  /**
+   * Traverses ternary expression's child nodes and converts them to infix notation.
+   */
+  private static List transformChildExpressionsToInfix(TernaryExpression ternaryExpression, Token ignored,
+      Integer operationPrecedence) {
+    List infixTrueExpression = transformToInfixExpression(ternaryExpression.trueExpression, operationPrecedence)
+    List infixFalseExpression = transformToInfixExpression(ternaryExpression.falseExpression, operationPrecedence)
+    [new TernaryRuleExpression(ternaryExpression.booleanExpression, infixTrueExpression, infixFalseExpression)]
+  }
+    
   /**
    * Traverses rule expression AST inorder and converts to infix notation. Parentheses are added when necessary.
    *
@@ -139,7 +181,8 @@ class RuleExpressionFormTransformer {
       return [expression]
     }
     Token operation = AstUtils.fetchOperationToken(expression)
-    List infixExpression = transformChildExpressionsToInfix(expression, operation)
+    Integer operationPrecedence = AstUtils.fetchPrecedence(operation)
+    List infixExpression = transformChildExpressionsToInfix(expression, operation, operationPrecedence)
     if (AstUtils.fetchPrecedence(operation) >= maxPrecedence) {
       infixExpression
     } else {
@@ -152,17 +195,11 @@ class RuleExpressionFormTransformer {
       [leftParenthesis] + infixExpression + [rightParenthesis]
     }
   }
-
-  /**
-   * Converts precedences of the ||, &&, and >> operators
-   *
-   * @param ruleExpression where operators have standard precedence
-   * @return a converted rule expression
-   */
-  static Expression convertPrecedences(ruleExpression) {
-    ruleExpression = transformToInfixExpression(ruleExpression)
-    ruleExpression = infixToPostfixExpression(ruleExpression)
-    postfixExpressionToTree(ruleExpression)
-  }
-
 }
+
+@TupleConstructor
+private class TernaryRuleExpression {
+  final Expression booleanExpression
+  final List trueExpression
+  final List falseExpression
+} 

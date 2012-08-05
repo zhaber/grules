@@ -18,5 +18,4 @@ class EnvironmentTest extends Specification {
     expect:
       result.cleanParameters.containsKey(PARAMETER_NAME)
   }
-
 }

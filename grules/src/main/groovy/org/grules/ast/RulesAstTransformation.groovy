@@ -18,6 +18,7 @@ import org.codehaus.groovy.ast.expr.MapEntryExpression
 import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.ast.expr.NotExpression
+import org.codehaus.groovy.ast.expr.TernaryExpression
 import org.codehaus.groovy.ast.expr.UnaryMinusExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.ast.stmt.BlockStatement
@@ -188,31 +189,42 @@ class RulesAstTransformation extends GrulesAstTransformation {
    * @param ruleExpression rule expression
    * @return converted rule expression
    */
-  private Expression convertToRuleExpression(Expression ruleExpression) {
-    log('Original rule', ruleExpression)
+  static Expression convertToRuleExpression(Expression ruleExpression) {
     ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
-    log('Rule with changed precedences of &, |, and >> operators', ruleExpression)
     ruleExpression = liftErrors(ruleExpression)
     ruleExpression = convertToRuleOperators(ruleExpression)
     ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
     addSequenceWrapper(ruleExpression)
   }
 
+  /**
+   * Traverses subrules and for each subrule lifts an error to the top level. 
+   * 
+   * @param expression an expression where for each subrule an error object is bound to the most right expression
+   * @return an expression with lifted errors
+   */
   private static Expression liftErrors(Expression expression) {
-    if (RuleExpressionVerifier.isAtomExpression(expression)) {
-      expression
+    if (AstUtils.isRightShift(expression)) {
+      BinaryExpression binaryExpression = expression
+      Expression leftExpression = liftErrors(binaryExpression.leftExpression)
+      Expression rightExpression = liftErrors(binaryExpression.rightExpression)
+      new BinaryExpression(leftExpression, binaryExpression.operation, rightExpression)
+    } else if (expression instanceof TernaryExpression) {
+      TernaryExpression ternaryExpression = expression
+      Expression trueExpression = liftErrors(ternaryExpression.trueExpression)
+      Expression falseExpression = liftErrors(ternaryExpression.falseExpression)
+      new TernaryExpression(ternaryExpression.booleanExpression, trueExpression, falseExpression)
     } else {
-      if (AstUtils.isRightShift(expression)) {
-        BinaryExpression binaryExpression = expression
-        Expression leftSubrule = liftErrors(binaryExpression.leftExpression)
-        Expression rightSubrule = liftErrors(binaryExpression.rightExpression)
-        new BinaryExpression(leftSubrule, binaryExpression.operation, rightSubrule)
-      } else {
-        liftError(expression)
-      }
+      liftError(expression)
     }
   }
 
+  /**
+   * Lifts a subrule error to the top level.
+   *
+   * @param expression an expression where an error object is bound to the most right expression
+   * @return a subrule with a lifted error
+   */
   private static Expression liftError(Expression expression) {
     if (hasError(expression)) {
       Expression expressionWithoutError = removeError(expression)
@@ -298,6 +310,11 @@ class RulesAstTransformation extends GrulesAstTransformation {
       Token operation = binaryExpression.operation
       operation.type = convertToBitwiseOperation(operation.type)
       new BinaryExpression(leftExpression, operation, rightExpression)
+    } else if (expression instanceof TernaryExpression) {
+      TernaryExpression ternaryExpression = expression
+      Expression trueExpression = convertToRuleOperators(ternaryExpression.trueExpression)
+      Expression falseExpression = convertToRuleOperators(ternaryExpression.falseExpression)
+      new TernaryExpression(ternaryExpression.booleanExpression, trueExpression, falseExpression)
     } else {
       throw new IllegalStateException(expression.class)
     }

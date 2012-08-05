@@ -5,6 +5,7 @@ import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.NotExpression
+import org.codehaus.groovy.ast.expr.TernaryExpression
 import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
 import org.grules.ast.UnsupportedExpressionException
@@ -30,6 +31,8 @@ class AstUtils {
       new Token(Types.NOT, Types.getText(Types.NOT), lineNumber, columnNumber)
     } else if (expression instanceof BitwiseNegationExpression) {
       new Token(Types.BITWISE_NEGATION, Types.getText(Types.BITWISE_NEGATION), lineNumber, columnNumber)
+    } else if (expression instanceof TernaryExpression) {
+      new Token(Types.QUESTION, Types.getText(Types.QUESTION), lineNumber, columnNumber)
     } else {
       throw new UnsupportedExpressionException(expression.class)
     }

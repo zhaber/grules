@@ -2,6 +2,7 @@ package org.grules.ast
 
 import groovy.inspect.swingui.AstNodeToScriptVisitor
 
+import org.codehaus.groovy.ast.AnnotatedNode
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
@@ -9,11 +10,14 @@ import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.GStringExpression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
+import org.codehaus.groovy.ast.expr.TernaryExpression
 import org.codehaus.groovy.ast.expr.UnaryMinusExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.runtime.MethodClosure
 import org.grules.script.RulesScriptAPI
 import org.grules.script.expressions.FunctionTerm
+import org.grules.script.expressions.SubrulesSeq
+import org.grules.script.expressions.TernaryTerm
 import org.grules.utils.AstUtils
 
 /**
@@ -40,7 +44,7 @@ class ClosureWrapper {
   }
 
   /**
-   * Wraps a method call into a closure.
+   * Wraps a method call into a function term.
    */
   static Expression wrapInClosures(MethodCallExpression expression) {
     Expression methodExpression = expression.method
@@ -52,6 +56,23 @@ class ClosureWrapper {
     Expression closureMethodCallExpression = ExpressionFactory.createMethodCall(methodExpression, arguments)
     Expression closure = ExpressionFactory.createClosureExpression(closureMethodCallExpression)
     ExpressionFactory.createConstructorCall(FunctionTerm, [closure, methodToConstantExpression(methodExpression)])
+  }
+  
+  /**
+   * Wraps a ternary operator into a term.
+   */
+  static Expression wrapInClosures(TernaryExpression expression) {
+    Closure<Expression> convertToSubrulesSeqApplication = { Expression branchExpression ->
+      List<AnnotatedNode> arguments = [ExpressionFactory.createItVariable()]
+      Expression ruleExpression = RulesAstTransformation.convertToRuleExpression(branchExpression)
+      Expression subrulesSeqApplicationExpression = ExpressionFactory.createMethodCall(ruleExpression, 
+          SubrulesSeq.&apply, arguments)
+      ExpressionFactory.createClosureExpression(subrulesSeqApplicationExpression)
+    }
+    Expression conditionClosure = ExpressionFactory.createClosureExpression(expression.booleanExpression)
+    Expression trueExpression = convertToSubrulesSeqApplication(expression.trueExpression)
+    Expression falseExpression = convertToSubrulesSeqApplication(expression.falseExpression)
+    ExpressionFactory.createConstructorCall(TernaryTerm, [conditionClosure, trueExpression, falseExpression])
   }
 
   /**

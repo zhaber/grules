@@ -8,7 +8,6 @@ class ValidationErrorProperties {
   final static String MESSAGE = 'message'
   final static String VALUE = 'value'
   final static String SUBRULE_INDEX = 'subruleIndex'
-  final static String FUNCTION_NAME = 'functionName'
   final static String EXCEPTION = 'exception'
 
   private final Map<String, Object> errorProperties
@@ -75,7 +74,7 @@ class ValidationErrorProperties {
   Exception getException() {
     errorProperties[EXCEPTION]
   }
-
+  
   /**
    * Sets an error message string.
    */
