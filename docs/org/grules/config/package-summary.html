@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<title>org.grules.config (grules 0.1 API)</title>
+<title>org.grules.config (Grules)</title>
 <META NAME="keywords" CONTENT="org.grules.config package">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 <link href="../../../groovy.ico" type="image/x-icon" rel="shortcut icon">
@@ -10,7 +10,7 @@
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="org.grules.config (grules 0.1 API)";
+    parent.document.title="org.grules.config (Grules)";
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -85,6 +85,25 @@ Package org.grules.config
 
 
 
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+    <TR BGCOLOR="#90DDF7" CLASS="TableHeadingColor">
+    <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+    <B>Interface Summary</B></FONT></TH>
+    </TR>
+
+        <TR BGCOLOR="white" CLASS="TableRowColor">
+        <TD WIDTH="15%"><B><A HREF="ConfigFactory.html" title="class in org/grules/config">ConfigFactory</A></B></TD>
+        <TD>The common interface for configuration factories.</TD>
+        </TR>
+
+</TABLE>
+&nbsp;
+<P>
+<DL>
+</DL>
+<hr>
+    
+
 
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
     <TR BGCOLOR="#90DDF7" CLASS="TableHeadingColor">
@@ -93,18 +112,48 @@ Package org.grules.config
     </TR>
 
         <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="Config.html" title="class in org/grules/config">Config</A></B></TD>
-        <TD>A singleton class with grules configuration parameters.</TD>
+        <TD WIDTH="15%"><B><A HREF="AstTransformationConfig.html" title="class in org/grules/config">AstTransformationConfig</A></B></TD>
+        <TD>Configuration used by AST transformations.</TD>
         </TR>
 
         <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="ConfigFactory.html" title="class in org/grules/config">ConfigFactory</A></B></TD>
-        <TD>The factory creates a grules configuration object from a groovy file or class.</TD>
+        <TD WIDTH="15%"><B><A HREF="AstTransformationConfigFactory.html" title="class in org/grules/config">AstTransformationConfigFactory</A></B></TD>
+        <TD>A factory that produces configuration used by a compiler during AST transformation.</TD>
+        </TR>
+
+        <TR BGCOLOR="white" CLASS="TableRowColor">
+        <TD WIDTH="15%"><B><A HREF="Config.html" title="class in org/grules/config">Config</A></B></TD>
+        <TD>A common ancestor for configuration classes.</TD>
+        </TR>
+
+        <TR BGCOLOR="white" CLASS="TableRowColor">
+        <TD WIDTH="15%"><B><A HREF="ConfigObjectFactory.html" title="class in org/grules/config">ConfigObjectFactory</A></B></TD>
+        <TD>The factory creates a configuration object from a groovy file or class.</TD>
+        </TR>
+
+        <TR BGCOLOR="white" CLASS="TableRowColor">
+        <TD WIDTH="15%"><B><A HREF="DefaultAstTransformationConfig.html" title="class in org/grules/config">DefaultAstTransformationConfig</A></B></TD>
+        <TD>A class with default values of configuration properties used by a compiler during AST transformation.</TD>
         </TR>
 
         <TR BGCOLOR="white" CLASS="TableRowColor">
         <TD WIDTH="15%"><B><A HREF="DefaultFunctionFactory.html" title="class in org/grules/config">DefaultFunctionFactory</A></B></TD>
         <TD></TD>
+        </TR>
+
+        <TR BGCOLOR="white" CLASS="TableRowColor">
+        <TD WIDTH="15%"><B><A HREF="DefaultGrulesConfig.html" title="class in org/grules/config">DefaultGrulesConfig</A></B></TD>
+        <TD>Default values of grules configuration properties.</TD>
+        </TR>
+
+        <TR BGCOLOR="white" CLASS="TableRowColor">
+        <TD WIDTH="15%"><B><A HREF="GrulesConfig.html" title="class in org/grules/config">GrulesConfig</A></B></TD>
+        <TD>Grules configuration parameters.</TD>
+        </TR>
+
+        <TR BGCOLOR="white" CLASS="TableRowColor">
+        <TD WIDTH="15%"><B><A HREF="GrulesConfigFactory.html" title="class in org/grules/config">GrulesConfigFactory</A></B></TD>
+        <TD>The factory creates a grules configuration object from a groovy file or class.</TD>
         </TR>
 
 </TABLE>
