@@ -1,3 +1,13 @@
+def groovyArtifacts = ['org.codehaus.groovy:groovy-all:1.8.6', 'asm:asm:3.3.1']
+def commonArtifacts = [
+    'joda-time:joda-time:2.1+', 
+    'com.google.inject:guice:3.0',
+    'org.apache.tomcat:servlet-api:6.0.35+', 
+    'org.codehaus.gpars:gpars:0.12+', 
+    'javax.mail:mail:1.4.5+',
+    'com.google.guava:guava:13.0'
+    ]
+
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
 apply plugin: 'eclipse'
@@ -36,10 +46,6 @@ repositories {
   mavenCentral()
 }
 
-def groovyArtifacts = ['org.codehaus.groovy:groovy-all:1.8.6', 'asm:asm:3.3.1']
-def commonArtifacts = ['joda-time:joda-time:2.1+', 'com.google.inject:guice:3.0',
-                       'org.apache.tomcat:servlet-api:6.0.35+', 'org.codehaus.gpars:gpars:0.12+',
-                       'javax.mail:mail:1.4.5+']
 def testArtifacts = ['org.spockframework:spock-core:0.6-groovy-1.8', 'org.objenesis:objenesis:1.2']
 
 dependencies {
@@ -118,6 +124,8 @@ task docsRelease(type:Groovydoc) {
   destinationDir = file('../../ghpages/grules/docs')
   classpath = sourceSets.main.compileClasspath + sourceSets.local_ast.compileClasspath
 }
+
+task release(dependsOn: docsRelease) << {}
 
 uploadArchives {
   repositories {

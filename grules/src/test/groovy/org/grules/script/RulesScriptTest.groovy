@@ -146,6 +146,14 @@ class RulesScriptTest extends Specification {
 		expect:
 			script.missingRequiredParameters == [(GROUP): [PARAMETER_NAME] as Set]
 	}
+  
+  def "applyRuleToRequiredParameter saves a parameter as missing if it is required but null"() {
+    setup:
+      (script.variables[GROUP] as Map).put(PARAMETER_NAME, null)
+      script.applyRuleToRequiredParameter(PARAMETER_NAME, createEmptyRuleClosure())
+    expect:
+      script.missingRequiredParameters == [(GROUP): [PARAMETER_NAME] as Set]
+  }
 
 	def "applyRuleToRequiredParameter saves a parameter as missing if its value is not available"() {
 		setup:
@@ -259,6 +267,15 @@ class RulesScriptTest extends Specification {
 			missingParameters.get(GROUP_AUX).containsKey(PARAMETER_NAME_AUX)
 			missingParameters.get(GROUP_AUX).get(PARAMETER_NAME_AUX) == PARAMETER_VALUE
 	}
+  
+  def "fetchEnvironment contains variables but not groups"() {
+    setup:
+      script.variables.put(VARIABLE_NAME, VARIABLE_VALUE)
+      def environment = script.fetchEnvironment()
+    expect:
+      environment.containsKey(VARIABLE_NAME)
+      !environment.containsKey(GROUP)
+  }
 
   def "adds group variables and variables for default group"() {
 		expect:

@@ -3,6 +3,8 @@ package org.grules.script
 import org.grules.GrulesInjector
 import org.grules.config.GrulesConfig
 
+import com.google.common.base.Optional
+
 
 /**
  * Encapsulates script variables. The <code>VariablesBinding</code> class handles parameters dirty/clean values and
@@ -15,7 +17,7 @@ class RulesBinding extends Binding {
   private static final GrulesConfig CONFIG = GrulesInjector.config
   private static final Set<String> GROUPS = CONFIG.groups
   private static final Map<String, String> MESSAGES = GrulesInjector.messagesResourceBundle.messages
-
+  
   /**
    * Checks if property is a parameter dirty value.
    */
@@ -55,19 +57,25 @@ class RulesBinding extends Binding {
     (variables[group] as Map<String, Object>).containsKey(toDirtyParameterName(parameterName))
   }
 
-  /**
-   * Returns value of the parameter <code>parameterName</code> from the group <code>group</code>.
-   */
-  def fetchValue(String group, String parameterName) {
-    if (isParameterDefined(group, parameterName)) {
-      if ((variables[group] as Map<String, Object>).containsKey(parameterName)) {
-        variables[group][parameterName]
-      } else {
-        variables[group][toDirtyParameterName(parameterName)]
-      }
+  private fetchDefinedParameterValue(String group, String parameterName) {
+    if ((variables[group] as Map<String, Object>).containsKey(parameterName)) {
+      variables[group][parameterName]
     } else {
-      ''
+      variables[group][toDirtyParameterName(parameterName)]
     }
+  }
+  
+  /**
+   * Returns value of the parameter <code>parameterName</code> from the <code>group</code>.
+   */
+  Optional fetchValue(String group, String parameterName) {
+    if (isParameterDefined(group, parameterName)) {
+      def value = fetchDefinedParameterValue(group, parameterName) 
+      if (value != '' && value != null) {
+        return Optional.of(value)
+      }
+    } 
+    Optional.absent()
   }
 
   /**

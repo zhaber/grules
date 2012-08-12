@@ -40,6 +40,5 @@ class TestScriptEntities {
   static final String JOIN_SEPARATOR = ' '
   static final Closure FUNCTION_FOR_LIST = {list -> list.join(JOIN_SEPARATOR)}
   static final Closure FUNCTION_FOR_ONE_ARGUMENT = {it + 1}
-  static final Closure FUNCTION_FOR_ONE_ARGUMENT_AUX = {it * 2}
   static final Closure FUNCTION_FOR_TWO_ARGUMENTS = {value1, value2 -> value1 + value2}
 }

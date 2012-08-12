@@ -11,6 +11,8 @@ import org.grules.script.expressions.Subrule
 import org.grules.script.expressions.SubrulesSeq
 import org.grules.script.expressions.SubrulesSeqWrapper
 
+import com.google.common.base.Optional
+
 /**
  * Encapsulates state of a rules script.
  */
@@ -122,7 +124,9 @@ class RulesScript implements RulesScriptAPI {
    * Returns all script variables that are not parameters.
    */
   Map<String, Object> fetchEnvironment() {
-    variables - variablesBinding.fetchParameters()
+    variables.findAll { String variableName, variableValue ->
+      !(variableName in GROUPS)
+    }
   }
 
   /**
@@ -180,7 +184,7 @@ class RulesScript implements RulesScriptAPI {
       throw new InvalidValidatorException(e.returnValue, e.methodName, parameterName)
     }
   }
-
+  
   /**
    * Applies a rule to a list of parameters.
    *
@@ -190,21 +194,23 @@ class RulesScript implements RulesScriptAPI {
    * @param subrulesSeqClosure closure that returns a subrules sequence
    */
   @Override
-  void applyRuleToParametersList(String ruleName, Set<String> requiredParameters,
+  void applyRuleToParametersList(String ruleName, Set<String> ruleRequiredParameters,
       Map<String, Object> optionalParameters, Closure<SubrulesSeq> subrulesSeqClosure) {
-    Map<String, Object> requiredParametersValues = requiredParameters.collectEntries {String parameterName ->
+    Map<String, Optional> ruleRequiredParametersValues = ruleRequiredParameters.collectEntries {
+      String parameterName ->
       [(parameterName): variablesBinding.fetchValue(currentGroup, parameterName)]
     }
-    Set<String> missingRuleRequiredParameters = ((requiredParametersValues.findAll {String parameterName, value ->
-      value == ''
+    Set<String> missingRuleRequiredParameters = ((ruleRequiredParametersValues.findAll {
+      String parameterName, Optional value ->
+      !value.isPresent()
     }) as Map<String, Object>).keySet()
     if (missingRuleRequiredParameters.isEmpty()) {
       Map<String, Object> optionalParametersValues = optionalParameters.collectEntries {
           String parameterName, defaultValue ->
-        def parameterValue = variablesBinding.fetchValue(currentGroup, parameterName)
-        [(parameterName): parameterValue == '' ? defaultValue : parameterValue]
+        Optional parameterValue = variablesBinding.fetchValue(currentGroup, parameterName)
+        [(parameterName): parameterValue | defaultValue]
       }
-      List<Object> parametersValues = requiredParametersValues.values() + optionalParametersValues.values()
+      List<Object> parametersValues = ruleRequiredParametersValues.values()*.get() + optionalParametersValues.values()
       applyRule(ruleName, parametersValues, subrulesSeqClosure)
     } else {
       missingRuleRequiredParameters.each { String parameterName ->
@@ -221,9 +227,9 @@ class RulesScript implements RulesScriptAPI {
    */
   @Override
   void applyRuleToRequiredParameter(String parameterName, Closure<SubrulesSeq> subrulesSeqClosure) {
-    def parameterValue = variablesBinding.fetchValue(currentGroup, parameterName)
-    if (parameterValue != '') {
-      applyRule(parameterName, parameterValue, subrulesSeqClosure)
+    Optional parameterValue = variablesBinding.fetchValue(currentGroup, parameterName)
+    if (parameterValue.isPresent()) {
+      applyRule(parameterName, parameterValue.get(), subrulesSeqClosure)
     } else {
       missingRequiredParameters[currentGroup].add(parameterName)
     }
@@ -238,8 +244,8 @@ class RulesScript implements RulesScriptAPI {
    */
   @Override
   void applyRuleToOptionalParameter(String parameterName, Closure<SubrulesSeq> subrulesSeqClosure, defaultValue) {
-    def parameterValue = variablesBinding.fetchValue(currentGroup, parameterName)
-    applyRule(parameterName, parameterValue == '' ? defaultValue : parameterValue, subrulesSeqClosure)
+    Optional parameterValue = variablesBinding.fetchValue(currentGroup, parameterName)
+    applyRule(parameterName, parameterValue | defaultValue, subrulesSeqClosure)
   }
 
   /**
@@ -329,9 +335,7 @@ class RulesScript implements RulesScriptAPI {
         variablesBinding.addCleanParameterValue(name, value, currentGroup)
       }
     } catch (ValidationException e) {
-      ValidationErrorProperties errorProperties = e.errorProperties
-      errorProperties.value = variablesBinding.fetchValue(currentGroup, e.errorProperties.parameter)
-      invalidParameters[currentGroup].put(e.errorProperties.parameter, errorProperties)
+      invalidParameters[currentGroup].put(e.errorProperties.parameter, e.errorProperties)
     }
   }
 
