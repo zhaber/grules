@@ -124,9 +124,7 @@ class RulesScript implements RulesScriptAPI {
    * Returns all script variables that are not parameters.
    */
   Map<String, Object> fetchEnvironment() {
-    variables.findAll { String variableName, variableValue ->
-      !(variableName in GROUPS)
-    }
+    variablesBinding.fetchEnvironment()
   }
 
   /**
@@ -308,8 +306,15 @@ class RulesScript implements RulesScriptAPI {
   /**
    * Fetches all parameters that were not validated.
    */
-  Map<String, Map<String, String>> fetchNotValidatedParameters() {
-    variablesBinding.fetchNotValidatedParameters()
+  Map<String, Map<String, Object>> fetchNotValidatedParameters() {
+    variablesBinding.fetchParametersDirtyValues().collectEntries {
+      String groupName, Map<String, Object> groupParameters ->
+      Map<String, Object> notValidatedParameters = groupParameters.findAll {
+        String parameterName, parameterValue ->        
+        !isProcessedParameter(groupName, parameterName)
+      }
+      notValidatedParameters.isEmpty() ? [:] : [(groupName): notValidatedParameters]
+    }
   }
 
   /**

@@ -32,7 +32,7 @@ configurations {
 
 project.ext {
   srcLibName = "${name}-src"
-  buildLibDir = 'lib'
+  releaseDir = 'release'
   configDir = 'config'
   codenarcConfigPath = "$configDir/codenarc.groovy"
   codenarcTestConfigPath = "$configDir/codenarc_test.groovy"
@@ -57,10 +57,17 @@ dependencies {
   test_scriptsCompile groovyArtifacts, commonArtifacts
 }
 
-task jar(type: Jar, overwrite: true) {
-  destinationDir = file(project.buildLibDir)
+// jar {...} causes a bug with duplicated files  
+task jar(type: Jar, overwrite: true, dependsOn: classes) {
+  destinationDir = file(project.releaseDir)
   from buildDir
   excludes=['tmp']
+}
+
+task jarsZip(type: Zip, dependsOn: jar) {
+    from configurations.runtime
+    from jar.archivePath
+    destinationDir = file(project.releaseDir)
 }
 
 compileLocal_astGroovy.dependsOn clean
@@ -71,7 +78,7 @@ compileTest_integrationGroovy.dependsOn compileTest_scriptsGroovy, processTest_i
 
 task sourcesJar(type: Jar) {
   classifier = 'sources'
-  destinationDir = file(project.buildLibDir)
+  destinationDir = file(project.releaseDir)
   from sourceSets.main.allSource
 }
 
@@ -125,7 +132,7 @@ task docsRelease(type:Groovydoc) {
   classpath = sourceSets.main.compileClasspath + sourceSets.local_ast.compileClasspath
 }
 
-task release(dependsOn: docsRelease) << {}
+task release(dependsOn: [build, docsRelease, jarsZip, sourcesJar]) << {}
 
 uploadArchives {
   repositories {

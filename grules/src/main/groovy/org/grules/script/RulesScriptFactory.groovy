@@ -45,6 +45,7 @@ class RulesScriptFactory {
   }
 
   private Script newScriptInstance(Class<? extends Script> scriptClass, Binding binding = new RulesBinding()) {
+    scriptClass = this.class.classLoader.loadClass(scriptClass.name)
     if (!Script.isAssignableFrom(scriptClass)) {
       throw new IllegalArgumentException("$scriptClass is not of Script class")
     }

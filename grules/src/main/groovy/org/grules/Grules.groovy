@@ -45,7 +45,7 @@ class Grules {
    */
   RulesScriptResult applyRules(Class<? extends Script> rulesScript, Map<String, Object> parameters,
       Map<String, Object> environment = [:]) {
-    GrulesAPI.newRulesApplicator(rulesScript, parameters, environment)
+    GrulesAPI.applyRules(rulesScript, parameters, environment)
   }
 
   /**

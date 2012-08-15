@@ -69,7 +69,7 @@ class RulesScriptResultFetcher {
         capitalizeParametersSet(rulesScript.missingRequiredParameters, originalParameters),
         capitalizeParametersMap(rulesScript.invalidParameters, originalParameters),
         capitalizeParametersSet(rulesScript.parametersWithMissingDependency, originalParameters),
-        rulesScript.variables)
+        rulesScript.fetchEnvironment())
   }
 
   /**
@@ -90,23 +90,30 @@ class RulesScriptResultFetcher {
 /**
  * A tuple class for result of rules application.
  */
-interface RulesScriptResultAPI {
+abstract class RulesScriptResultAPI {
   /** Parameters that passed validation */
-  def getCleanParameters()
+  abstract getCleanParameters()
   /** Parameters for which a preprocessing rule was not found */
-  def getNotValidatedParameters()
+  abstract getNotValidatedParameters()
   /** Parameters that are missing from input but required by a rules script. */
-  def getMissingRequiredParameters()
+  abstract getMissingRequiredParameters()
   /** Parameters that did no pass validation */
-  def getInvalidParameters()
+  abstract getInvalidParameters()
   /** Parameters that depend on other parameters that are invalid or missing from input. */
-  def getParametersWithMissingDependency()
-  /** All script variables */
-  Map<String, Object> getVariables()
+  abstract getParametersWithMissingDependency()
+  /** Script variables that are not inpit parameters */
+  abstract Map<String, Object> getVariables()
+  
+  @Override
+  String toString() {
+    "Clean parameters: $cleanParameters\nNot validated parameters: $notValidatedParameters\n" +
+    "Missing required parameters: $missingRequiredParameters\nInvalid parameters: $invalidParameters\n" +
+    "Parameters with missing dependency: $parametersWithMissingDependency\nVariables: $variables"
+  }
 }
 
 @TupleConstructor
-class RulesScriptGroupResult implements RulesScriptResultAPI {
+class RulesScriptGroupResult extends RulesScriptResultAPI {
   /** {@inheritDoc} */
   final Map<String, Map<String, Object>> cleanParameters
   /** {@inheritDoc} */
@@ -122,7 +129,7 @@ class RulesScriptGroupResult implements RulesScriptResultAPI {
 }
 
 @TupleConstructor
-class RulesScriptResult implements RulesScriptResultAPI {
+class RulesScriptResult extends RulesScriptResultAPI {
   /** {@inheritDoc} */
   final Map<String, Object> cleanParameters
   /** {@inheritDoc} */

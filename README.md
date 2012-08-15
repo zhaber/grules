@@ -23,6 +23,7 @@ weight toPositiveBigDecimal [decimalErr] >> {round(it / 1000)}
 endDate isAfterNow && isBefore(deadline) && {it.day != 1}
 ```
 
+<a href=https://github.com/zhaber/grules/wiki/Sample-rules-script>Quick start</a><br>
 <a href="https://github.com/zhaber/grules/wiki/_pages">Wiki documentation</a> <br>
 <a href="http://www.youtube.com/watch?v=6RYbDRY6cvQ">Introduction video</a> <br>
 

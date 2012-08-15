@@ -38,8 +38,8 @@ class GrulesLogger {
 }
 
 /**
-* A console handler for the logger.
-*/
+ * A console handler for the logger.
+ */
 class StdoutConsoleHandler extends ConsoleHandler {
 
   @Override

@@ -77,6 +77,12 @@ class RulesBinding extends Binding {
     } 
     Optional.absent()
   }
+  
+  Map<String, Object> fetchEnvironment() {  
+    variables.findAll { String variableName, variableValue ->
+      !(variableName in GROUPS) && variableName != RESOURCES_VARIABLE  
+    }
+  }
 
   /**
    * Adds variables for direct access to parameters of the group <code>group</code>, i.e. that a group prefix can be
@@ -93,7 +99,8 @@ class RulesBinding extends Binding {
    * @param missingPropertyClosure closure called when some parameter is missing
    */
   void addParameters(Map<String, Map<String, Object>> parameters, Closure<Object> missingPropertyClosure) {
-    variables << GROUPS.collectEntries { String group ->
+    variables << GROUPS.collectEntries { 
+      String group ->
       Map<String, Object> dirtyParametersValuesVariables = [:]
       if (parameters.containsKey(group)) {
         dirtyParametersValuesVariables += parameters[group].collectEntries {
@@ -139,25 +146,39 @@ class RulesBinding extends Binding {
   }
 
   /**
-   * Returns only parameters variables.
+   * Returns groups with parameters variables.
    */
-  Map<String, Map<String, Object>> fetchParameters() {
+  Map<String, Map<String, Object>> fetchParametersGroupVariables() {
     variables.findAll {String name, value -> name in GROUPS}
+  }
+
+  Map<String, Map<String, Object>> fetchParametersDirtyValues() {
+    fetchParametersGroupVariables().collectEntries {
+      String group, Map<String, Object> groupParameters ->
+      Map<String, Object> parametersDirtyValues = (groupParameters.collectEntries {
+        String parameterName, parameterValue ->
+        if (isDirtyParameterName(parameterName)) { 
+          [(parseDirtyParameterName(parameterName)) : parameterValue]
+        } else {
+          [:]
+        }
+      })
+      [(group): parametersDirtyValues]
+    }
   }
 
   /**
    * Checks if the specified parameter was processed and is valid.
    */
   boolean isCleanParameter(String group, String parameterName) {
-    boolean isGroup = variables.containsKey(group) && variables.containsKey(group) instanceof Map<String, Object>
-    isGroup && (variables[group] as Map<String, Object>).containsKey(parameterName)
+    variables.containsKey(group) && (variables[group] as Map<String, Object>).containsKey(parameterName)
   }
 
   /**
    * Returns clean values for all clean parameters.
    */
   Map<String, Map<String, Object>> fetchCleanParametersValues() {
-    fetchParameters().collectEntries {
+    fetchParametersGroupVariables().collectEntries {
       String group, Map<String, Object> groupParameters ->
       Map<String, Object> parametersDirtyValuesVariables = groupParameters.findAll {
         String name, value ->
@@ -178,21 +199,6 @@ class RulesBinding extends Binding {
   void removeGroupDirectParametersVariables(String group) {
     Set<String> variablesNames = (variables[group] as Map<String, Object>).keySet()
     variables.keySet().removeAll(variablesNames)
-  }
-
-  /**
-   * Fetches parameters that were not validated by the rules script.
-   */
-  Map<String, Map<String, String>> fetchNotValidatedParameters() {
-    fetchParameters().collectEntries {	String group, Map<String, Object> groupParameters ->
-      Map<String, String> notValidatedParameters = (groupParameters.findAll {
-        String parameterName, parameterValue ->
-        isDirtyParameterName(parameterName) && !groupParameters.containsKey(parseDirtyParameterName(parameterName))
-      }).collectEntries({ String parameterName, parameterValue ->
-        [(parseDirtyParameterName(parameterName)) : parameterValue]
-      })
-      notValidatedParameters.isEmpty() ? [:] : [(group): notValidatedParameters]
-    }
   }
 
   @Override

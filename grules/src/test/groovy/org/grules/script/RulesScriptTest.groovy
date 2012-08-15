@@ -241,7 +241,7 @@ class RulesScriptTest extends Specification {
 			thrown(MissingPropertyException)
 	}
 
-	def "Non empty missing request parameters"() {
+	def "fetchNotValidatedParameters returns not validated parameters"() {
 		setup:
 		  def notValidatedParameters = script.fetchNotValidatedParameters()
 		expect:
@@ -250,12 +250,19 @@ class RulesScriptTest extends Specification {
 			notValidatedParameters.get(GROUP).get(PARAMETER_NAME) == PARAMETER_VALUE
 	}
 
-	def "Empty missing request parameters"() {
+	def "fetchNotValidatedParameters does not return clean parameters"() {
 		setup:
 			script.variablesBinding.addCleanParameterValue(PARAMETER_NAME, CLEAN_PARAMETER_VALUE, GROUP)
 		expect:
 	  	script.fetchNotValidatedParameters().isEmpty()
 	}
+  
+  def "fetchNotValidatedParameters does not return invalid parameters"() {
+    setup:
+      script.invalidParameters.put(GROUP, [(PARAMETER_NAME): new ValidationErrorProperties()])
+    expect:
+      script.fetchNotValidatedParameters().isEmpty()
+  }
 
 	def "fetchNotValidatedParameters gets parameters from missing group"() {
 		setup:
@@ -271,10 +278,12 @@ class RulesScriptTest extends Specification {
   def "fetchEnvironment contains variables but not groups"() {
     setup:
       script.variables.put(VARIABLE_NAME, VARIABLE_VALUE)
+      script.applyRules()
       def environment = script.fetchEnvironment()
     expect:
       environment.containsKey(VARIABLE_NAME)
       !environment.containsKey(GROUP)
+      !environment.containsKey(RulesBinding.toDirtyParameterName(PARAMETER_NAME))
   }
 
   def "adds group variables and variables for default group"() {
