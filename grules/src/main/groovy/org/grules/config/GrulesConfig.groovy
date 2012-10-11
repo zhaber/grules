@@ -6,6 +6,9 @@ import java.util.logging.Level
 import org.grules.GrulesException
 import org.grules.script.expressions.Subrule
 
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableMap
+
 /**
  * Grules configuration parameters.
  */
@@ -17,12 +20,13 @@ class GrulesConfig extends Config {
   static final String DEFAULT_GROUP_PARAMETER_NAME = 'defaultGroup'
   static final String LOG_LEVEL_PARAMETER_NAME = 'logLevel'
   static final String LOGGER_HANDLER_PARAMETER_NAME = 'loggerHandler'
+  static final String ENABLE_MULTITHREADING_PARAMETER_NAME = 'enableMultithreading'
   static final String GROUPS_PARAMETER_NAME = 'groups'
   static final String RESOURCE_BUNDLE_PARAMETER_NAME = 'resourceBundlePath'
   static final String DEFAULT_FUNCTIONS_PARAMETER_NAME = 'defaultFunctions'
 
   GrulesConfig(Map<String, Object> properties) {
-    this.parameters = properties
+    this.parameters = ImmutableMap.copyOf(properties)
   }
 
   /**
@@ -58,6 +62,13 @@ class GrulesConfig extends Config {
   }
 
   /**
+   * Checks whether scripts should be evaluated in multi-threaded environment.
+   */
+  Boolean isMultithreadingEnabled() {
+    parameters[ENABLE_MULTITHREADING_PARAMETER_NAME]
+  }
+
+  /**
    * Action performed when there is no defined rule for some input parameter.
    */
   OnValidationEventAction getNotValidatedParametersAction() {
@@ -75,12 +86,12 @@ class GrulesConfig extends Config {
    * Sequence of converters that must be applied to all parameters.
    */
   List<Subrule> getDefaultFunctions() {
-    parameters[DEFAULT_FUNCTIONS_PARAMETER_NAME]
+    ImmutableList.copyOf(parameters[DEFAULT_FUNCTIONS_PARAMETER_NAME])
   }
 
   /** {@inheritDoc} */
   @Override
-  Map<String, Object> getParameters() {
+  protected Map<String, Object> getParameters() {
     parameters
   }
 }

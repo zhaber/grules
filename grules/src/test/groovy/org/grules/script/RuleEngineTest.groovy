@@ -7,7 +7,6 @@ import org.grules.EmptyRulesScript
 import org.grules.GrulesAPI
 import org.grules.GrulesInjector
 import org.grules.config.GrulesConfig
-import org.grules.config.GrulesConfigFactory
 import org.grules.config.OnValidationEventAction
 
 import spock.lang.Specification
@@ -27,8 +26,11 @@ class RuleEngineTest extends Specification {
 	}
 
 	RuleEngine createRuleEngineWithValidationErrorAction() {
-		def config = new GrulesConfigFactory().createConfig()
-		config.parameters.put(GrulesConfig.NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME, OnValidationEventAction.ERROR)
+		GrulesConfig config = Mock()
+		config.getNotValidatedParametersAction() >> OnValidationEventAction.ERROR
+    config.getGroups() >> TEST_CONFIG.groups
+    config.getDefaultGroup() >> TEST_CONFIG.getDefaultGroup()
+    config.isMultithreadingEnabled() >> false
 		new RuleEngine(config, new RulesScriptFactory())
 	}
 
@@ -43,15 +45,16 @@ class RuleEngineTest extends Specification {
 		ruleEngine.runMainScript(Script, [:], [:])
 	}
 
-	def "Create new preprocessor for grouped parameters"() {
+	def "Preprocessing of grouped parameters"() {
 		setup:
 		  def parameters = [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]]
 			RulesScriptGroupResult result = GrulesAPI.applyGroupRules(TestRulesScript, parameters)
 		expect:
 			result.cleanParameters == [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]]
+      result.invalidParameters.isEmpty()
 	}
 
-	def "Create new preprocessor for default group"() {
+	def "Preprocessing of one group"() {
 		setup:
 			RulesScriptResult result = GrulesAPI.applyRules(TestRulesScript, [(PARAMETER_NAME): PARAMETER_VALUE])
 		expect:

@@ -33,7 +33,7 @@ class RuleEngine {
    * parameters names and values are parameters values (<code>Map&lt;String, Object></code>)
    */
   Closure<RulesScriptResult> newExecutor(Class<? extends Script> rulesScriptClass, Map<String, Object> environment) {
-    String defaultGroup = config.defaultGroup
+    String defaultGroup = config.getDefaultGroup()
     return { Map<String, Object> parameters ->
       RulesScript script = runMainScript(rulesScriptClass, [(defaultGroup): parameters], environment)
       RulesScriptResult scriptResult = RulesScriptResultFetcher.fetchResult(script, defaultGroup, parameters)
@@ -41,7 +41,6 @@ class RuleEngine {
       scriptResult
     }
   }
-
 
   /**
    * Creates a closure that applies a rules script to given parameters values. Parameters is a map where keys are
@@ -52,7 +51,7 @@ class RuleEngine {
       Map<String, Object> environment) {
     return {Map<String, Map<String, Object>> parameters ->
       parameters.each {String group, groupParameters ->
-        if (!config.groups.contains(group)) {
+        if (!config.getGroups().contains(group)) {
           throw new InvalidGroupException(group)
         }
       }
@@ -69,12 +68,16 @@ class RuleEngine {
   private RulesScript runMainScript(Class<? extends Script> scriptClass,
       Map<String, Map<String,Object>> parameters, Map<String, Object> environment) {
     RulesScript script = rulesScriptFactory.newInstanceMain(scriptClass, parameters, environment)
-    try {
-      GParsExecutorsPool.withPool {
-        GParsExecutorsPoolUtil.callAsync{runScript(script)}.get()
+    if (config.isMultithreadingEnabled()) {
+      try {
+        GParsExecutorsPool.withPool {
+          GParsExecutorsPoolUtil.callAsync{runScript(script)}.get()
+        }
+      } catch (ExecutionException e) {
+        throw e.cause
       }
-    } catch (ExecutionException e) {
-      throw e.cause
+    } else {
+      runScript(script)
     }
     script
   }
@@ -83,7 +86,7 @@ class RuleEngine {
    * Runs an included rules script.
    */
   protected void runIncludedScript(Class<? extends Script> scriptClass,
-      List<Class<? extends Script>> scriptsChain, Binding binding, 
+      List<Class<? extends Script>> scriptsChain, Binding binding,
       Map<String, Set<String>> missingRequiredParameters,
       Map<String, Map<String, ValidationErrorProperties>> invalidParameters,
       Map<String, Set<String>> parametersWithMissingDependency,
@@ -110,7 +113,7 @@ class RuleEngine {
   }
 
   /**
-   * Checks missing parameters for a rules script with one default section.
+   * Checks missing parameters for a rules script with one default group.
    */
   private void checkMissingFlatParameters(Map<String, String> notValidatedParameters) {
     if (!notValidatedParameters.isEmpty()) {
@@ -119,15 +122,16 @@ class RuleEngine {
   }
 
   private void checkMissingParameters(NotValidatedParametersException notValidatedParametersException) {
-    if (config.notValidatedParametersAction != OnValidationEventAction.IGNORE) {
-      switch (config.notValidatedParametersAction) {
+    OnValidationEventAction onValidationEventAction = config.getNotValidatedParametersAction()
+    if (onValidationEventAction != OnValidationEventAction.IGNORE) {
+      switch (onValidationEventAction) {
         case OnValidationEventAction.ERROR:
           throw notValidatedParametersException
         case OnValidationEventAction.LOG:
           GrulesLogger.warn("Missing parameters: $notValidatedParametersException.parameters")
           break
         default:
-          throw new ConfigException("Unknown action value ($config.notValidatedParametersAction)")
+          throw new ConfigException("Unknown action value ($onValidationEventAction)")
       }
     }
   }

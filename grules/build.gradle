@@ -1,12 +1,12 @@
-def groovyArtifacts = ['org.codehaus.groovy:groovy-all:1.8.6', 'asm:asm:3.3.1']
+def groovyArtifacts = ['org.codehaus.groovy:groovy-all:2.0.4', 'asm:asm:3.3.1']
 def commonArtifacts = [
-    'joda-time:joda-time:2.1+', 
+    'joda-time:joda-time:2.1',
     'com.google.inject:guice:3.0',
-    'org.apache.tomcat:servlet-api:6.0.35+', 
-    'org.codehaus.gpars:gpars:0.12+', 
-    'javax.mail:mail:1.4.5+',
+    'org.apache.tomcat:servlet-api:6.0.35',
+    'org.codehaus.gpars:gpars:0.12',
+    'javax.mail:mail:1.4.5',
     'com.google.guava:guava:13.0'
-    ]
+    ] + groovyArtifacts
 
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
@@ -18,10 +18,20 @@ defaultTasks 'build'
 
 buildDir = 'bin'
 group = 'org.grules'
-version = '0.1'
+version = '0.2'
+
+project.ext {
+  releaseDir = 'release'
+  configDir = 'config'
+  sonatypeRepositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+  codenarcConfigPath = "$configDir/codenarc.groovy"
+  codenarcTestConfigPath = "$configDir/codenarc_test.groovy"
+  groovyDocWindowTitle = 'Grules'
+}
 
 sourceSets {
-  local_ast
+  functions
+  transformation
   test_scripts
   test_integration
 }
@@ -30,65 +40,66 @@ configurations {
   excludedClasspathJars
 }
 
-project.ext {
-  srcLibName = "${name}-src"
-  releaseDir = 'release'
-  configDir = 'config'
-  codenarcConfigPath = "$configDir/codenarc.groovy"
-  codenarcTestConfigPath = "$configDir/codenarc_test.groovy"
-  groovyDocSources = [sourceSets.main.allGroovy, sourceSets.local_ast.allGroovy]
-  groovyDocWindowTitle = 'Grules'
+if (hasProperty('ci')) {
+  version += "-SNAPSHOT"
+  project.sonatypeRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
 }
 
 sourceSets*.output.each {it.classesDir = buildDir; it.resourcesDir = buildDir}
 
 repositories {
+  maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
   mavenCentral()
 }
 
-def testArtifacts = ['org.spockframework:spock-core:0.6-groovy-1.8', 'org.objenesis:objenesis:1.2']
+def testArtifacts = ['org.spockframework:spock-core:0.7-groovy-2.0-SNAPSHOT', 'org.objenesis:objenesis:1.2']
 
-dependencies {
-  groovy groovyArtifacts
-  local_astCompile groovyArtifacts
-  compile commonArtifacts
-  testCompile testArtifacts
-  test_integrationCompile groovyArtifacts, commonArtifacts, testArtifacts
-  test_scriptsCompile groovyArtifacts, commonArtifacts
-}
-
-// jar {...} causes a bug with duplicated files  
-task jar(type: Jar, overwrite: true, dependsOn: classes) {
-  destinationDir = file(project.releaseDir)
+task classesJar(type: Jar, dependsOn: [classes, transformationClasses]) {
+  destinationDir = file(releaseDir)
   from buildDir
   excludes=['tmp']
 }
 
-task jarsZip(type: Zip, dependsOn: jar) {
-    from configurations.runtime
-    from jar.archivePath
-    destinationDir = file(project.releaseDir)
+dependencies {
+  groovy groovyArtifacts
+  compile commonArtifacts
+  functionsCompile commonArtifacts
+  transformationCompile commonArtifacts
+  testCompile testArtifacts, files(classesJar.archivePath)
+  test_integrationCompile commonArtifacts, testArtifacts
+  test_scriptsCompile commonArtifacts
 }
 
-compileLocal_astGroovy.dependsOn clean
-compileGroovy.dependsOn compileLocal_astGroovy
+// jar {...} causes a bug with duplicated files
+task jar(type: Jar, overwrite: true, dependsOn: classesJar) {}
+
+task zipAll(type: Zip, dependsOn: jar) {
+  classifier = 'all'
+  from configurations.runtime
+  from jar.archivePath
+  destinationDir = file(releaseDir)
+}
+
+compileGroovy.dependsOn clean
+compileFunctionsGroovy.dependsOn compileGroovy
+compileTransformationGroovy.dependsOn compileFunctionsGroovy
 compileTestGroovy.dependsOn jar
 compileTest_scriptsGroovy.dependsOn processResources, compileTestGroovy
 compileTest_integrationGroovy.dependsOn compileTest_scriptsGroovy, processTest_integrationResources
 
-task sourcesJar(type: Jar) {
+task srcJar(type: Jar) {
   classifier = 'sources'
-  destinationDir = file(project.releaseDir)
+  destinationDir = file(releaseDir)
   from sourceSets.main.allSource
 }
 
 tasks.withType(CodeNarc).all { codeNarcTask ->
-  codeNarcTask.configFile = file(project.codenarcConfigPath)
+  codeNarcTask.configFile = file(codenarcConfigPath)
 }
 
-codenarcTest_scripts.configFile = file(project.codenarcTestConfigPath)
-codenarcTest_integration.configFile = file(project.codenarcTestConfigPath)
-codenarcTest.configFile = file(project.codenarcTestConfigPath)
+codenarcTest_scripts.configFile = file(codenarcTestConfigPath)
+codenarcTest_integration.configFile = file(codenarcTestConfigPath)
+codenarcTest.configFile = file(codenarcTestConfigPath)
 
 task compileAll(dependsOn: [compileGroovy, compileTestGroovy, compileTest_integrationGroovy]) << {}
 
@@ -103,42 +114,59 @@ task initProject << {
 
 task initEclipseProject(dependsOn: [initProject, eclipseClasspath]) << {}
 
-build.dependsOn = [testAll, check, sourcesJar, jar, groovydoc]
-
 task wrapper(type: Wrapper) {
   gradleVersion = '1.0'
 }
 
-artifacts {
-  archives jar
-  archives sourcesJar
-}
-
-signing {
-  sign configurations.archives
-}
-
 groovydoc.destinationDir = file('docs')
 groovydoc.windowTitle = groovyDocWindowTitle
-groovydoc.source groovyDocSources
+
+task groovydocJar(type: Jar, dependsOn: 'groovydoc') {
+  classifier = 'javadoc'
+  from groovydoc.destinationDir
+  destinationDir = file(releaseDir)
+}
+
+build.dependsOn = [check, testAll, jar]
 
 task docsRelease(type:Groovydoc) {
   group = "Documentation"
   windowTitle = groovyDocWindowTitle
   description = 'Generates Groovydoc API documentation for the grules source code and copies it to the' +
       'github pages repository.'
-  source sourceSets.main.allGroovy, sourceSets.local_ast.allGroovy
+  source sourceSets.main.allGroovy, sourceSets.functions.allGroovy, sourceSets.transformation.allGroovy
   destinationDir = file('../../ghpages/grules/docs')
-  classpath = sourceSets.main.compileClasspath + sourceSets.local_ast.compileClasspath
+  classpath = sourceSets.main.compileClasspath + sourceSets.functions.compileClasspath +
+      sourceSets.transformation.compileClasspath
 }
 
-task release(dependsOn: [build, docsRelease, jarsZip, sourcesJar]) << {}
+task release(dependsOn: [zipAll, uploadArchives, docsRelease]) << {}
 
+// for testing purposes
+task dummy << {}
+
+task copyJar(type: Copy, dependsOn: classesJar) {
+  from classesJar.archivePath
+  into libsDir
+}
+
+signing {
+  sign srcJar
+  sign classesJar
+  sign groovydocJar
+}
+
+artifacts {
+  archives srcJar
+  archives groovydocJar
+}
+
+uploadArchives.dependsOn = [build, copyJar, groovydocJar, srcJar, signClassesJar, signGroovydocJar, signSrcJar]
 uploadArchives {
   repositories {
       mavenDeployer {
-          beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
-          repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+          beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment); println deployment }
+          repository(url: sonatypeRepositoryUrl) {
             authentication(userName: sonatypeUsername, password: sonatypePassword)
           }
           pom.project {

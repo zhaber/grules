@@ -57,7 +57,7 @@ class ClosureWrapper {
     Expression closure = ExpressionFactory.createClosureExpression(closureMethodCallExpression)
     ExpressionFactory.createConstructorCall(FunctionTerm, [closure, methodToConstantExpression(methodExpression)])
   }
-  
+
   /**
    * Wraps a ternary operator into a term.
    */
@@ -65,7 +65,7 @@ class ClosureWrapper {
     Closure<Expression> convertToSubrulesSeqApplication = { Expression branchExpression ->
       List<AnnotatedNode> arguments = [ExpressionFactory.createItVariable()]
       Expression ruleExpression = RulesAstTransformation.convertToRuleExpression(branchExpression)
-      Expression subrulesSeqApplicationExpression = ExpressionFactory.createMethodCall(ruleExpression, 
+      Expression subrulesSeqApplicationExpression = ExpressionFactory.createMethodCall(ruleExpression,
           SubrulesSeq.&apply, arguments)
       ExpressionFactory.createClosureExpression(subrulesSeqApplicationExpression)
     }

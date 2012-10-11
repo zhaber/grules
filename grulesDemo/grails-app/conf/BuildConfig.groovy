@@ -25,9 +25,9 @@ grails.project.dependency.resolution = {
     dependencies {
 			compile "com.google.inject:guice:3.0",
 			        "com.google.guava:guava:11.0.2",
-							"joda-time:joda-time:2.1+",
+							"joda-time:joda-time:2.1",
 							'org.codehaus.gpars:gpars:0.12+',
-              'javax.mail:mail:1.4.5+'
+              'javax.mail:mail:1.4.5'
     }
 
     plugins {

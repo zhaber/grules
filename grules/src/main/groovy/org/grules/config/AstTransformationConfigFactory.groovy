@@ -1,7 +1,7 @@
 package org.grules.config
 
 /**
- * A factory that produces configuration used by a compiler during AST transformation.
+ * A factory that produces a configuration object used by a compiler during AST transformation.
  */
 class AstTransformationConfigFactory implements ConfigFactory {
 

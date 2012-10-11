@@ -27,7 +27,7 @@ class RuleExpressionFormTransformer {
     List postfixRuleExpression = infixToPostfixExpression(infixRuleExpression)
     postfixExpressionToTree(postfixRuleExpression)
   }
-  
+
   /**
    * Returns operators precedence in rule expressions.
    */
@@ -135,7 +135,7 @@ class RuleExpressionFormTransformer {
   /**
    * Traverses binary expression's child nodes and converts them to infix notation.
    */
-  private static List transformChildExpressionsToInfix(BinaryExpression binaryExpression, Token operation, 
+  private static List transformChildExpressionsToInfix(BinaryExpression binaryExpression, Token operation,
       Integer operationPrecedence) {
     List leftExpression = transformToInfixExpression(binaryExpression.leftExpression, operationPrecedence)
     List rightExpression = transformToInfixExpression(binaryExpression.rightExpression, operationPrecedence)
@@ -150,16 +150,16 @@ class RuleExpressionFormTransformer {
     List innerExpression = transformToInfixExpression(notExpression.expression, operationPrecedence)
     [operation] + innerExpression
   }
-      
+
   /**
    * Traverses bitwise negation expression's child nodes and converts them to infix notation.
    */
-  private static List transformChildExpressionsToInfix(BitwiseNegationExpression bitwiseNegationExpression, 
+  private static List transformChildExpressionsToInfix(BitwiseNegationExpression bitwiseNegationExpression,
        Token operation, Integer operationPrecedence) {
      List innerExpression = transformToInfixExpression(bitwiseNegationExpression.expression, operationPrecedence)
      [operation] + innerExpression
   }
-       
+
   /**
    * Traverses ternary expression's child nodes and converts them to infix notation.
    */
@@ -169,7 +169,7 @@ class RuleExpressionFormTransformer {
     List infixFalseExpression = transformToInfixExpression(ternaryExpression.falseExpression, operationPrecedence)
     [new TernaryRuleExpression(ternaryExpression.booleanExpression, infixTrueExpression, infixFalseExpression)]
   }
-    
+
   /**
    * Traverses rule expression AST inorder and converts to infix notation. Parentheses are added when necessary.
    *
@@ -198,8 +198,8 @@ class RuleExpressionFormTransformer {
 }
 
 @TupleConstructor
-private class TernaryRuleExpression {
+class TernaryRuleExpression {
   final Expression booleanExpression
   final List trueExpression
   final List falseExpression
-} 
+}

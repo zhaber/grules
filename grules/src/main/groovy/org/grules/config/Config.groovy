@@ -8,7 +8,7 @@ abstract class Config {
   /**
    * Returns a map with configuration properties.
    */
-  abstract Map<String, Object> getParameters()
+  protected abstract Map<String, Object> getParameters()
 
   /**
    * Returns all configuration parameters as a string.

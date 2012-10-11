@@ -65,5 +65,4 @@ class AstUtils {
       annotationNode.classNode.name == annotationClass.simpleName
     }
   }
-
 }

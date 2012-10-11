@@ -6,13 +6,12 @@ import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.GroovyClassVisitor
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.ModuleNode
-import org.codehaus.groovy.runtime.StackTraceUtils
 import org.codehaus.groovy.transform.ASTTransformation
 
 /**
  * The class is common ancestor for grules script transformations.
  */
-abstract class GrulesAstTransformation implements ASTTransformation {
+abstract class GrulesAstTransformation implements ASTTransformation, Closeable {
 
   private GrulesASTTransformationLogger logger
   private GroovyClassVisitor astNodeLoggerVisitor
@@ -39,8 +38,7 @@ abstract class GrulesAstTransformation implements ASTTransformation {
       logSource(node)
     } catch (Throwable exception) {
       Writer stringWriter = new StringWriter()
-      Throwable sanitizedException = StackTraceUtils.deepSanitize(exception)
-      sanitizedException.printStackTrace(new PrintWriter(stringWriter))
+      exception.printStackTrace(new PrintWriter(stringWriter))
       log(stringWriter)
     } finally {
       close()
@@ -67,16 +65,17 @@ abstract class GrulesAstTransformation implements ASTTransformation {
     log(label + ': ' + message)
   }
 
-  private void close() {
+  @Override
+  void close() {
     log('\nTransformation complete')
     logger.close()
   }
 
-  private void logSource(ClassNode node) {
+  protected void logSource(ClassNode node) {
     astNodeLoggerVisitor.visitClass(node)
   }
 
-  private void logSource(MethodNode node) {
+  protected void logSource(MethodNode node) {
     astNodeLoggerVisitor.visitMethod(node)
   }
 }

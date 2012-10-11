@@ -27,7 +27,7 @@ class RulesScriptResultTest extends Specification {
 		script.parametersWithMissingDependency >> parametersWithMissingDependency 
 	}
 
-	def "fetch gets all GROUPed variables"() {
+	def "fetch gets all grouped variables"() {
 		setup:
 		  RulesScriptGroupResult scriptResult = RulesScriptResultFetcher.fetchGroupResult(script, cleanParameters)
 		expect:
@@ -38,7 +38,7 @@ class RulesScriptResultTest extends Specification {
 			scriptResult.parametersWithMissingDependency == parametersWithMissingDependency
 	}
 	
-	def "fetchFlat method gets not GROUPed variables"() {
+	def "fetchFlat method gets not grouped variables"() {
 		setup:
 			RulesScriptResult scriptResult = RulesScriptResultFetcher.fetchResult(script, GROUP, cleanParameters.get(GROUP))
 		expect:

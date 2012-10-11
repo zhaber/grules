@@ -21,7 +21,7 @@ class GrulesInjector {
     INJECTOR.getInstance(GrulesConfig)
   }
 
-  static MessagesResourceBundle getMessagesResourceBundle() {
-    INJECTOR.getInstance(MessagesResourceBundle)
+  static MessageResourceBundle getMessageResourceBundle() {
+    INJECTOR.getInstance(MessageResourceBundle)
   }
 }

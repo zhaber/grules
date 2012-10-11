@@ -62,7 +62,16 @@ class RulesAstTransformation extends GrulesAstTransformation {
 
   private static final List<Class> IMPORT_CLASSES = [CommonFunctions, DateFunctions, StringFunctions, TypeFunctions,
       UserFunctions, MathFunctions, SecurityFunctions]
-  private static final String RULES_SUFFIX = 'Grules'
+  private static final String DEFAULT_RULES_FILE_SUFFIX = 'Grules'
+  private String rulesFileSufix
+
+  RulesAstTransformation() {
+    this(DEFAULT_RULES_FILE_SUFFIX)
+  }
+
+  RulesAstTransformation(String rulesFileSufix) {
+    this.rulesFileSufix = rulesFileSufix
+  }
 
   /**
    * Visits a rules script class and applies appropriate transformations.
@@ -74,21 +83,22 @@ class RulesAstTransformation extends GrulesAstTransformation {
       return
     }
     String scriptName = (moduleNode.classes[0].name.split(/\\./) as List).last()
-    if (scriptName.endsWith(RULES_SUFFIX)) {
+    if (scriptName.endsWith(rulesFileSufix)) {
       IMPORT_CLASSES.each {
         Class importClass ->
         moduleNode.addStaticStarImport(importClass.name, ClassHelper.make(importClass))
       }
       ClassNode classNode = moduleNode.classes[0]
       init(classNode.name)
-      visit(moduleNode, classNode)
+      super.visit(moduleNode, classNode)
     }
   }
 
   @Override
   void visitModule(ModuleNode moduleNode, node) {
     List<Statement> statements = moduleNode.statementBlock.statements
-    for (int i = 0; i < statements.size; i++) {
+    // using .size() instead of .size for GAE compatibility
+    for (int i = 0; i < statements.size(); i++) {
       Statement statement = statements[i]
       if (statement.statementLabel != null) {
         log('Creating method call for group', statement.statementLabel)
@@ -207,8 +217,8 @@ class RulesAstTransformation extends GrulesAstTransformation {
   }
 
   /**
-   * Traverses subrules and for each subrule lifts an error to the top level. 
-   * 
+   * Traverses subrules and for each subrule lifts an error to the top level.
+   *
    * @param expression an expression where for each subrule an error object is bound to the most right expression
    * @return an expression with lifted errors
    */

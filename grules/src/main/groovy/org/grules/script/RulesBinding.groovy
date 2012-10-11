@@ -16,12 +16,12 @@ class RulesBinding extends Binding {
   private static final String RESOURCES_VARIABLE = 'm'
   private static final GrulesConfig CONFIG = GrulesInjector.config
   private static final Set<String> GROUPS = CONFIG.groups
-  private static final Map<String, String> MESSAGES = GrulesInjector.messagesResourceBundle.messages
-  
+  private static final Map<String, String> MESSAGES = GrulesInjector.messageResourceBundle.messages
+
   /**
-   * Checks if property is a parameter dirty value.
+   * Checks if the specified property is a parameter raw value.
    */
-  static boolean isDirtyParameterName(String name) {
+  static boolean isRawParameterName(String name) {
     name.startsWith(DIRTY_VALUE_PREFIX)
   }
 
@@ -64,23 +64,23 @@ class RulesBinding extends Binding {
       variables[group][toDirtyParameterName(parameterName)]
     }
   }
-  
+
   /**
    * Returns value of the parameter <code>parameterName</code> from the <code>group</code>.
    */
   Optional fetchValue(String group, String parameterName) {
     if (isParameterDefined(group, parameterName)) {
-      def value = fetchDefinedParameterValue(group, parameterName) 
+      def value = fetchDefinedParameterValue(group, parameterName)
       if (value != '' && value != null) {
         return Optional.of(value)
       }
-    } 
+    }
     Optional.absent()
   }
-  
-  Map<String, Object> fetchEnvironment() {  
+
+  Map<String, Object> fetchEnvironment() {
     variables.findAll { String variableName, variableValue ->
-      !(variableName in GROUPS) && variableName != RESOURCES_VARIABLE  
+      !(variableName in GROUPS) && variableName != RESOURCES_VARIABLE
     }
   }
 
@@ -93,13 +93,13 @@ class RulesBinding extends Binding {
   }
 
   /**
-   * Adds variables for input parameters.
+   * Adds variables that contains raw parameters value.
    *
    * @param parameters input parameters
    * @param missingPropertyClosure closure called when some parameter is missing
    */
   void addParameters(Map<String, Map<String, Object>> parameters, Closure<Object> missingPropertyClosure) {
-    variables << GROUPS.collectEntries { 
+    variables << GROUPS.collectEntries {
       String group ->
       Map<String, Object> dirtyParametersValuesVariables = [:]
       if (parameters.containsKey(group)) {
@@ -134,7 +134,11 @@ class RulesBinding extends Binding {
   }
 
   private static String normalizeParameterName(String parameterName) {
-    parameterName.isEmpty() ? '' : parameterName[0].toLowerCase() + parameterName[1..-1]
+    if (!parameterName.isEmpty()) {
+      parameterName[0].toLowerCase() + (parameterName.size() > 1 ? parameterName[1..-1] : '')
+    } else {
+      ''
+    }
   }
 
   /**
@@ -157,7 +161,7 @@ class RulesBinding extends Binding {
       String group, Map<String, Object> groupParameters ->
       Map<String, Object> parametersDirtyValues = (groupParameters.collectEntries {
         String parameterName, parameterValue ->
-        if (isDirtyParameterName(parameterName)) { 
+        if (isRawParameterName(parameterName)) {
           [(parseDirtyParameterName(parameterName)) : parameterValue]
         } else {
           [:]
@@ -182,7 +186,7 @@ class RulesBinding extends Binding {
       String group, Map<String, Object> groupParameters ->
       Map<String, Object> parametersDirtyValuesVariables = groupParameters.findAll {
         String name, value ->
-        isDirtyParameterName(name)
+        isRawParameterName(name)
       }
       Map<String, Object> cleanParameters = groupParameters - parametersDirtyValuesVariables
       if (cleanParameters.isEmpty()) {

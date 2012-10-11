@@ -18,10 +18,6 @@ class GrulesModule implements Module {
     binder.bind(GrulesConfig).toInstance(new GrulesConfigFactory().createConfig())
     binder.bind(RulesScriptFactory).in(Scopes.SINGLETON)
     binder.bind(RuleEngine).in(Scopes.SINGLETON)
-    binder.bind(MessagesResourceBundle).in(Scopes.SINGLETON)
+    binder.bind(MessageResourceBundle).in(Scopes.SINGLETON)
   }
 }
-
-
-
-

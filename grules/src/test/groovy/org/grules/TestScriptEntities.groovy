@@ -9,7 +9,7 @@ import org.grules.http.HttpRequestParametersGroup
 
 class TestScriptEntities {
 
-  static final GrulesConfig CONFIG = new GrulesConfigFactory().createDefaultConfig()
+  static final GrulesConfig TEST_CONFIG = new GrulesConfigFactory().createDefaultConfig()
 
 	static final List FALSE_PARAMETER = []
 	static final String PARAMETER_NAME = 'parameterName'
@@ -33,10 +33,10 @@ class TestScriptEntities {
 	static final String VALID_PARAMETER = VALID_INTEGER_STRING
 	static final String INVALID_PARAMETER_VALUE = '1a'
 	static final String SUBRULES_SEQ_NAME = 'subrulesSeqName'
-	static final String GROUP = CONFIG.defaultGroup
+	static final String GROUP = TEST_CONFIG.defaultGroup
 	static final String GROUP_AUX = HttpRequestParametersGroup.GET.name()
 	static final Level CONFIG_LOG_LEVEL = Level.INFO
-  static final OnValidationEventAction NOT_VALIDATED_PARAMETERS_ACTION = CONFIG.notValidatedParametersAction
+  static final OnValidationEventAction NOT_VALIDATED_PARAMETERS_ACTION = TEST_CONFIG.notValidatedParametersAction
   static final String JOIN_SEPARATOR = ' '
   static final Closure FUNCTION_FOR_LIST = {list -> list.join(JOIN_SEPARATOR)}
   static final Closure FUNCTION_FOR_ONE_ARGUMENT = {it + 1}

@@ -305,29 +305,37 @@ class RulesASTTransformationTest extends Specification {
 	}
 
 	def "createRuleExpression"() {
-		def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
-			"$PARAMETER_NAME" a && b [c] >> d
-		})
-		MethodCallExpression ruleApplicationExpression = astTransformation.convertToRuleApplicationExpression(ruleExpression)
-		ClosureExpression closureExpression = fetchArguments(ruleApplicationExpression)[1]
-		BinaryExpression ruleBinaryExpression = fetchClosureExpression(closureExpression)
-		assert ruleBinaryExpression.leftExpression instanceof MethodCallExpression
-		MethodCallExpression wrapperMethodCall = ruleBinaryExpression.leftExpression
-		def wrapperMethodName = (SubrulesSeqWrapper.&wrap as MethodClosure).method
-		assert (wrapperMethodCall.method as ConstantExpression).value == wrapperMethodName
-		assert fetchArguments(ruleBinaryExpression.leftExpression).size == 1
-		BinaryExpression aBC = fetchArguments(ruleBinaryExpression.leftExpression)[0]
-		BinaryExpression ab = aBC.leftExpression
-		assert aBC.operation.type == LEFT_SQUARE_BRACKET
-		assert ab.operation.type == BITWISE_AND
-		assert ab.leftExpression instanceof ConstructorCallExpression
-		assert fetchArguments(ab.leftExpression)[0] instanceof ClosureExpression
-		assert fetchClosureExpression(fetchArguments(ab.leftExpression)[0]) instanceof MethodCallExpression
-		VariableExpression itVariable = fetchArguments(fetchClosureExpression(fetchArguments(ab.leftExpression)[0]))[0]
-		assert itVariable.name == ExpressionFactory.IT_NAME
-		assert ab.rightExpression instanceof ConstructorCallExpression
-		assert aBC.rightExpression instanceof VariableExpression
-		assert ruleBinaryExpression.rightExpression instanceof ConstructorCallExpression
-    expect: true
+    setup:
+		  def expression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
+			  "$PARAMETER_NAME" a && b [c] >> d
+		  })
+		  MethodCallExpression ruleApplicationExpression = astTransformation.convertToRuleApplicationExpression(expression)
+		  ClosureExpression closureExpression = fetchArguments(ruleApplicationExpression)[1]
+    when:
+		  BinaryExpression ruleBinaryExpression = fetchClosureExpression(closureExpression)
+    then:
+		  ruleBinaryExpression.leftExpression instanceof MethodCallExpression
+		when:
+      MethodCallExpression wrapperMethodCall = ruleBinaryExpression.leftExpression
+		  def wrapperMethodName = (SubrulesSeqWrapper.&wrap as MethodClosure).method
+    then:
+		  (wrapperMethodCall.method as ConstantExpression).value == wrapperMethodName
+		  fetchArguments(ruleBinaryExpression.leftExpression).size == 1
+    when:
+		  BinaryExpression aBC = fetchArguments(ruleBinaryExpression.leftExpression)[0]
+		  BinaryExpression ab = aBC.leftExpression
+    then:
+		  aBC.operation.type == LEFT_SQUARE_BRACKET
+		  ab.operation.type == BITWISE_AND
+		  ab.leftExpression instanceof ConstructorCallExpression
+		  fetchArguments(ab.leftExpression)[0] instanceof ClosureExpression
+		  fetchClosureExpression(fetchArguments(ab.leftExpression)[0]) instanceof MethodCallExpression
+    when:
+		  VariableExpression itVariable = fetchArguments(fetchClosureExpression(fetchArguments(ab.leftExpression)[0]))[0]
+    then:
+		  itVariable.name == ExpressionFactory.IT_NAME
+		  ab.rightExpression instanceof ConstructorCallExpression
+		  aBC.rightExpression instanceof VariableExpression
+		  ruleBinaryExpression.rightExpression instanceof ConstructorCallExpression
 	}
 }

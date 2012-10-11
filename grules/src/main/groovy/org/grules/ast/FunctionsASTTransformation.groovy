@@ -34,8 +34,12 @@ class FunctionsASTTransformation extends GrulesAstTransformation {
       MethodNode methodNode ->
       methodNode.modifiers = methodNode.modifiers | Opcodes.ACC_STATIC
       methodNode.setParameters(methodNode.parameters) //set static context to parameters
-      (methodNode.code as BlockStatement).scope.parent = methodNode.variableScope
+      if (methodNode.code instanceof BlockStatement) {
+        (methodNode.code as BlockStatement).scope.parent = methodNode.variableScope
+      } else {
+         throw new IllegalArgumentException("Illegal method node '$methodNode.name'." +
+             "Expected type of methodNode.code is ${BlockStatement}, actual: ${methodNode.code.class}.")
+      }
     }
   }
-
 }

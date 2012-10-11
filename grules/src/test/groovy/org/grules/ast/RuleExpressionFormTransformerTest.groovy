@@ -219,43 +219,66 @@ class RuleExpressionFormTransformerTest extends Specification {
 	}
 
 	def "postfixExpressionToTree for complex rule expression"() {
-		BinaryExpression binaryExpression = RuleExpressionFormTransformer.convertPrecedences(complexRuleExpression)
-		assert binaryExpression.leftExpression instanceof BinaryExpression
-		BinaryExpression beforeJ = binaryExpression.leftExpression
-		assert beforeJ.leftExpression instanceof BinaryExpression
-		BinaryExpression beforeG = beforeJ.leftExpression
-		assert beforeG.leftExpression instanceof BinaryExpression
-		BinaryExpression beforeE = beforeG.leftExpression
-		assert beforeE.leftExpression instanceof BinaryExpression
-		BinaryExpression aOrBAndC = beforeE.leftExpression
-		assert aOrBAndC.leftExpression instanceof BinaryExpression
-		BinaryExpression aOrB = aOrBAndC.leftExpression
-		checkVariable(aOrB.leftExpression, a)
-		checkVariable(aOrB.rightExpression, b)
-		checkVariable(aOrBAndC.rightExpression, c)
-		assert beforeE.rightExpression instanceof BinaryExpression
-		BinaryExpression dOrE = beforeE.rightExpression
-		assert checkVariable(dOrE.leftExpression, d)
-		assert checkVariable(dOrE.rightExpression, e)
-		assert beforeG.rightExpression instanceof BinaryExpression
-		BinaryExpression fOrG = beforeG.rightExpression
-		checkVariable(fOrG.leftExpression, f)
-		checkVariable(fOrG.leftExpression, g)
-		assert beforeJ.rightExpression instanceof BinaryExpression
-		BinaryExpression hAndIOrJ = beforeJ.rightExpression
-		assert hAndIOrJ.leftExpression instanceof BinaryExpression
-		BinaryExpression hAndI = hAndIOrJ.leftExpression
-		checkVariable(hAndI.leftExpression, h)
-		checkVariable(hAndI.leftExpression, i)
-		checkVariable(hAndIOrJ.rightExpression, j)
-		assert binaryExpression.rightExpression instanceof BitwiseNegationExpression
-		BitwiseNegationExpression conversionkAndNotL = binaryExpression.rightExpression
-		assert conversionkAndNotL.expression instanceof BinaryExpression
-		BinaryExpression kAndNotL = conversionkAndNotL.expression
-		checkVariable(kAndNotL.leftExpression, k)
-		assert kAndNotL.rightExpression instanceof NotExpression
-		checkVariable((kAndNotL.rightExpression as NotExpression).expression, l)
-    expect: true
+    when:
+		  BinaryExpression binaryExpression = RuleExpressionFormTransformer.convertPrecedences(complexRuleExpression)
+    then:
+		  binaryExpression.leftExpression instanceof BinaryExpression
+    when:
+		  BinaryExpression beforeJ = binaryExpression.leftExpression
+		then:
+      beforeJ.leftExpression instanceof BinaryExpression
+    when:
+		  BinaryExpression beforeG = beforeJ.leftExpression
+		then:
+      beforeG.leftExpression instanceof BinaryExpression
+    when:
+		  BinaryExpression beforeE = beforeG.leftExpression
+		then:
+      beforeE.leftExpression instanceof BinaryExpression
+    when:
+		  BinaryExpression aOrBAndC = beforeE.leftExpression
+		then:
+      aOrBAndC.leftExpression instanceof BinaryExpression
+		when:
+      BinaryExpression aOrB = aOrBAndC.leftExpression
+    then:
+		  checkVariable(aOrB.leftExpression, a)
+		  checkVariable(aOrB.rightExpression, b)
+		  checkVariable(aOrBAndC.rightExpression, c)
+		  beforeE.rightExpression instanceof BinaryExpression
+    when:
+		  BinaryExpression dOrE = beforeE.rightExpression
+    then:
+		  checkVariable(dOrE.leftExpression, d)
+		  checkVariable(dOrE.rightExpression, e)
+		  beforeG.rightExpression instanceof BinaryExpression
+    when:
+		  BinaryExpression fOrG = beforeG.rightExpression
+    then:
+		  checkVariable(fOrG.leftExpression, f)
+		  checkVariable(fOrG.rightExpression, g)
+		  beforeJ.rightExpression instanceof BinaryExpression
+    when:
+		  BinaryExpression hAndIOrJ = beforeJ.rightExpression
+    then:
+		  hAndIOrJ.leftExpression instanceof BinaryExpression
+    when:
+		  BinaryExpression hAndI = hAndIOrJ.leftExpression
+    then:
+		  checkVariable(hAndI.leftExpression, h)
+		  checkVariable(hAndI.rightExpression, i)
+		  checkVariable(hAndIOrJ.rightExpression, j)
+	    binaryExpression.rightExpression instanceof BitwiseNegationExpression
+    when:
+		  BitwiseNegationExpression conversionkAndNotL = binaryExpression.rightExpression
+    then:
+		  conversionkAndNotL.expression instanceof BinaryExpression
+    when:
+		  BinaryExpression kAndNotL = conversionkAndNotL.expression
+    then:
+		  checkVariable(kAndNotL.leftExpression, k)
+		  kAndNotL.rightExpression instanceof NotExpression
+		  checkVariable((kAndNotL.rightExpression as NotExpression).expression, l)
 	}
 
 }

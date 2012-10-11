@@ -2,7 +2,9 @@ ruleset {
   ruleset('rulesets/basic.xml')
   ruleset('rulesets/braces.xml')
   ruleset('rulesets/concurrency.xml')
-  ruleset('rulesets/convention.xml')
+  ruleset('rulesets/convention.xml') {
+    exclude 'InvertedIfElse'
+  }
   ruleset('rulesets/design.xml')
   ruleset('rulesets/dry.xml')
   ruleset('rulesets/exceptions.xml') {
@@ -25,6 +27,8 @@ ruleset {
   ruleset('rulesets/size.xml')
   ruleset('rulesets/unnecessary.xml') {
     exclude 'UnnecessaryPackageReference'
+    // TODO remove when spock 0.7 is available
+    exclude 'UnnecessaryGetter'
   }
   ruleset('rulesets/unused.xml')
 }

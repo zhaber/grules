@@ -17,6 +17,7 @@ ruleset {
   ruleset('rulesets/naming.xml') {
     exclude 'FactoryMethodName'
     exclude 'MethodName'
+    exclude 'PropertyName'
   }
   ruleset('rulesets/security.xml')
   ruleset('rulesets/serialization.xml')
@@ -26,6 +27,8 @@ ruleset {
   ruleset('rulesets/unnecessary.xml') {
     exclude 'UnnecessaryPackageReference'
     exclude 'UnnecessaryPublicModifier'
+    // TODO remove when spock 0.7 is available
+    exclude 'UnnecessaryGetter'
   }
   ruleset('rulesets/unused.xml')
 }

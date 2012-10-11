@@ -1,7 +1,8 @@
 /.settings
 /*.launch
 /*.tmproj
-stacktrace.log
+*.log
+*.log.lck
 /test/reports
 *.war
 /.link_to_grails_plugins

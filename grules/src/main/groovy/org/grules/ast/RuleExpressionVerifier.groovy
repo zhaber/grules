@@ -1,7 +1,5 @@
 package org.grules.ast
 
-import java.lang.reflect.Method
-
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
@@ -34,7 +32,7 @@ class RuleExpressionVerifier {
       BinaryExpression binaryExpression = expression
       AstUtils.isArrayItemExpression(binaryExpression) && isAtomExpression(binaryExpression.leftExpression)
     } else {
-      !(expression instanceof NotExpression) && !(expression instanceof BitwiseNegationExpression) 
+      !(expression instanceof NotExpression) && !(expression instanceof BitwiseNegationExpression)
     }
   }
 
@@ -54,8 +52,8 @@ class RuleExpressionVerifier {
 
   private static boolean isValidRuleApplicationMethodNameExpression(Expression expression) {
     if (expression instanceof ConstantExpression) {
-      List<Method> inheritedMethods = (Script.methods as List<Method>) + (RulesScriptAPI.methods as List<Method>)
-      !((expression as ConstantExpression).value in inheritedMethods*.name)
+      List<String> inheritedMethods = [Script, RulesScriptAPI].collectMany {Class clazz -> clazz.methods*.name}
+      !((expression as ConstantExpression).value in inheritedMethods)
     } else {
       isValidParameterNameExpression(expression)
     }
@@ -119,10 +117,10 @@ class RuleExpressionVerifier {
     } else if (expression instanceof BitwiseNegationExpression) {
       isValidRuleExpression((expression as BitwiseNegationExpression).expression)
     } else if (expression instanceof TernaryExpression) {
-      TernaryExpression ternaryExpression = expression 
+      TernaryExpression ternaryExpression = expression
       Boolean isValidRuleTrueExpression = isValidRuleExpression(ternaryExpression.trueExpression)
-      Boolean isValidRuleFalseExpression = isValidRuleExpression(ternaryExpression.falseExpression)   
-      isValidRuleTrueExpression && isValidRuleFalseExpression   
+      Boolean isValidRuleFalseExpression = isValidRuleExpression(ternaryExpression.falseExpression)
+      isValidRuleTrueExpression && isValidRuleFalseExpression
     } else {
       [VariableExpression, ClosureExpression, MethodCallExpression, GStringExpression].any { Class clazz ->
         clazz.isInstance(expression)

@@ -6,7 +6,7 @@ import org.grules.ValidationException
 /**
  * A sequence of subrules.
  */
-class SubrulesSeq {
+class SubrulesSeq implements Term {
 
   private final List<Subrule> subrules = []
   private final List<String> skipFunctions = []
@@ -16,9 +16,11 @@ class SubrulesSeq {
    * it is taken from the first rule that comes after it and specifies non-empty error action, and if there is no such
    * subrule an empty error action is assumed.
    */
+  @Override
   def apply(originalValue) {
     def value = originalValue
-    for (int i = 0; i < subrules.size; i++) {
+    // Using size() instead of size for GAE compatibility
+    for (int i = 0; i < subrules.size(); i++) {
       try {
         value = subrules[i].apply(value)
       } catch (ValidationException e) {

@@ -8,7 +8,7 @@ import org.grules.utils.ClassUtils
 /**
  * A subrule expression (parts of a rule between ">>" operators).
  */
-class Subrule {
+class Subrule implements Term {
 
   final Term term
   final ValidationErrorProperties errorProperties

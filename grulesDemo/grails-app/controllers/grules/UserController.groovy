@@ -1,11 +1,7 @@
 package grules
 
-import grules.User
-
-import org.springframework.dao.DataIntegrityViolationException
-
 import org.grules.Grules
-import org.grules.script.RulesScriptGroupResult
+import org.springframework.dao.DataIntegrityViolationException
 
 class UserController {
 
@@ -25,8 +21,9 @@ class UserController {
     }
 
     def save() {
-         Map<String, Object> headers = Grules.fetchRequestHeaders(request)
-        RulesScriptGroupResult result = Grules.applyGroupRules(UserGrules, [PARAMETERS: params, HEADER: headers])
+        def grules = new Grules()
+        def headers = grules.fetchRequestHeaders(request)
+        def result = grules.applyGroupRules(UserGrules, [PARAMETERS: params, HEADER: headers])
         if (result.invalidParameters.isEmpty()) {
           def userInstance = new User(result.cleanParameters.PARAMETERS)
           if (!userInstance.save(flush: true)) {
@@ -48,7 +45,11 @@ class UserController {
     }
 
     private def convertParameters(Map<String, Object> map) {
-      map.keySet().inject("") {acc, val -> acc + val + " = " + map[val] + "<br>"}
+      if (!map.isEmpty()) {
+        map.keySet().inject("") {acc, val -> acc + val + " = " + map[val] + "\n"}
+      } else {
+        "[:]"
+      }
     }
 
     def show() {

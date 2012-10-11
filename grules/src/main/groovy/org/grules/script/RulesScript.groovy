@@ -1,6 +1,5 @@
 package org.grules.script
 
-import org.grules.GrulesInjector
 import org.grules.GrulesLogger
 import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
@@ -18,10 +17,8 @@ import com.google.common.base.Optional
  */
 class RulesScript implements RulesScriptAPI {
 
-  private static final GrulesConfig CONFIG = GrulesInjector.config
-  private static final Set<String> GROUPS = CONFIG.groups
-  private static final RuleEngine RULE_ENGINE = GrulesInjector.ruleEngine
-
+  private GrulesConfig config
+  private RuleEngine ruleEngine
   private Script script
   private List<Class<? extends Script>> parentScripts
   private Set<String> nologParameters
@@ -42,10 +39,13 @@ class RulesScript implements RulesScriptAPI {
    *
    * @param script the rules script
    */
-  private void init(Script script) {
+  private void init(Script script, GrulesConfig config, RuleEngine ruleEngine) {
     this.script = script
     this.variablesBinding = script.binding as RulesBinding
-    this.currentGroup = CONFIG.defaultGroup
+    this.config = config
+    // TODO use property when spock 0.7 is available
+    this.currentGroup = config.getDefaultGroup()
+    this.ruleEngine = ruleEngine
   }
 
   /**
@@ -53,12 +53,13 @@ class RulesScript implements RulesScriptAPI {
    *
    * @param script main script
    * @param parameters input parameters
-   * @param environment custom variables that have to be included in the script 
+   * @param environment custom variables that have to be included in the script
    */
-  protected void initMain(Script script, Map<String, Map<String, Object>> parameters, Map<String, Object> environment) {
-    init(script)
-    this.parentScripts = []
-    this.nologParameters = []
+  protected void initMain(Script script, GrulesConfig config, RuleEngine ruleEngine,
+        Map<String, Map<String, Object>> parameters, Map<String, Object> environment) {
+    init(script, config, ruleEngine)
+    parentScripts = []
+    nologParameters = []
     missingRequiredParameters = [:].withDefault {[] as Set<String>}
     invalidParameters = [:].withDefault {[:] as Map<String, ValidationErrorProperties>}
     parametersWithMissingDependency = [:].withDefault {[] as Set<String>}
@@ -76,12 +77,13 @@ class RulesScript implements RulesScriptAPI {
    * @param invalidParameters parameters that did not pass validation
    * @param parametersWithMissingDependency parameters that depend on a value of another missing parameter
    */
-  protected void initInclude(Script script, List<Class<? extends Script>> parentScripts,
+  protected void initInclude(Script script, GrulesConfig config, RuleEngine ruleEngine,
+      List<Class<? extends Script>> parentScripts,
       Map<String, Set<String>> missingRequiredParameters,	Map<String,
       Map<String, ValidationErrorProperties>> invalidParameters,
       Map<String, Set<String>> parametersWithMissingDependency,
       Set<String> nologParameters) {
-    init(script)
+    init(script, config, ruleEngine)
     this.parentScripts = parentScripts
     this.missingRequiredParameters = missingRequiredParameters
     this.invalidParameters = invalidParameters
@@ -99,7 +101,7 @@ class RulesScript implements RulesScriptAPI {
   @Override
   void changeGroup(String group) {
     variablesBinding.removeGroupDirectParametersVariables(currentGroup)
-    if (!(group in GROUPS)) {
+    if (!(group in config.getGroups())) {
       throw new InvalidGroupException(group)
     }
     currentGroup = group
@@ -137,7 +139,7 @@ class RulesScript implements RulesScriptAPI {
       throw new CircularIncludeException(scriptsChain + includedScriptClass)
     }
     variablesBinding.removeGroupDirectParametersVariables(currentGroup)
-    RULE_ENGINE.runIncludedScript(includedScriptClass, scriptsChain, variablesBinding, missingRequiredParameters,
+    ruleEngine.runIncludedScript(includedScriptClass, scriptsChain, variablesBinding, missingRequiredParameters,
         invalidParameters, parametersWithMissingDependency, nologParameters)
     variablesBinding.addGroupParametersVariables(currentGroup)
   }
@@ -154,7 +156,7 @@ class RulesScript implements RulesScriptAPI {
       SubrulesSeq subrulesSeq = subrulesSeqClosure.call()
       def value = parameterValue
       try {
-        List<Subrule> defaultFunctions = CONFIG.defaultFunctions.findAll { Subrule defaultFunction ->
+        List<Subrule> defaultFunctions = config.getDefaultFunctions().findAll { Subrule defaultFunction ->
           !subrulesSeq.hasSkipFunction(defaultFunction)
         }
         value = SubrulesSeqWrapper.wrap(defaultFunctions).apply(parameterValue)
@@ -173,7 +175,7 @@ class RulesScript implements RulesScriptAPI {
     } catch (ValidationException e) {
       invalidParameters[currentGroup].put(parameterName, e.errorProperties)
       if (parameterName in nologParameters) {
-        e.errorProperties.value = 'NOLOG_PARAMETER' 
+        e.errorProperties.value = 'NOLOG_PARAMETER'
       }
       GrulesLogger.info("Parameter $parameterName failed validation. Validation error properties: " + e.errorProperties)
     } catch (InvalidDependencyValueException e){
@@ -182,7 +184,7 @@ class RulesScript implements RulesScriptAPI {
       throw new InvalidValidatorException(e.returnValue, e.methodName, parameterName)
     }
   }
-  
+
   /**
    * Applies a rule to a list of parameters.
    *
@@ -286,7 +288,7 @@ class RulesScript implements RulesScriptAPI {
    */
   void propertyMissing(String name, String providedGroup = '') {
     String group = providedGroup.isEmpty() ? currentGroup : providedGroup
-    if (RulesBinding.isDirtyParameterName(name)) {
+    if (RulesBinding.isRawParameterName(name)) {
       throw new MissingParameterException(group, RulesBinding.parseDirtyParameterName(name))
     } else if (isProcessedParameter(group, name)) {
       throw new InvalidDependencyValueException()
@@ -296,7 +298,7 @@ class RulesScript implements RulesScriptAPI {
   }
 
   private boolean isProcessedParameter(String group, String name) {
-    boolean isInvalidParameter = invalidParameters[group].containsKey(name)
+    boolean isInvalidParameter = invalidParameters.containsKey(group) && invalidParameters[group].containsKey(name)
     boolean isMissingRequiredParameter = name in missingRequiredParameters[group]
     boolean isParameterWithMissingDependency = name in parametersWithMissingDependency[group]
     boolean isCleanParameter = variablesBinding.isCleanParameter(group, name)
@@ -310,7 +312,7 @@ class RulesScript implements RulesScriptAPI {
     variablesBinding.fetchParametersDirtyValues().collectEntries {
       String groupName, Map<String, Object> groupParameters ->
       Map<String, Object> notValidatedParameters = groupParameters.findAll {
-        String parameterName, parameterValue ->        
+        String parameterName, parameterValue ->
         !isProcessedParameter(groupName, parameterName)
       }
       notValidatedParameters.isEmpty() ? [:] : [(groupName): notValidatedParameters]
@@ -353,7 +355,7 @@ class RulesScript implements RulesScriptAPI {
   void addParameter(String name, value) {
     variablesBinding.addParameter(name, value, currentGroup)
   }
-  
+
   @Override
   void nolog(String... parameters) {
     nologParameters.addAll(parameters)
