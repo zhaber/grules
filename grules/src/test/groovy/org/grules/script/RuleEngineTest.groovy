@@ -50,7 +50,8 @@ class RuleEngineTest extends Specification {
 		  def parameters = [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]]
 			RulesScriptGroupResult result = GrulesAPI.applyGroupRules(TestRulesScript, parameters)
 		expect:
-			result.cleanParameters == [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]]
+			result.cleanParameters.containsKey(GROUP)
+      result.cleanParameters[GROUP] == [(PARAMETER_NAME): PARAMETER_VALUE]
       result.invalidParameters.isEmpty()
 	}
 

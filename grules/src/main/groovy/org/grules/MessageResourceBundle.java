@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import groovy.lang.Closure;
 import groovy.lang.MapWithDefault;
 
-import org.codehaus.groovy.runtime.MethodClosure;
 import org.grules.config.GrulesConfig;
 
 import com.google.inject.Inject;
@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 /**
  * Resource bundle for error messages.
  */
-class MessageResourceBundle {
+public class MessageResourceBundle {
 
   private final Map<String, String> messages;
   private final ResourceBundle messagesBundle;
@@ -39,27 +39,27 @@ class MessageResourceBundle {
     }
   };
 
-  @SuppressWarnings("unused")
-  private String getProperty(String key) {
-    return messagesBundle.getString(key);
-  }
-
-  @SuppressWarnings("unused")
-  private String throwMissingResourceException(String key) {
-    throw new MissingResourceException("Can not find bundle " + bundlePath, bundlePath, "");
-  }
-
   @Inject
   MessageResourceBundle(GrulesConfig config) {
     bundlePath = config.getResourceBundlePath();
     ResourceBundle resourceBundle;
-    MethodClosure methodClosure;
+    Closure<String> methodClosure;
     try {
       resourceBundle = ResourceBundle.getBundle(bundlePath);
-      methodClosure = new MethodClosure(this, "getProperty");
+      methodClosure = new Closure<String>(this) {
+        @SuppressWarnings("unused")
+        private String doCall(String key) {
+          return messagesBundle.getString(key);
+        }
+      };
     } catch (MissingResourceException e) {
       resourceBundle = NON_EXISTING_BUNDLE;
-      methodClosure = new MethodClosure(this, "throwMissingResourceException");
+      methodClosure = new Closure<String>(this) {
+        @SuppressWarnings("unused")
+        private String doCall(String key) {
+          throw new MissingResourceException("Can not find bundle " + bundlePath, bundlePath, "");
+        }
+      };
     }
     messages = MapWithDefault.newInstance(new HashMap<String, String>(), methodClosure);
     messagesBundle = resourceBundle;

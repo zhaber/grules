@@ -1,11 +1,11 @@
-def groovyArtifacts = ['org.codehaus.groovy:groovy-all:2.0.4', 'asm:asm:3.3.1']
+def groovyArtifacts = ['org.codehaus.groovy:groovy-all:2.0.5', 'asm:asm:3.3.1']
 def commonArtifacts = [
-    'joda-time:joda-time:2.1',
+    'joda-time:joda-time:2.1+',
     'com.google.inject:guice:3.0',
-    'org.apache.tomcat:servlet-api:6.0.35',
-    'org.codehaus.gpars:gpars:0.12',
-    'javax.mail:mail:1.4.5',
-    'com.google.guava:guava:13.0'
+    'org.apache.tomcat:servlet-api:6.0.35+',
+    'org.codehaus.gpars:gpars:0.12+',
+    'javax.mail:mail:1.4.5+',
+    'com.google.guava:guava:13.0+'
     ] + groovyArtifacts
 
 apply plugin: 'groovy'
@@ -52,7 +52,7 @@ repositories {
   mavenCentral()
 }
 
-def testArtifacts = ['org.spockframework:spock-core:0.7-groovy-2.0-SNAPSHOT', 'org.objenesis:objenesis:1.2']
+def testArtifacts = ['org.spockframework:spock-core:0.7-groovy-2.0', 'org.objenesis:objenesis:1.2']
 
 task classesJar(type: Jar, dependsOn: [classes, transformationClasses]) {
   destinationDir = file(releaseDir)
@@ -76,7 +76,7 @@ task jar(type: Jar, overwrite: true, dependsOn: classesJar) {}
 task zipAll(type: Zip, dependsOn: jar) {
   classifier = 'all'
   from configurations.runtime
-  from jar.archivePath
+  from classesJar.archivePath
   destinationDir = file(releaseDir)
 }
 

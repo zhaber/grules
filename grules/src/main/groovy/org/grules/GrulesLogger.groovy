@@ -16,16 +16,16 @@ class GrulesLogger {
     LOGGER.useParentHandlers = false
   }
 
-  static void fine(String message) {
-    LOGGER.fine(message)
-  }
-  
-  static void info(String message) {
-    LOGGER.info(message)
+  static void fine(message) {
+    LOGGER.fine(message.toString())
   }
 
-  static void warn(String message) {
-    LOGGER.warning(message)
+  static void info(message) {
+    LOGGER.info(message.toString())
+  }
+
+  static void warn(message) {
+    LOGGER.warning(message.toString())
   }
 
   static void turnOff() {

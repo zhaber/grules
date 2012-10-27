@@ -28,6 +28,8 @@ To build the project, you should run the following command in the grules folder:
 
 Requirements: JVM 6, Groovy 2.0.4
 
+Documentation:
+
 <a href="https://github.com/zhaber/grules/wiki">Wiki documentation</a><br>
 <a href="http://digitalcommons.mcmaster.ca/cgi/viewcontent.cgi?article=8244&context=opendissertations">Paper</a><br>
 <a href="http://www.youtube.com/watch?v=6RYbDRY6cvQ">Introduction video</a><br>

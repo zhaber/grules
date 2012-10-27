@@ -323,9 +323,9 @@ class RulesScriptTest extends Specification {
   }
 
   def "After applying rules direct parameters variables from last group are removed"() {
-    setup:
+    when:
       script.applyRules()
-    expect:
+    then:
       !(PARAMETER_NAME in script.variables)
       !(RulesBinding.toDirtyParameterName(PARAMETER_NAME) in script.variables)
   }
@@ -336,6 +336,7 @@ class RulesScriptTest extends Specification {
       (script.variables.get(GROUP) as Map).put(RulesBinding.toDirtyParameterName(PARAMETER_NAME), PARAMETER_VALUE)
       script.variables.put(VARIABLE_NAME, VARIABLE_VALUE)
     then:
-      script.fetchCleanParameters() == [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]]
+      script.fetchCleanParameters().containsKey(GROUP)
+      script.fetchCleanParameters()[GROUP] == [(PARAMETER_NAME): PARAMETER_VALUE]
   }
 }

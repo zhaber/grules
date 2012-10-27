@@ -16,8 +16,8 @@ class RulesScriptFactory {
    * @return rules script
    */
   RulesScript newInstanceMain(Class<? extends Script> scriptClass, Map<String, Map<String, Object>> parameters,
-      Map<String, Object> environment) {
-    Script script = newScriptInstance(scriptClass, loadClass(RulesBinding, scriptClass).newInstance())
+        Map<String, Object> environment) {
+    Script script = newScriptInstance(scriptClass, new RulesBinding())
     RulesScript rulesScript = script as RulesScript
     rulesScript.initMain(script, GrulesInjector.config, GrulesInjector.ruleEngine, parameters, environment)
     rulesScript
@@ -46,21 +46,14 @@ class RulesScriptFactory {
   }
 
   private Script newScriptInstance(Class<? extends Script> rulesScriptClass, Binding binding) {
-    if (!loadClass(Script, rulesScriptClass).isAssignableFrom(rulesScriptClass)) {
-      throw new IllegalArgumentException("$rulesScriptClass is not of Script class")
+    if (!Script.isAssignableFrom(rulesScriptClass)) {
+      throw new IllegalArgumentException("$rulesScriptClass loaded by ${rulesScriptClass.classLoader} is not " +
+          "assignable to Script loaded by ${Script.classLoader}. Make sure you use the same groovy library for " +
+          'running the main application and jar dependencies.')
     }
-    // rules script class can be loaded by another class loader, so we can not use type Script
-    def script = rulesScriptClass.newInstance()
+    Script script = rulesScriptClass.newInstance()
     script.setBinding(binding)
     script.metaClass.mixin(RulesScript)
     script
-  }
-
-  private static Class loadClass(Class clazz, Class<? extends Script> rulesScriptClass) {
-    if (rulesScriptClass.classLoader == (this as Class).classLoader) {
-      clazz
-    } else {
-      rulesScriptClass.classLoader.loadClass(clazz.name)
-    }
   }
 }

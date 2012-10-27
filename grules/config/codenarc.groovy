@@ -27,7 +27,6 @@ ruleset {
   ruleset('rulesets/size.xml')
   ruleset('rulesets/unnecessary.xml') {
     exclude 'UnnecessaryPackageReference'
-    // TODO remove when spock 0.7 is available
     exclude 'UnnecessaryGetter'
   }
   ruleset('rulesets/unused.xml')

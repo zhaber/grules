@@ -43,7 +43,6 @@ class RulesScript implements RulesScriptAPI {
     this.script = script
     this.variablesBinding = script.binding as RulesBinding
     this.config = config
-    // TODO use property when spock 0.7 is available
     this.currentGroup = config.getDefaultGroup()
     this.ruleEngine = ruleEngine
   }
@@ -63,7 +62,7 @@ class RulesScript implements RulesScriptAPI {
     missingRequiredParameters = [:].withDefault {[] as Set<String>}
     invalidParameters = [:].withDefault {[:] as Map<String, ValidationErrorProperties>}
     parametersWithMissingDependency = [:].withDefault {[] as Set<String>}
-    variablesBinding.addParameters(parameters, this.&propertyMissing)
+    variablesBinding.addRawValuesVariables(parameters, this.&propertyMissing)
     variablesBinding.addCustomVariables(environment)
     changeGroup(currentGroup)
   }

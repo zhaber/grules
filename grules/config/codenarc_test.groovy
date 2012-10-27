@@ -27,7 +27,6 @@ ruleset {
   ruleset('rulesets/unnecessary.xml') {
     exclude 'UnnecessaryPackageReference'
     exclude 'UnnecessaryPublicModifier'
-    // TODO remove when spock 0.7 is available
     exclude 'UnnecessaryGetter'
   }
   ruleset('rulesets/unused.xml')
