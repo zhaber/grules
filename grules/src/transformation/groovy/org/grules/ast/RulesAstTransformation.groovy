@@ -367,7 +367,7 @@ class RulesAstTransformation extends GrulesAstTransformation {
       ListExpression listExpression = objectExpression
       List<String> parametersNames = []
       List<Expression> requiredParameters = []
-      Map<String, Expression> optionalParameters = [:]
+      Map<Expression, Expression> optionalParameters = [:]
       listExpression.expressions.each {Expression expression ->
         if (AstUtils.isArrayItemExpression(expression)) {
           BinaryExpression binaryExpression = expression
