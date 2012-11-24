@@ -49,7 +49,8 @@ class RulesScriptFactory {
     if (!Script.isAssignableFrom(rulesScriptClass)) {
       throw new IllegalArgumentException("$rulesScriptClass loaded by ${rulesScriptClass.classLoader} is not " +
           "assignable to Script loaded by ${Script.classLoader}. Make sure you use the same groovy library for " +
-          'running the main application and jar dependencies.')
+          'running the main application and jar dependencies. If you use Eclipse, try "Run as Java Application "' +
+          'instead of "Run as Groovy Script".')
     }
     Script script = rulesScriptClass.newInstance()
     script.setBinding(binding)
