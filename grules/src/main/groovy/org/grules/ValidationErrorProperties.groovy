@@ -17,7 +17,7 @@ class ValidationErrorProperties {
   }
 
   ValidationErrorProperties(Map<String, Object> errorProperties) {
-    this.errorProperties = errorProperties
+    this.errorProperties = errorProperties.collectEntries {String key, value -> value != null ? [(key): value] : [:]}
   }
 
   ValidationErrorProperties(errorId, Map<String, Object> errorProperties) {
@@ -74,7 +74,7 @@ class ValidationErrorProperties {
   Exception getException() {
     errorProperties[EXCEPTION]
   }
-  
+
   /**
    * Sets an error message string.
    */
@@ -94,6 +94,13 @@ class ValidationErrorProperties {
    */
   void setErrorId(errorId) {
     errorProperties[ERROR_ID] = errorId
+  }
+
+  /**
+   * Sets an exception.
+   */
+  void setException(Exception exception) {
+    errorProperties[EXCEPTION] = exception
   }
 
   /**

@@ -37,4 +37,9 @@ class Subrule implements Term {
       applicationResult
     }
   }
+
+  @Override
+  String toString() {
+    "Term $term, error properties: $errorProperties"
+  }
 }

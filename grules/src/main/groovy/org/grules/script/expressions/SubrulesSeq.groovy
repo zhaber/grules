@@ -19,7 +19,6 @@ class SubrulesSeq implements Term {
   @Override
   def apply(originalValue) {
     def value = originalValue
-    // Using size() instead of size for GAE compatibility
     for (int i = 0; i < subrules.size(); i++) {
       try {
         value = subrules[i].apply(value)

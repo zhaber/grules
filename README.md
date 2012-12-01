@@ -4,14 +4,11 @@ Grules is a rule engine for data preprocessing. The rules are specified via inte
 // isEmail is a Groovy/Java method that takes an email value as its parameter
 email isEmail ["Invalid email"]
 
-// invalidLoginErr and dupLoginErr are String error messages
-login isLogin [invalidLoginErr] >> isUnique [dupLoginErr] 
+// invalidLoginMessage and dupLoginMessage are String error messages
+login isLogin [invalidLoginMessage] >> isUnique [dupLoginMessage] 
 
-// Gender is a Groovy/Java enumeration
-gender toEnum(Gender) 
-
-// zip code defaults to 10001
-zipcode["10001"] isValidZipcode 
+// The value gender defaults to "MALE"
+gender["MALE"] toEnum(Gender) 
 
 // agreeToTerms is a message from a resource bundle
 termsCondition[""] !isEmpty [m.agreeToTerms] 

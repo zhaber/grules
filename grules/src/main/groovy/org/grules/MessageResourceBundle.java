@@ -23,6 +23,7 @@ public class MessageResourceBundle {
   private final String bundlePath;
 
   private final static ResourceBundle NON_EXISTING_BUNDLE = new ResourceBundle() {
+
     @Override
     public Enumeration<String> getKeys() {
       throw new IllegalStateException();
@@ -57,7 +58,7 @@ public class MessageResourceBundle {
       methodClosure = new Closure<String>(this) {
         @SuppressWarnings("unused")
         private String doCall(String key) {
-          throw new MissingResourceException("Can not find bundle " + bundlePath, bundlePath, "");
+          throw new MissingResourceException("Cannot find resource bundle " + bundlePath, bundlePath, "");
         }
       };
     }

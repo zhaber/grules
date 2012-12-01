@@ -27,7 +27,7 @@ class ValidationException extends GrulesException {
     this.errorProperties = new ValidationErrorProperties(errorProperties)
   }
 
-  void addProperties(ValidationErrorProperties properties) {
-    errorProperties.merge(properties)
+  void addProperties(ValidationErrorProperties errorProperties) {
+    this.errorProperties.merge(errorProperties)
   }
 }
