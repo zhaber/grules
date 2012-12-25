@@ -23,6 +23,8 @@ version = '0.2.0.8'
 project.ext {
   releaseDir = 'release'
   configDir = 'config'
+  ghpagesDir = '../../ghpages/grules'
+  groovyDocsDir = "$ghpagesDir/docs"
   sonatypeRepositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
   codenarcConfigPath = "$configDir/codenarc.groovy"
   codenarcTestConfigPath = "$configDir/codenarc_test.groovy"
@@ -80,6 +82,26 @@ task zipAll(type: Zip, dependsOn: jar) {
   destinationDir = file(releaseDir)
 }
 
+task copyZip(type:Copy, dependsOn: zipAll) {
+  from zipAll.archivePath
+  into ghpagesDir
+  rename (zipAll.archiveName, 'grules-all.zip')
+}
+
+task tarAll(type: Tar, dependsOn: jar) {
+  compression = Compression.GZIP
+  classifier = 'all'
+  from configurations.runtime
+  from classesJar.archivePath
+  destinationDir = file(releaseDir)
+}
+
+task copyTar(type:Copy, dependsOn: tarAll) {
+  from tarAll.archivePath
+  into ghpagesDir
+  rename (tarAll.archiveName, 'grules-all.tar.gz')
+}
+
 compileGroovy.dependsOn clean
 compileFunctionsGroovy.dependsOn compileGroovy
 compileTransformationGroovy.dependsOn compileFunctionsGroovy
@@ -129,18 +151,22 @@ task groovydocJar(type: Jar, dependsOn: 'groovydoc') {
 
 build.dependsOn = [check, testAll, jar]
 
-task docsRelease(type:Groovydoc) {
+task cleanDocs(type:Delete) {
+  delete groovyDocsDir
+}
+
+task docsRelease(type:Groovydoc, dependsOn: cleanDocs) {
   group = "Documentation"
   windowTitle = groovyDocWindowTitle
   description = 'Generates Groovydoc API documentation for the grules source code and copies it to the' +
       'github pages repository.'
   source sourceSets.main.allGroovy, sourceSets.functions.allGroovy, sourceSets.transformation.allGroovy
-  destinationDir = file('../../ghpages/grules/docs')
+  destinationDir = file(groovyDocsDir)
   classpath = sourceSets.main.compileClasspath + sourceSets.functions.compileClasspath +
       sourceSets.transformation.compileClasspath
 }
 
-task release(dependsOn: [zipAll, uploadArchives, docsRelease]) << {}
+task release(dependsOn: [copyZip, copyTar, uploadArchives, docsRelease]) << {}
 
 // for testing purposes
 task dummy << {}
