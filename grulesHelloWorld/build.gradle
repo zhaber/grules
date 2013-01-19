@@ -1,0 +1,20 @@
+apply plugin: 'application'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+defaultTasks 'run'
+
+repositories {
+   mavenCentral()
+}
+
+mainClassName = "test.Test"
+
+dependencies {
+  groovy 'org.codehaus.groovy:groovy:2.0.5' exclude group: 'asm', module: 'asm' 
+  compile 'org.grules:grules:0.2.0.8' exclude group: 'asm', module: 'asm' 
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.2'
+}

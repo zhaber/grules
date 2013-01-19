@@ -1,0 +1,2 @@
+INFO: Parameter email failed validation. Validation error properties: [errorId:Invalid email, value:megmail.com, subruleIndex:1]
+INFO: age = 35
