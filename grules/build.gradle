@@ -137,7 +137,7 @@ task initProject << {
 task initEclipseProject(dependsOn: [initProject, eclipseClasspath]) << {}
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.0'
+  gradleVersion = '1.2'
 }
 
 groovydoc.destinationDir = file('docs')

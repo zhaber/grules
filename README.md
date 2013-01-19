@@ -21,8 +21,14 @@ endDate isAfterNow && isBefore(deadline) && {it.day != 1}
 ```
 To build the project, you should run the following command in the grules folder:
 
+    cd grules
     ./gradlew
 
+To run hello world example:
+
+    cd grulesHelloWorld
+    ./gradlew
+    
 Documentation:
 
 <a href="https://github.com/zhaber/grules/wiki">Wiki documentation</a><br>

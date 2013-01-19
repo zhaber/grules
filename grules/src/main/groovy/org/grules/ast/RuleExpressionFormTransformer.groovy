@@ -84,7 +84,7 @@ class RuleExpressionFormTransformer {
             postfixExpression += popLowerPriorityTokens(stack, operation)
           }
           if (operation.type == Types.RIGHT_PARENTHESIS) {
-            // remove left the corresponding left parenthesis from the stack
+            // remove the corresponding left parenthesis from the stack
             stack.pop()
           } else {
             stack << operation
