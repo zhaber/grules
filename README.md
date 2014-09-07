@@ -32,7 +32,7 @@ To run hello world example:
 Documentation:
 
 <a href="https://github.com/zhaber/grules/wiki">Wiki documentation</a><br>
-<a href="http://digitalcommons.mcmaster.ca/cgi/viewcontent.cgi?article=8244&context=opendissertations">Paper</a><br>
+<a href="http://digitalcommons.mcmaster.ca/cgi/viewcontent.cgi?article=8244&context=opendissertations">White paper</a><br>
 <a href="http://www.youtube.com/watch?v=6RYbDRY6cvQ">Introduction video</a><br>
 
 Requirements: JVM 6, Groovy 2.0
