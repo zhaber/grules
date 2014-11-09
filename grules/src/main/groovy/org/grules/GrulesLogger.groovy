@@ -32,3 +32,4 @@ class GrulesLogger {
     LOGGER.level = Level.OFF
   }
 }
+

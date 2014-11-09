@@ -1,5 +1,8 @@
 package org.grules.utils
 
+/**
+ * Map utilities.
+ */
 class MapUtils {
 
   /**
@@ -13,3 +16,4 @@ class MapUtils {
     }
   }
 }
+

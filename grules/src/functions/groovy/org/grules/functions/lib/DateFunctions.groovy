@@ -1,4 +1,3 @@
-
 package org.grules.functions.lib
 
 import org.joda.time.DateTime

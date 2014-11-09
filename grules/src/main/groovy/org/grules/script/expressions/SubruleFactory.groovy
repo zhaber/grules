@@ -29,7 +29,6 @@ class SubruleFactory {
      new Subrule(term, new ValidationErrorProperties(errorId))
   }
 
-
   /**
    * Creates a subrule based on the given term.
    *
@@ -57,3 +56,4 @@ class SubruleFactory {
     throw new InvalidSubruleException(expression)
   }
 }
+

@@ -6,7 +6,6 @@ import javax.servlet.http.Cookie
 import org.grules.script.RulesScriptGroupResult
 import org.grules.script.RulesScriptResult
 
-
 /** @see Grules */
 class GrulesAPI {
 
@@ -40,7 +39,7 @@ class GrulesAPI {
   static Map<String, Map<String, Object>> fetchRequestHeaders(HttpServletRequest request) {
     Enumeration<String> headerNames = request.headerNames
     headerNames.toList().collectEntries {  String name ->
-      [(name): request.getHeader(name)]
+      [(name):request.getHeader(name)]
     }
   }
 
@@ -48,14 +47,15 @@ class GrulesAPI {
   static Map<String, Map<String, Object>> fetchRequestParameters(HttpServletRequest request,
       List<String> listParameters = []) {
     request.parameterMap.collectEntries { String name, String[] values ->
-       [(name): name in listParameters ? values as List<String> : values[0]]
+       [(name):name in listParameters ? values as List<String> : values[0]]
     }
   }
 
   /** @see Grules#fetchRequestCookies(HttpServletRequest) */
   static Map<String, Map<String, String>> fetchRequestCookies(HttpServletRequest request) {
     (request.cookies as List<Cookie>).collectEntries { Cookie cookie ->
-        [(cookie.name): cookie.value]
+        [(cookie.name):cookie.value]
     }
   }
 }
+

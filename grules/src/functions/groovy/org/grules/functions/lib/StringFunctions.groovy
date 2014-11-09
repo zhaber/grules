@@ -163,3 +163,4 @@ class StringFunctions {
     value
   }
 }
+

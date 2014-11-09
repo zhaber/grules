@@ -1,4 +1,4 @@
-def groovyArtifacts = ['org.codehaus.groovy:groovy-all:2.0.5']
+def groovyArtifacts = ['org.codehaus.groovy:groovy-all:2.3.7']
 def commonArtifacts = [
     'joda-time:joda-time:2.1+',
     'com.google.inject:guice:3.0',
@@ -18,7 +18,7 @@ defaultTasks 'build'
 
 buildDir = 'bin'
 group = 'org.grules'
-version = '0.2.0.8'
+version = '0.2.3.7.1'
 
 project.ext {
   releaseDir = 'release'
@@ -63,7 +63,6 @@ task classesJar(type: Jar, dependsOn: [classes, transformationClasses]) {
 }
 
 dependencies {
-  groovy groovyArtifacts
   compile commonArtifacts
   functionsCompile commonArtifacts
   transformationCompile commonArtifacts
@@ -137,7 +136,7 @@ task initProject << {
 task initEclipseProject(dependsOn: [initProject, eclipseClasspath]) << {}
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.2'
+  gradleVersion = '2.1'
 }
 
 groovydoc.destinationDir = file('docs')
@@ -166,8 +165,6 @@ task docsRelease(type:Groovydoc, dependsOn: cleanDocs) {
       sourceSets.transformation.compileClasspath
 }
 
-task release(dependsOn: [copyZip, copyTar, uploadArchives, docsRelease]) << {}
-
 // for testing purposes
 task dummy << {}
 
@@ -176,64 +173,69 @@ task copyJar(type: Copy, dependsOn: classesJar) {
   into libsDir
 }
 
-signing {
-  sign srcJar
-  sign classesJar
-  sign groovydocJar
-}
+if (hasProperty('sonatypeUsername')) {
 
-artifacts {
-  archives srcJar
-  archives groovydocJar
-}
+	signing {
+	  sign srcJar
+	  sign classesJar
+	  sign groovydocJar
+	}
 
-uploadArchives.dependsOn = [build, copyJar, groovydocJar, srcJar, signClassesJar, signGroovydocJar, signSrcJar]
-uploadArchives {
-  repositories {
-      mavenDeployer {
-          beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment); println deployment }
-          repository(url: sonatypeRepositoryUrl) {
-            authentication(userName: sonatypeUsername, password: sonatypePassword)
-          }
-          pom.project {
-             name 'Grules'
-             packaging 'jar'
-             description 'Grules is a rule engine written in Groovy'
-             url 'http://grules.org'
+	artifacts {
+	  archives srcJar
+	  archives groovydocJar
+	}
 
-             scm {
-                 url 'scm:git@github.com:zhaber/grules.git'
-                 connection 'scm:git@github.com:zhaber/grules.git'
-                 developerConnection 'scm:git@github.com:zhaber/grules.git'
-             }
+	task release(dependsOn: [copyZip, copyTar, uploadArchives, docsRelease]) << {}
 
-             licenses {
-                 license {
-                     name 'GNU Lesser General Public License v3.0'
-                     url 'http://www.gnu.org/licenses/lgpl.html'
-                     distribution 'repo'
-                 }
-             }
+	uploadArchives.dependsOn = [build, copyJar, groovydocJar, srcJar, signClassesJar, signGroovydocJar, signSrcJar]
+	uploadArchives {
+	  repositories {
+		  mavenDeployer {
+			  beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment); println deployment }
+			  repository(url: sonatypeRepositoryUrl) {
+				authentication(userName: sonatypeUsername, password: sonatypePassword)
+			  }
+			  pom.project {
+				 name 'Grules'
+				 packaging 'jar'
+				 description 'Grules is a rule engine written in Groovy'
+				 url 'http://grules.org'
 
-             developers {
-                 developer {
-                     id 'zhaber'
-                     name 'Vitalii Fedorenko'
-                 }
-             }
-         }
+				 scm {
+					 url 'scm:git@github.com:zhaber/grules.git'
+					 connection 'scm:git@github.com:zhaber/grules.git'
+					 developerConnection 'scm:git@github.com:zhaber/grules.git'
+				 }
 
-         pom.withXml { XmlProvider xmlProvider ->
-             def xml = xmlProvider.asString()
-             def pomXml = new XmlParser().parse(new ByteArrayInputStream(xml.toString().bytes))
-             pomXml.version[0] + { packaging('jar') }
-             def newXml = new StringWriter()
-             def printer = new XmlNodePrinter(new PrintWriter(newXml))
-             printer.preserveWhitespace = true
-             printer.print(pomXml)
-             xml.setLength(0)
-             xml.append(newXml.toString())
-         }
-      }
-  }
+				 licenses {
+					 license {
+						 name 'GNU Lesser General Public License v3.0'
+						 url 'http://www.gnu.org/licenses/lgpl.html'
+						 distribution 'repo'
+					 }
+				 }
+
+				 developers {
+					 developer {
+						 id 'zhaber'
+						 name 'Vitalii Fedorenko'
+					 }
+				 }
+			 }
+
+			 pom.withXml { XmlProvider xmlProvider ->
+				 def xml = xmlProvider.asString()
+				 def pomXml = new XmlParser().parse(new ByteArrayInputStream(xml.toString().bytes))
+				 pomXml.version[0] + { packaging('jar') }
+				 def newXml = new StringWriter()
+				 def printer = new XmlNodePrinter(new PrintWriter(newXml))
+				 printer.preserveWhitespace = true
+				 printer.print(pomXml)
+				 xml.setLength(0)
+				 xml.append(newXml.toString())
+			 }
+		  }
+	  }
+	}
 }

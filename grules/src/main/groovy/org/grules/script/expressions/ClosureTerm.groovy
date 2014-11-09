@@ -1,6 +1,5 @@
 package org.grules.script.expressions
 
-
 /**
  * A term implemented as a closure.
  */
@@ -20,3 +19,4 @@ class ClosureTerm implements Term {
     closure.call(value)
   }
 }
+

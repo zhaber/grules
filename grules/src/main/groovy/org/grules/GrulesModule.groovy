@@ -21,3 +21,4 @@ class GrulesModule implements Module {
     binder.bind(MessageResourceBundle).in(Scopes.SINGLETON)
   }
 }
+

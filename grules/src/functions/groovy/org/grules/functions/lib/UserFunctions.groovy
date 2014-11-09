@@ -1,9 +1,13 @@
 package org.grules.functions.lib;import javax.mail.internet.AddressException
+
 import javax.mail.internet.InternetAddress
 
 import org.grules.ValidationException
 import org.grules.functions.Functions
 
+/**
+ * Custom user functions.
+ */
 @Functions
 class UserFunctions {
 
@@ -29,10 +33,10 @@ class UserFunctions {
    * strength (WEAK or MEDIUM), which then can be read on the client side
    */
   boolean isStrongPassword(String value, List<String> mediumRegexps, List<String> strongRegexps) {
-    if (!mediumRegexps.every {String regexp -> value.matches(regexp)}) {
-      throw new ValidationException((PasswordStrength.simpleName): PasswordStrength.WEAK)
-    } else if (!strongRegexps.every {String regexp -> value.matches(regexp)}) {
-      throw new ValidationException((PasswordStrength.simpleName): PasswordStrength.MEDIUM)
+    if (!mediumRegexps.every { String regexp -> value.matches(regexp) }) {
+      throw new ValidationException((PasswordStrength.simpleName):PasswordStrength.WEAK)
+    } else if (!strongRegexps.every { String regexp -> value.matches(regexp) }) {
+      throw new ValidationException((PasswordStrength.simpleName):PasswordStrength.MEDIUM)
     } else {
       true
     }

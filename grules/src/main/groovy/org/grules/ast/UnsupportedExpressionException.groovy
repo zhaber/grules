@@ -14,3 +14,4 @@ class UnsupportedExpressionException extends GrulesException {
   }
 
 }
+

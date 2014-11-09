@@ -1,5 +1,8 @@
 package org.grules.utils
 
+/**
+ * Set utilities.
+ */
 class SetUtils {
 
   /**
@@ -13,3 +16,4 @@ class SetUtils {
     }
   }
 }
+

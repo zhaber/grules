@@ -59,9 +59,9 @@ class RulesScript implements RulesScriptAPI {
     init(script, config, ruleEngine)
     parentScripts = []
     nologParameters = []
-    missingRequiredParameters = [:].withDefault {[] as Set<String>}
-    invalidParameters = [:].withDefault {[:] as Map<String, ValidationErrorProperties>}
-    parametersWithMissingDependency = [:].withDefault {[] as Set<String>}
+    missingRequiredParameters = [:].withDefault { [] as Set<String> }
+    invalidParameters = [:].withDefault { [:] }
+    parametersWithMissingDependency = [:].withDefault { [] as Set<String> }
     variablesBinding.addRawValuesVariables(parameters, this.&propertyMissing)
     variablesBinding.addCustomVariables(environment)
     changeGroup(currentGroup)
@@ -168,7 +168,7 @@ class RulesScript implements RulesScriptAPI {
       if (!(parameterName in nologParameters)) {
         GrulesLogger.info(parameterName + ' = ' + parameterValue)
       }
-    } catch (MissingParameterException e){
+    } catch (MissingParameterException e) {
       missingRequiredParameters[e.group].add(e.parameterName)
       parametersWithMissingDependency[currentGroup].add(parameterName)
     } catch (ValidationException e) {
@@ -177,7 +177,7 @@ class RulesScript implements RulesScriptAPI {
         e.errorProperties.value = 'NOLOG_PARAMETER'
       }
       GrulesLogger.info("Parameter $parameterName failed validation. Validation error properties: " + e.errorProperties)
-    } catch (InvalidDependencyValueException e){
+    } catch (InvalidDependencyValueException e) {
       parametersWithMissingDependency[currentGroup].add(parameterName)
     } catch (InvalidValidatorException e) {
       throw new InvalidValidatorException(e.returnValue, e.methodName, parameterName)
@@ -197,7 +197,7 @@ class RulesScript implements RulesScriptAPI {
       Map<String, Object> optionalParameters, Closure<SubrulesSeq> subrulesSeqClosure) {
     Map<String, Optional> ruleRequiredParametersValues = ruleRequiredParameters.collectEntries {
       String parameterName ->
-      [(parameterName): variablesBinding.fetchValue(currentGroup, parameterName)]
+      [(parameterName):variablesBinding.fetchValue(currentGroup, parameterName)]
     }
     Set<String> missingRuleRequiredParameters = ((ruleRequiredParametersValues.findAll {
       String parameterName, Optional value ->
@@ -207,7 +207,7 @@ class RulesScript implements RulesScriptAPI {
       Map<String, Object> optionalParametersValues = optionalParameters.collectEntries {
           String parameterName, defaultValue ->
         Optional parameterValue = variablesBinding.fetchValue(currentGroup, parameterName)
-        [(parameterName): parameterValue | defaultValue]
+        [(parameterName):parameterValue | defaultValue]
       }
       List<Object> parametersValues = ruleRequiredParametersValues.values()*.get() + optionalParametersValues.values()
       applyRule(ruleName, parametersValues, subrulesSeqClosure)
@@ -314,7 +314,7 @@ class RulesScript implements RulesScriptAPI {
         String parameterName, parameterValue ->
         !isProcessedParameter(groupName, parameterName)
       }
-      notValidatedParameters.isEmpty() ? [:] : [(groupName): notValidatedParameters]
+      notValidatedParameters.isEmpty() ? [:] : [(groupName):notValidatedParameters]
     }
   }
 
@@ -337,7 +337,7 @@ class RulesScript implements RulesScriptAPI {
   @Override
   void validate(Closure<Map<String, Object>> closure) {
     try {
-      closure().each {String name, value ->
+      closure().each { String name, value ->
         variablesBinding.addCleanParameterValue(name, value, currentGroup)
       }
     } catch (ValidationException e) {
@@ -360,3 +360,4 @@ class RulesScript implements RulesScriptAPI {
     nologParameters.addAll(parameters)
   }
 }
+

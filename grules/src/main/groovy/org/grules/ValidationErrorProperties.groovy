@@ -1,5 +1,8 @@
 package org.grules
 
+/**
+ * Validation error properties.
+ */
 class ValidationErrorProperties {
   final static String PARAMETER = 'parameter'
   final static String INPUT_ELEMENT = 'element'
@@ -17,19 +20,19 @@ class ValidationErrorProperties {
   }
 
   ValidationErrorProperties(Map<String, Object> errorProperties) {
-    this.errorProperties = errorProperties.collectEntries {String key, value -> value != null ? [(key): value] : [:]}
+    this.errorProperties = errorProperties.collectEntries { String key, value -> value != null ? [(key):value] : [:] }
   }
 
   ValidationErrorProperties(errorId, Map<String, Object> errorProperties) {
-    this([(ERROR_ID): errorId] + errorProperties)
+    this([(ERROR_ID):errorId] + errorProperties)
   }
 
   ValidationErrorProperties(errorId, String message, Map<String, Object> errorProperties) {
-    this(errorId, [(MESSAGE): message] + errorProperties)
+    this(errorId, [(MESSAGE):message] + errorProperties)
   }
 
   ValidationErrorProperties(errorId, String message, String parameter, Map<String, Object> errorProperties) {
-    this(errorId, message, [(PARAMETER): parameter] + errorProperties)
+    this(errorId, message, [(PARAMETER):parameter] + errorProperties)
   }
 
   ValidationErrorProperties(errorId) {
@@ -196,3 +199,4 @@ class ValidationErrorProperties {
   }
 
 }
+

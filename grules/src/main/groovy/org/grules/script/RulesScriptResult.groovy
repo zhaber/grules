@@ -26,15 +26,15 @@ class RulesScriptResultFetcher {
       Map<String, Map<String, Object>> originalParameters) {
     parameters.collectEntries { String group, Map<String, ?> groupParameters ->
       if (originalParameters.containsKey(group)) {
-        [(group): groupParameters.collectEntries { String parameterName, parameterValue ->
+        [(group):groupParameters.collectEntries { String parameterName, parameterValue ->
           if (originalParameters[group].containsKey(parameterName.capitalize())) {
-            [(parameterName.capitalize()): parameterValue]
+            [(parameterName.capitalize()):parameterValue]
           } else {
-            [(parameterName): parameterValue]
+            [(parameterName):parameterValue]
           }
-        }]
+        } ]
       } else {
-        [(group): groupParameters]
+        [(group):groupParameters]
       }
     }
   }
@@ -43,7 +43,7 @@ class RulesScriptResultFetcher {
       Map<String, Map<String, Object>> originalParameters) {
     parameters.collectEntries { String group, Set<String> groupParametersName ->
       if (originalParameters.containsKey(group)) {
-        [(group): (groupParametersName.collect { String parameterName ->
+        [(group):(groupParametersName.collect { String parameterName ->
           if (originalParameters[group].containsKey(parameterName.capitalize())) {
             parameterName.capitalize()
           } else {
@@ -51,7 +51,7 @@ class RulesScriptResultFetcher {
           }
         }) as Set]
       } else {
-        [(group): groupParametersName]
+        [(group):groupParametersName]
       }
     }
   }
@@ -76,7 +76,7 @@ class RulesScriptResultFetcher {
    * Fetches result of rules application for a script with one default section.
    */
   static RulesScriptResult fetchResult(RulesScript rulesScript, String group, Map<String, Object> parameters) {
-    RulesScriptGroupResult result = fetchGroupResult(rulesScript, [(group): parameters])
+    RulesScriptGroupResult result = fetchGroupResult(rulesScript, [(group):parameters])
     Map<String, Object> cleanParameters = MapUtils.nullToEmpty(result.cleanParameters[group])
     Map<String, String> notValidatedParameters = MapUtils.nullToEmpty(result.notValidatedParameters[group])
     Set<String> missingRequiredParameters = SetUtils.nullToEmpty(result.missingRequiredParameters[group])
@@ -103,7 +103,7 @@ abstract class RulesScriptResultAPI {
   abstract getParametersWithMissingDependency()
   /** Script variables that are not inpit parameters */
   abstract Map<String, Object> getVariables()
-  
+
   @Override
   String toString() {
     "Clean parameters: $cleanParameters\nNot validated parameters: $notValidatedParameters\n" +
@@ -128,6 +128,9 @@ class RulesScriptGroupResult extends RulesScriptResultAPI {
   final Map<String, Object> variables
 }
 
+/**
+ * Result of rules script application.
+ */
 @TupleConstructor
 class RulesScriptResult extends RulesScriptResultAPI {
   /** {@inheritDoc} */

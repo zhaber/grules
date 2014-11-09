@@ -63,7 +63,7 @@ class RuleExpressionFormTransformer {
   /**
    * Converts infix notation to postfix notation.
    */
-  private static List infixToPostfixExpression(List infixExpression){
+  private static List infixToPostfixExpression(List infixExpression) {
     Stack<Token> stack = [] as Stack
     Deque<Object> postfixExpression = [] as Queue
     infixExpression.each { token ->
@@ -203,3 +203,4 @@ class TernaryRuleExpression {
   final List trueExpression
   final List falseExpression
 }
+

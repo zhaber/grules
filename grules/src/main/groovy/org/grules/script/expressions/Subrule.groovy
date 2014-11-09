@@ -43,3 +43,4 @@ class Subrule implements Term {
     "Term $term, error properties: $errorProperties"
   }
 }
+

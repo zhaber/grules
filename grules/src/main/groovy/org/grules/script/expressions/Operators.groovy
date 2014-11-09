@@ -6,7 +6,7 @@ import org.grules.ValidationErrorProperties
 /**
  * Operators used in rule expressions: and, or, chaining operator (<code>>></code>), binding an error (<code>[]</code>)
  */
-class Operators {
+interface Operators {
 
   @Category(Term)
   class TermOperators {

@@ -30,3 +30,4 @@ class FunctionTerm implements Term {
     name
   }
 }
+

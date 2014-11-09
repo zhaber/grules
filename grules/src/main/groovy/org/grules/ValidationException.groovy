@@ -31,3 +31,4 @@ class ValidationException extends GrulesException {
     this.errorProperties.merge(errorProperties)
   }
 }
+

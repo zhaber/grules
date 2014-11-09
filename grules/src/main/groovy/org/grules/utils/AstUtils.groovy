@@ -10,6 +10,9 @@ import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.syntax.Types
 import org.grules.ast.UnsupportedExpressionException
 
+/**
+ * Utils used for AST transformations.
+ */
 class AstUtils {
 
   /**
@@ -61,8 +64,9 @@ class AstUtils {
   }
 
   static boolean hasAnnotation(Expression expression, Class annotationClass) {
-    expression.annotations.any {AnnotationNode annotationNode ->
+    expression.annotations.any { AnnotationNode annotationNode ->
       annotationNode.classNode.name == annotationClass.simpleName
     }
   }
 }
+

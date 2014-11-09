@@ -35,4 +35,4 @@ Documentation:
 <a href="http://digitalcommons.mcmaster.ca/cgi/viewcontent.cgi?article=8244&context=opendissertations">White paper</a><br>
 <a href="http://www.youtube.com/watch?v=6RYbDRY6cvQ">Introduction video</a><br>
 
-Requirements: JVM 6, Groovy 2.0
+Requirements: JVM 8, Groovy 2.3

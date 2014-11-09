@@ -1,5 +1,8 @@
 package org.grules.script.expressions
 
+/**
+ * A wrapper class for a sequence of subrules.
+ */
 class SubrulesSeqWrapper {
 
   /**
@@ -59,7 +62,6 @@ class SubrulesSeqWrapper {
     }
     subrulesSeq
   }
-
 
   /**
    * Wraps a term into a subrules sequence.

@@ -11,7 +11,7 @@ import org.grules.config.AstTransformationConfigFactory
 class GrulesASTTransformationLogger implements Closeable {
 
   private static final String LOG_DIR = (new AstTransformationConfigFactory()).createConfig().compilerLogPath
-  protected final Writer writer 
+  protected final Writer writer
 
   GrulesASTTransformationLogger(String filename) {
     try {

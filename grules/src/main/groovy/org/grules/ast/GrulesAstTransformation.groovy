@@ -79,3 +79,4 @@ abstract class GrulesAstTransformation implements ASTTransformation, Closeable {
     astNodeLoggerVisitor.visitMethod(node)
   }
 }
+

@@ -6,6 +6,9 @@ import org.grules.script.expressions.FunctionTerm
 import org.grules.script.expressions.Subrule
 import org.grules.script.expressions.SubruleFactory
 
+/**
+ * Creates default grules functions (<code>trim</code> etc).
+ */
 class DefaultFunctionFactory {
 
   /**
@@ -42,7 +45,7 @@ class DefaultFunctionFactory {
   }
 
   /**
-   * Creates a default function based on the given closure and function name.
+   * Creates a default function based on the given closure.
    *
    * @param closure a validation or conversion closure
    * @return a subrule
@@ -63,3 +66,4 @@ class DefaultFunctionFactory {
     SubruleFactory.create(new FunctionTerm(closure, name, errorMessage))
   }
 }
+

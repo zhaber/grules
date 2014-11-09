@@ -16,3 +16,4 @@ import org.codehaus.groovy.transform.GroovyASTTransformationClass
 @GroovyASTTransformationClass('org.grules.ast.FunctionsASTTransformation')
 @interface Functions {
 }
+

@@ -43,7 +43,7 @@ class ConverterASTTransformation extends GrulesAstTransformation {
   }
 
   /**
-   * Mixins {@link org.grules.functions.ConverterBooleanResult} to a method return value to so the method can be used as
+   * Mixins {@link org.grules.functions.ConverterBooleanResult} to a method return value so the method can be used as
    * a converter.
    */
   @Override
@@ -72,3 +72,4 @@ class ConverterASTTransformation extends GrulesAstTransformation {
     methodBlockStatement.statements = [declarationStatement, mixinMethodCallStatement, returnExpression]
   }
 }
+

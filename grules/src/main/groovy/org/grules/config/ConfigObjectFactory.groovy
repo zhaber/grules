@@ -1,6 +1,5 @@
 package org.grules.config
 
-
 /**
  * The factory creates a configuration object from a groovy file or class.
  */
@@ -39,3 +38,4 @@ class ConfigObjectFactory {
     }
   }
 }
+

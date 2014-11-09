@@ -19,8 +19,8 @@ class TypeFunctions {
   static final String NOT_POSITIVE_ERROR_ID = 'Value is not positive'
 
   private static Exception createValidationException(Exception e) {
-    new ValidationException([(ValidationErrorProperties.MESSAGE): e.message,
-      (ValidationErrorProperties.EXCEPTION): e])
+    new ValidationException([(ValidationErrorProperties.MESSAGE):e.message,
+      (ValidationErrorProperties.EXCEPTION):e])
   }
 
   /**
@@ -47,49 +47,49 @@ class TypeFunctions {
    * to <code>true</code>.
    */
   List<Boolean> toBooleanList(List values) {
-    values.collect {Object value -> toBoolean(value).value}
+    values.collect { Object value -> toBoolean(value).value }
   }
 
   /**
    * Converts a list of string to a list of integers.
    */
   List<Character> toCharList(List<String> values) {
-    values.collect {String value -> toChar(value)}
+    values.collect { String value -> toChar(value) }
   }
 
   /**
    * Converts a list of string to a list of integers.
    */
   List<Integer> toIntList(List<String> values) {
-    values.collect {String value -> toInt(value)}
+    values.collect { String value -> toInt(value) }
   }
 
   /**
    * Converts a list of string to a list of longs.
    */
   List<Long> toLongList(List<String> values) {
-    values.collect {String value -> toLong(value)}
+    values.collect { String value -> toLong(value) }
   }
 
   /**
    * Converts a list of string to a list of big decimals.
    */
   List<BigDecimal> toBigDecimalList(List<String> values) {
-    values.collect {String value -> toBigDecimal(value)}
+    values.collect { String value -> toBigDecimal(value) }
   }
 
   /**
    * Converts a list of string to a list of floats.
    */
   List<Float> toFloatList(List<String> values) {
-    values.collect {String value -> toFloat(value)}
+    values.collect { String value -> toFloat(value) }
   }
 
   /**
    * Converts a list of string to a list of doubles.
    */
   List<Double> toDoubleList(List<String> values) {
-    values.collect {String value -> toDouble(value)}
+    values.collect { String value -> toDouble(value) }
   }
 
   /**
@@ -121,7 +121,7 @@ class TypeFunctions {
   Double toDouble(String value) {
     try {
       value.toDouble()
-    } catch (NumberFormatException e){
+    } catch (NumberFormatException e) {
       throw createValidationException(e)
     }
   }
@@ -143,7 +143,7 @@ class TypeFunctions {
   Float toFloat(String value) {
     try {
       value.toFloat()
-    } catch (NumberFormatException e){
+    } catch (NumberFormatException e) {
       throw createValidationException(e)
     }
   }
@@ -226,7 +226,7 @@ class TypeFunctions {
   Long toLong(String value) {
     try {
       value.toLong()
-    } catch (NumberFormatException e){
+    } catch (NumberFormatException e) {
       throw createValidationException(e)
     }
   }
@@ -261,7 +261,7 @@ class TypeFunctions {
   Integer toInt(String value) {
     try {
       value.toInteger()
-    } catch (NumberFormatException e){
+    } catch (NumberFormatException e) {
       throw createValidationException(e)
     }
   }
@@ -290,3 +290,4 @@ class TypeFunctions {
     }
   }
 }
+

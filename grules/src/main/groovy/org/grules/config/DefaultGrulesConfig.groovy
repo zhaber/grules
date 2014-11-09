@@ -23,7 +23,7 @@ class DefaultGrulesConfig extends GrulesConfig {
         String format(LogRecord record) {
           record.level.name + ': ' + record.message + '\n'
         }
-      })
+      } )
       handler
     } catch (IOException e) {
       defaultHandler
@@ -37,13 +37,14 @@ class DefaultGrulesConfig extends GrulesConfig {
   }
 
   DefaultGrulesConfig() {
-    super([(GrulesConfig.NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME): OnValidationEventAction.IGNORE,
-    (GrulesConfig.DEFAULT_GROUP_PARAMETER_NAME): HttpRequestParametersGroup.PARAMETERS.name(),
-    (GrulesConfig.LOG_LEVEL_PARAMETER_NAME): Level.FINE,
-    (GrulesConfig.ENABLE_MULTITHREADING_PARAMETER_NAME): false,
-    (GrulesConfig.GROUPS_PARAMETER_NAME): HttpRequestParametersGroup.values()*.name(),
-    (GrulesConfig.LOGGER_HANDLER_PARAMETER_NAME): createLogHandler(),
-    (GrulesConfig.RESOURCE_BUNDLE_PARAMETER_NAME): 'messages',
-    (GrulesConfig.DEFAULT_FUNCTIONS_PARAMETER_NAME): []])
+    super([(GrulesConfig.NOT_VALIDATED_PARAMETERS_ACTION_PARAMETER_NAME):OnValidationEventAction.IGNORE,
+    (GrulesConfig.DEFAULT_GROUP_PARAMETER_NAME):HttpRequestParametersGroup.PARAMETERS.name(),
+    (GrulesConfig.LOG_LEVEL_PARAMETER_NAME):Level.FINE,
+    (GrulesConfig.ENABLE_MULTITHREADING_PARAMETER_NAME):false,
+    (GrulesConfig.GROUPS_PARAMETER_NAME):HttpRequestParametersGroup.values()*.name(),
+    (GrulesConfig.LOGGER_HANDLER_PARAMETER_NAME):createLogHandler(),
+    (GrulesConfig.RESOURCE_BUNDLE_PARAMETER_NAME):'messages',
+    (GrulesConfig.DEFAULT_FUNCTIONS_PARAMETER_NAME):[]])
   }
 }
+

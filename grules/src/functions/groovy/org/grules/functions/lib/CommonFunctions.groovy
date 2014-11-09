@@ -15,14 +15,14 @@ class CommonFunctions {
    * Checks that all values are members of the list.
    */
   boolean areIn(List values, List list) {
-    isEvery(values) {isIn(it, list)}
+    isEvery(values) { isIn(it, list) }
   }
 
   /**
    * Checks that all values are members of the set.
    */
   boolean areIn(List values, Set list) {
-    isEvery(values) {isIn(it, list)}
+    isEvery(values) { isIn(it, list) }
   }
 
   /**
@@ -161,3 +161,4 @@ s   */
     values.join(separator)
   }
 }
+

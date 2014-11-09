@@ -29,3 +29,4 @@ class GrulesConfigFactory implements ConfigFactory {
     DefaultGrulesConfig.INSTANCE
   }
 }
+

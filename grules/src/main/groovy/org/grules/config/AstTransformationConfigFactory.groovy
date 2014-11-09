@@ -23,3 +23,4 @@ class AstTransformationConfigFactory implements ConfigFactory {
     DefaultAstTransformationConfig.INSTANCE
   }
 }
+

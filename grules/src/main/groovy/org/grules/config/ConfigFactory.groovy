@@ -20,3 +20,4 @@ interface ConfigFactory {
    */
   Config createDefaultConfig()
 }
+

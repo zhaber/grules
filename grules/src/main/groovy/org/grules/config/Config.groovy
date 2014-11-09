@@ -18,3 +18,4 @@ abstract class Config {
     parameters.toString()
   }
 }
+

@@ -8,3 +8,4 @@ import groovy.transform.InheritConstructors
 @InheritConstructors
 class GrulesException extends Exception {
 }
+

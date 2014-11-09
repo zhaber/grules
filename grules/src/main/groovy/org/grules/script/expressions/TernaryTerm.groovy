@@ -1,6 +1,5 @@
 package org.grules.script.expressions
 
-
 /**
  * A term implemented as a ternary operator.
  */
@@ -12,7 +11,7 @@ class TernaryTerm implements Term {
 
   /**
    * Creates a ternary term.
-   * 
+   *
    * @param condition condition closure which result determines which branch to choose
    * @param trueBranch closure called if the condition coerces to true
    * @param falseBranch closure called if the condition coerces to false
@@ -29,3 +28,4 @@ class TernaryTerm implements Term {
     condition.call(value) ? trueBranch.call(value) : falseBranch.call(value)
   }
 }
+

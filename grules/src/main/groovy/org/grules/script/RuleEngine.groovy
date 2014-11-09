@@ -35,7 +35,7 @@ class RuleEngine {
   Closure<RulesScriptResult> newExecutor(Class<? extends Script> rulesScriptClass, Map<String, Object> environment) {
     String defaultGroup = config.getDefaultGroup()
     return { Map<String, Object> parameters ->
-      RulesScript script = runMainScript(rulesScriptClass, [(defaultGroup): parameters], environment)
+      RulesScript script = runMainScript(rulesScriptClass, [(defaultGroup):parameters], environment)
       RulesScriptResult scriptResult = RulesScriptResultFetcher.fetchResult(script, defaultGroup, parameters)
       checkMissingFlatParameters(scriptResult.notValidatedParameters)
       scriptResult
@@ -49,8 +49,8 @@ class RuleEngine {
    */
   Closure<RulesScriptGroupResult> newGroupExecutor(Class<? extends Script> rulesScriptClass,
       Map<String, Object> environment) {
-    return {Map<String, Map<String, Object>> parameters ->
-      parameters.each {String group, groupParameters ->
+    return { Map<String, Map<String, Object>> parameters ->
+      parameters.each { String group, groupParameters ->
         if (!config.getGroups().contains(group)) {
           throw new InvalidGroupException(group)
         }
@@ -71,7 +71,7 @@ class RuleEngine {
     if (config.isMultithreadingEnabled()) {
       try {
         GParsExecutorsPool.withPool {
-          GParsExecutorsPoolUtil.callAsync{runScript(script)}.get()
+          GParsExecutorsPoolUtil.callAsync { runScript(script) }.get()
         }
       } catch (ExecutionException e) {
         throw e.cause
@@ -136,3 +136,4 @@ class RuleEngine {
     }
   }
 }
+

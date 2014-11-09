@@ -28,3 +28,4 @@ class AstTransformationConfig extends Config {
     parameters[COMPILER_LOG_PATH_PARAMETER_NAME]
   }
 }
+

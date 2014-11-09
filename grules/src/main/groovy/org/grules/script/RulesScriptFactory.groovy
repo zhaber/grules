@@ -58,3 +58,4 @@ class RulesScriptFactory {
     script
   }
 }
+
