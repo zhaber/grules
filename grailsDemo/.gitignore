@@ -1,0 +1,10 @@
+/.settings
+/*.launch
+/*.tmproj
+*.log
+*.log.lck
+/test/reports
+*.war
+/.link_to_grails_plugins
+/target
+/target-eclipse
