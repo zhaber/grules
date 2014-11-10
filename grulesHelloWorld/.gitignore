@@ -1,0 +1,11 @@
+.classpath
+.project
+/bin
+/build
+/docs
+/.gradle
+/.externalToolBuilders
+/.settings
+/release
+grules.log
+*.class

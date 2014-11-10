@@ -11,7 +11,7 @@ repositories {
 mainClassName = "test.Test"
 
 dependencies {
-  compile 'org.grules:grules:0.2.0.8' exclude group: 'asm', module: 'asm' 
+  compile 'org.grules:grules:0.2.3.7.1' exclude group: 'asm', module: 'asm' 
 }
 
 task wrapper(type: Wrapper) {

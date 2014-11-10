@@ -173,7 +173,9 @@ task copyJar(type: Copy, dependsOn: classesJar) {
   into libsDir
 }
 
-if (hasProperty('sonatypeUsername')) {
+if (hasProperty('sonatypePassword')) {
+
+	task release(dependsOn: [copyZip, copyTar, uploadArchives, docsRelease]) << {}
 
 	signing {
 	  sign srcJar
@@ -186,15 +188,13 @@ if (hasProperty('sonatypeUsername')) {
 	  archives groovydocJar
 	}
 
-	task release(dependsOn: [copyZip, copyTar, uploadArchives, docsRelease]) << {}
-
 	uploadArchives.dependsOn = [build, copyJar, groovydocJar, srcJar, signClassesJar, signGroovydocJar, signSrcJar]
 	uploadArchives {
 	  repositories {
 		  mavenDeployer {
 			  beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment); println deployment }
 			  repository(url: sonatypeRepositoryUrl) {
-				authentication(userName: sonatypeUsername, password: sonatypePassword)
+				authentication(userName: 'zhaber', password: sonatypePassword)
 			  }
 			  pom.project {
 				 name 'Grules'
