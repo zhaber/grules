@@ -1,6 +1,8 @@
 package org.grules.scripts
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.FUNCTION_FOR_ONE_ARGUMENT
+import static org.grules.TestScriptEntities.PARAMETER_NAME
+import static org.grules.TestScriptEntities.VALID_INTEGER
 
 import org.grules.GrulesAPI
 import org.grules.script.RulesScriptResult
@@ -11,7 +13,7 @@ class RuleExtensionTest extends Specification {
 
   def "Rule annotation"() {
     setup:
-      RulesScriptResult result = GrulesAPI.applyRules(RuleExtensionGrules, [(PARAMETER_NAME): VALID_INTEGER])
+      RulesScriptResult result = GrulesAPI.applyRules(RuleExtensionGrules, [(PARAMETER_NAME):VALID_INTEGER])
       def expectedResult = FUNCTION_FOR_ONE_ARGUMENT(FUNCTION_FOR_ONE_ARGUMENT(VALID_INTEGER))
     expect:
       result.cleanParameters.containsKey(PARAMETER_NAME)

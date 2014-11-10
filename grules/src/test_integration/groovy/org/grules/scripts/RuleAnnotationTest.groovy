@@ -1,6 +1,9 @@
 package org.grules.scripts
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.VALID_INTEGER
+import static org.grules.TestScriptEntities.PARAMETER_NAME
+import static org.grules.TestScriptEntities.PARAMETER_NAME_AUX
+import static org.grules.TestScriptEntities.FUNCTION_FOR_TWO_ARGUMENTS
 
 import org.grules.GrulesAPI
 import org.grules.script.RulesScriptResult
@@ -11,7 +14,7 @@ class RuleAnnotationTest extends Specification {
 
   def "Rule annotation"() {
     setup:
-      def parameters = [(PARAMETER_NAME): VALID_INTEGER, (PARAMETER_NAME_AUX): VALID_INTEGER]
+      def parameters = [(PARAMETER_NAME):VALID_INTEGER, (PARAMETER_NAME_AUX):VALID_INTEGER]
       RulesScriptResult result = GrulesAPI.applyRules(RuleAnnotationGrules, parameters)
     expect:
       result.cleanParameters.containsKey(PARAMETER_NAME)

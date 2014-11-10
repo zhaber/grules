@@ -1,8 +1,15 @@
 package org.grules.ast
 
-import static org.codehaus.groovy.syntax.Types.*
-import static org.grules.TestScriptEntities.*
-import static org.grules.ast.ASTTestUtils.*
+import static org.codehaus.groovy.syntax.Types.BITWISE_OR
+import static org.codehaus.groovy.syntax.Types.BITWISE_AND
+import static org.codehaus.groovy.syntax.Types.RIGHT_SHIFT
+import static org.codehaus.groovy.syntax.Types.LEFT_SQUARE_BRACKET
+import static org.grules.ast.ASTTestUtils.fetchStatementBlockExpression
+import static org.grules.ast.ASTTestUtils.fetchClosureExpression
+import static org.grules.ast.ASTTestUtils.checkVariable
+import static org.grules.ast.ASTTestUtils.fetchArguments
+import static org.grules.TestScriptEntities.PARAMETER_NAME
+import static org.grules.TestScriptEntities.DEFAULT_VALUE
 
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.ModuleNode
@@ -35,22 +42,21 @@ import spock.lang.Specification
 
 class RulesASTTransformationTest extends Specification {
 
-	GrulesASTTransformationLogger logger
-	RulesAstTransformation astTransformation
-	CompilePhase phase
-	Expression complexRuleExpression
-	RuleExpressionFormTransformer ruleExpressionFormTransformer = new RuleExpressionFormTransformer()
+	private GrulesASTTransformationLogger logger
+	private RulesAstTransformation astTransformation
+	private CompilePhase phase
+	private final RuleExpressionFormTransformer ruleExpressionFormTransformer = new RuleExpressionFormTransformer()
 
-	def a = 'a'
-	def b = 'b'
-	def c = 'c'
-	def d = 'd'
-	def e = 'd'
-	def f = 'f'
+	private final a = 'a'
+	private final b = 'b'
+	private final c = 'c'
+	private final d = 'd'
+	private final e = 'd'
+	private final f = 'f'
 
 	def setup() {
 		logger = Mock()
-		logger.write(_) >> {}
+		logger.write(_) >> { }
 		astTransformation = new RulesAstTransformation()
 		astTransformation.init('test')
 		GrulesLogger.turnOff()
@@ -118,7 +124,7 @@ class RulesASTTransformationTest extends Specification {
     setup:
     List<BlockStatement> statementBlocks = (new AstBuilder()).buildFromCode(phase) {
       @Rule
-      a = {b,c -> {->}}
+      a = { b, c -> { -> } }
       a d
     }
     ExpressionStatement statement = statementBlocks[0].statements[0]
@@ -162,11 +168,10 @@ class RulesASTTransformationTest extends Specification {
 			})
 	}
 
-
 	def "Binary expressions are converted to rules"() {
 		setup:
 			List<BlockStatement> statementBlocks = (new AstBuilder()).buildFromCode(phase) {
-				"$PARAMETER_NAME" {} >> a
+				"$PARAMETER_NAME" { } >> a
 			}
       ExpressionStatement statement = statementBlocks[0].statements[0]
 	    astTransformation.visitStatement(statement)
@@ -247,7 +252,7 @@ class RulesASTTransformationTest extends Specification {
 	def "addSequenceWrapper for right shift expression"() {
 		setup:
 			def ruleExpression = fetchStatementBlockExpression((new AstBuilder()).buildFromCode(phase) {
-				a >> {b}
+				a >> { b }
 			})
 			ruleExpression = ruleExpressionFormTransformer.convertPrecedences(ruleExpression)
 			ruleExpression = RulesAstTransformation.liftErrors(ruleExpression)
@@ -292,7 +297,7 @@ class RulesASTTransformationTest extends Specification {
 	def "Labels are converted to change group methods"() {
 		setup:
 		  List<BlockStatement> statementBlocks = (new AstBuilder()).buildFromCode(phase) {
-				POST: "$PARAMETER_NAME" {}
+				POST: "$PARAMETER_NAME" { }
 			}
       ModuleNode moduleNode = Mock()
       ClassNode classNode = Mock()

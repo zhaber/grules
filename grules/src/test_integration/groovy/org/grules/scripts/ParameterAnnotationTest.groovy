@@ -1,6 +1,6 @@
 package org.grules.scripts
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.PARAMETER_NAME
 
 import org.grules.GrulesAPI
 import org.grules.script.RulesScriptResult

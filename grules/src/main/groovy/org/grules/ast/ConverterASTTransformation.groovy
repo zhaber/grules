@@ -59,8 +59,8 @@ class ConverterASTTransformation extends GrulesAstTransformation {
     Integer columnNumber = methodBlockStatement.columnNumber
     Token assignmentOperator = new Token(Types.ASSIGN, Types.getText(Types.ASSIGN), lineNumber, columnNumber)
     Expression variableExpression = new VariableExpression(TMP_CLOSURE_VARIABLE_NAME)
-    Expression booleanConstructorCallExpression = ExpressionFactory.createConstructorCall(Boolean, [closureCall])
     // the constructor is called to prevent mix in on cached boolean value Boolean.TRUE or Boolean.FALSE
+    Expression booleanConstructorCallExpression = ExpressionFactory.createConstructorCall(Boolean, [closureCall])
     Expression declarationExpression = new DeclarationExpression(variableExpression, assignmentOperator,
         booleanConstructorCallExpression)
     Expression metaClassProperty = new PropertyExpression(variableExpression, ExpandoMetaClass.META_CLASS_PROPERTY)

@@ -7,6 +7,9 @@ import org.grules.config.GrulesConfigFactory
 import org.grules.config.OnValidationEventAction
 import org.grules.http.HttpRequestParametersGroup
 
+/**
+ * Entities used in tests.
+ */
 class TestScriptEntities {
 
   static final GrulesConfig TEST_CONFIG = new GrulesConfigFactory().createDefaultConfig()
@@ -27,7 +30,7 @@ class TestScriptEntities {
 	static final String ERROR_ID = 'errorId'
   static final String ERROR_MESSAGE = 'errorMessage'
 	static final Integer VALID_INTEGER = 1
-	static final String VALID_INTEGER_STRING = VALID_INTEGER.toString()
+	static final String VALID_INTEGER_STRING = VALID_INTEGER
 	static final String FUNCTION_ARGUMENT = VALID_INTEGER_STRING
 	static final String FUNCTION_NAME = 'functionName'
 	static final String VALID_PARAMETER = VALID_INTEGER_STRING
@@ -38,7 +41,7 @@ class TestScriptEntities {
 	static final Level CONFIG_LOG_LEVEL = Level.INFO
   static final OnValidationEventAction NOT_VALIDATED_PARAMETERS_ACTION = TEST_CONFIG.notValidatedParametersAction
   static final String JOIN_SEPARATOR = ' '
-  static final Closure FUNCTION_FOR_LIST = {list -> list.join(JOIN_SEPARATOR)}
-  static final Closure FUNCTION_FOR_ONE_ARGUMENT = {it + 1}
-  static final Closure FUNCTION_FOR_TWO_ARGUMENTS = {value1, value2 -> value1 + value2}
+  static final Closure FUNCTION_FOR_LIST = { list -> list.join(JOIN_SEPARATOR) }
+  static final Closure FUNCTION_FOR_ONE_ARGUMENT = { it + 1 }
+  static final Closure FUNCTION_FOR_TWO_ARGUMENTS = { value1, value2 -> value1 + value2 }
 }

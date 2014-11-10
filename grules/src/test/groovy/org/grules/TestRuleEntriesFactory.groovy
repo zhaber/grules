@@ -66,7 +66,7 @@ class TestRuleEntriesFactory {
     new TildeTerm( { String string ->
       try {
         string.toInteger()
-      } catch(NumberFormatException e) {
+      } catch (NumberFormatException e) {
         throw new ValidationException()
       }
     })

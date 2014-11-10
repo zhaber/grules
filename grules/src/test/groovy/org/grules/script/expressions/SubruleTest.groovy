@@ -1,14 +1,21 @@
 package org.grules.script.expressions
 
-import static org.grules.TestRuleEntriesFactory.*
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestRuleEntriesFactory.createFailValidationTerm
+import static org.grules.TestRuleEntriesFactory.createIsIntegerValidator
+import static org.grules.TestRuleEntriesFactory.createValidationTerm
+import static org.grules.TestRuleEntriesFactory.createTrimConverter
+import static org.grules.TestRuleEntriesFactory.createToIntConverter
+import static org.grules.TestScriptEntities.VALID_INTEGER_STRING
+import static org.grules.TestScriptEntities.PARAMETER_VALUE
+import static org.grules.TestScriptEntities.DEFAULT_VALUE
+import static org.grules.TestScriptEntities.INVALID_PARAMETER_VALUE
 
 import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
 
 import spock.lang.Specification
 
-class SubruleTest extends Specification{
+class SubruleTest extends Specification {
 
 	def "Apply validation subrule to valid term"() {
 		setup:
@@ -59,7 +66,7 @@ class SubruleTest extends Specification{
 
 	def "create for closure"() {
 		setup:
-		  def closure = {}
+		  def closure = { }
 		  def subrule = SubruleFactory.create(closure)
 		expect:
 		  (subrule.term as ClosureTerm).closure == closure

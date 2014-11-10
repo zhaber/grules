@@ -1,6 +1,7 @@
 package org.grules.scripts.include
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.PARAMETER_NAME
+import static org.grules.TestScriptEntities.PARAMETER_VALUE
 
 import org.grules.GrulesAPI
 import org.grules.script.RulesScriptResult
@@ -11,14 +12,14 @@ class IncludeTest extends Specification {
 
   def "Scripts can be included in each other"() {
     setup:
-      RulesScriptResult scriptResult = GrulesAPI.applyRules(IncludeMainGrules, [(PARAMETER_NAME): PARAMETER_VALUE])
+      RulesScriptResult scriptResult = GrulesAPI.applyRules(IncludeMainGrules, [(PARAMETER_NAME):PARAMETER_VALUE])
     expect:
       scriptResult.cleanParameters[PARAMETER_NAME] == PARAMETER_VALUE
   }
 
   def "Scripts can be included with condition"() {
     setup:
-      def parameters = [(PARAMETER_NAME): PARAMETER_VALUE]
+      def parameters = [(PARAMETER_NAME):PARAMETER_VALUE]
       RulesScriptResult scriptResult = GrulesAPI.applyRules(ConditionalIncludeGrules, parameters)
     expect:
       scriptResult.cleanParameters[PARAMETER_NAME] == PARAMETER_VALUE

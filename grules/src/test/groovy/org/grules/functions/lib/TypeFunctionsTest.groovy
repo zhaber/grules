@@ -1,6 +1,6 @@
 package org.grules.functions.lib
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.VALID_INTEGER
 
 import org.grules.ValidationException
 import org.joda.time.DateTime
@@ -13,29 +13,26 @@ enum TestEnum {
 
 class TypeFunctionsTest extends Specification {
 
-	TypeFunctions typeFunctions = new TypeFunctions()
+	private final TypeFunctions typeFunctions = new TypeFunctions()
 
-	DateTime nowDateTime = DateTime.now()
-	static final POSITIVE_LONG = Long.MAX_VALUE
-	static final POSITIVE_INTEGER = 1
-	static final POSITIVE_BIGDECIMAL = 1.1
-	static final POSITIVE_BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL.toString()
-	static final BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL_STRING
-	static final NEGATIVE_BIGDECIMAL = -POSITIVE_BIGDECIMAL
-	static final INTEGER = VALID_INTEGER
-	static final LONG = POSITIVE_LONG
-	static final NEGATIVE_INTEGER = -POSITIVE_INTEGER
-	static final INTEGER_STRING = INTEGER.toString()
-  static final INVALID_INTEGER_STRING = INTEGER_STRING + '?'
-	static final POSITIVE_INTEGER_STRING = INTEGER_STRING
-	static final NEGATIVE_INTEGER_STRING = '-' + POSITIVE_INTEGER_STRING
-	static final NEGATIVE_BIGDECIMAL_STRING = '-' + POSITIVE_BIGDECIMAL_STRING
-	static final POSITIVE_LONG_STRING = POSITIVE_LONG.toString()
-	static final NEGATIVE_LONG_STRING = NEGATIVE_LONG.toString()
-	static final NEGATIVE_LONG = Long.MIN_VALUE
-	static final LONG_STRING = POSITIVE_LONG_STRING
-	static final ZERO_STRING = '0'
-	static final BigDecimal BIGDECIMAL = POSITIVE_BIGDECIMAL
+	private final DateTime nowDateTime = DateTime.now()
+	private static final POSITIVE_LONG = Long.MAX_VALUE
+	private static final POSITIVE_BIGDECIMAL = 1.1
+	private static final POSITIVE_BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL.toString()
+	private static final BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL_STRING
+	private static final INTEGER = VALID_INTEGER
+	private static final LONG = POSITIVE_LONG
+	private static final INTEGER_STRING = INTEGER.toString()
+  private static final INVALID_INTEGER_STRING = INTEGER_STRING + '?'
+	private static final POSITIVE_INTEGER_STRING = INTEGER_STRING
+	private static final NEGATIVE_INTEGER_STRING = '-' + POSITIVE_INTEGER_STRING
+	private static final NEGATIVE_BIGDECIMAL_STRING = '-' + POSITIVE_BIGDECIMAL_STRING
+	private static final POSITIVE_LONG_STRING = POSITIVE_LONG.toString()
+	private static final NEGATIVE_LONG_STRING = NEGATIVE_LONG.toString()
+	private static final NEGATIVE_LONG = Long.MIN_VALUE
+	private static final LONG_STRING = POSITIVE_LONG_STRING
+	private static final ZERO_STRING = '0'
+	private static final BigDecimal BIGDECIMAL = POSITIVE_BIGDECIMAL
 
 	def "toBigDecimal"() {
 		expect:

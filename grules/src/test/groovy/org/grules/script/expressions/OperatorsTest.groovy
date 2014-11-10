@@ -1,7 +1,15 @@
 package org.grules.script.expressions
 
-import static org.grules.TestRuleEntriesFactory.*
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestRuleEntriesFactory.createValidationTerm
+import static org.grules.TestRuleEntriesFactory.createTrimConverter
+import static org.grules.TestRuleEntriesFactory.createFailValidationTerm
+import static org.grules.TestRuleEntriesFactory.createTildeTerm
+import static org.grules.TestRuleEntriesFactory.createTerm
+import static org.grules.TestRuleEntriesFactory.createConversionTerm
+import static org.grules.TestRuleEntriesFactory.createSuccessValidationTerm
+import static org.grules.TestRuleEntriesFactory.createSubrulesSeq
+import static org.grules.TestRuleEntriesFactory.createSubrule
+import static org.grules.TestScriptEntities.ERROR_ID
 
 import org.grules.script.expressions.Operators.ClosureOperators
 import org.grules.script.expressions.Operators.SubrulesSeqOperators
@@ -32,7 +40,7 @@ class OperatorsTest extends Specification {
 
 	def "AND operator throws exception if left term is tilde term"() {
 		when:
-		  use(TildeTermOperators){
+		  use(TildeTermOperators) {
   		  createTildeTerm() & createTerm()
 	    }
 		then:
@@ -41,7 +49,7 @@ class OperatorsTest extends Specification {
 
 	def "AND operator throws exception if right term is tilde term"() {
 		when:
-			use(TermOperators){
+			use(TermOperators) {
 			  createValidationTerm() & createTildeTerm()
 			}
 		then:
@@ -50,7 +58,7 @@ class OperatorsTest extends Specification {
 
 	def "OR operator throws exception if left term is tilde term"() {
 		when:
-		  use(TildeTermOperators){
+		  use(TildeTermOperators) {
   		  createTildeTerm() | createTerm()
 	    }
 	 	then:
@@ -68,7 +76,7 @@ class OperatorsTest extends Specification {
 
 	def "AND operator throws exception if left term returns non-boolean value"() {
 		when:
-			use(TermOperators){
+			use(TermOperators) {
 				(createConversionTerm() & createValidationTerm()).apply('')
 			}
 		then:
@@ -77,7 +85,7 @@ class OperatorsTest extends Specification {
 
 	def "AND operator throws exception if right term returns non-boolean value"() {
 		when:
-			use(TermOperators){
+			use(TermOperators) {
 				(createSuccessValidationTerm() & createConversionTerm()).apply('')
 			}
 		then:
@@ -86,7 +94,7 @@ class OperatorsTest extends Specification {
 
 	def "OR operator throws exception if left term returns non-boolean value"() {
 		when:
-			use(TermOperators){
+			use(TermOperators) {
 				(createConversionTerm() | createValidationTerm()).apply('')
 			}
 		then:
@@ -95,7 +103,7 @@ class OperatorsTest extends Specification {
 
 	def "OR operator throws exception if right term returns non-boolean value"() {
 		when:
-			use(TermOperators){
+			use(TermOperators) {
 				(createFailValidationTerm() | createConversionTerm()).apply('')
 			}
 		then:
@@ -106,7 +114,7 @@ class OperatorsTest extends Specification {
 		setup:
 		  def term = createValidationTerm()
 		  def andTerm
-		  use(TermOperators){
+		  use(TermOperators) {
   	   	andTerm = term & term
 		  }
 		expect:
@@ -149,10 +157,9 @@ class OperatorsTest extends Specification {
       subrule.errorProperties.errorId == ERROR_ID
   }
 
-
 	def "AND operator for closure wraps closure"() {
 		setup:
-		  def closure = {}
+		  def closure = { }
 		  def term
 		  use (ClosureOperators, TermOperators) {
 			  term = (closure & createValidationTerm()) as BinaryValidationTerm
@@ -163,7 +170,7 @@ class OperatorsTest extends Specification {
 
 	def "OR operator for closure wraps closure"() {
 		setup:
-		  def closure = {}
+		  def closure = { }
 		  def term
 		  use (ClosureOperators, TermOperators) {
 			  term = (closure | createValidationTerm()) as BinaryValidationTerm
@@ -176,7 +183,7 @@ class OperatorsTest extends Specification {
 		setup:
 		  def term
 		  use (ClosureOperators) {
-		    term = ~{}
+		    term = ~ { }
 		  }
 		expect:
 		  term instanceof TildeTerm
@@ -184,7 +191,7 @@ class OperatorsTest extends Specification {
 
 	def "GetAt operator for closure returns subrule"() {
 		setup:
-		  def closure = {}
+		  def closure = { }
 		  Subrule subrule
       use (ClosureOperators) {
         subrule = closure[ERROR_ID] as Subrule

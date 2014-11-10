@@ -1,16 +1,23 @@
 package org.grules.script.expressions
 
-import static org.grules.TestRuleEntriesFactory.*
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestRuleEntriesFactory.createIsIntegerValidator
+import static org.grules.TestRuleEntriesFactory.createToIntConverter
+import static org.grules.TestRuleEntriesFactory.createSubrule
+import static org.grules.TestRuleEntriesFactory.createSubrulesSeq
+import static org.grules.TestRuleEntriesFactory.createValidationTerm
+import static org.grules.TestRuleEntriesFactory.createFailingSubrule
+import static org.grules.TestScriptEntities.VALID_INTEGER_STRING
+import static org.grules.TestScriptEntities.VALID_INTEGER
+import static org.grules.TestScriptEntities.INVALID_PARAMETER_VALUE
+import static org.grules.TestScriptEntities.ERROR_ID
+import static org.grules.TestScriptEntities.ERROR_MESSAGE
 
 import org.grules.ValidationErrorProperties
 import org.grules.ValidationException
 
 import spock.lang.Specification
 
-class SubrulesSeqTest extends Specification{
-
-  Subrule failedSubrule
+class SubrulesSeqTest extends Specification {
 
 	def "Apply subrules sequence from one subrule to valid term"() {
 		setup:
@@ -119,7 +126,7 @@ class SubrulesSeqTest extends Specification{
 		setup:
 		  def subrulesSeq = createSubrulesSeq()
 		  def initialSize = subrulesSeq.subrules.size()
-		  subrulesSeq.add {}
+		  subrulesSeq.add { }
 		expect:
 		  subrulesSeq.subrules.size() == initialSize + 1
 	}
@@ -149,7 +156,7 @@ class SubrulesSeqTest extends Specification{
 
 	def "wrap for closure"() {
 		setup:
-			def closure = {}
+			def closure = { }
 			def subruleSeq = SubrulesSeqWrapper.wrap(closure)
 		expect:
 			(subruleSeq.subrules[0].term as ClosureTerm).closure == closure

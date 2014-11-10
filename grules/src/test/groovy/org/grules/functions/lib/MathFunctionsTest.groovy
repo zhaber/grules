@@ -1,14 +1,12 @@
 package org.grules.functions.lib
 
-import static org.grules.TestScriptEntities.*
-
 import org.grules.ValidationException
 
 import spock.lang.Specification
 
 class MathFunctionsTest extends Specification {
 
-	MathFunctions mathFunctions = new MathFunctions()
+	private final MathFunctions mathFunctions = new MathFunctions()
 
 	def "abs"() {
 		expect:

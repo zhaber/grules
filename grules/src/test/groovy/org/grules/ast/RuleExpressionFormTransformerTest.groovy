@@ -1,8 +1,15 @@
 package org.grules.ast
 
-import static org.codehaus.groovy.syntax.Types.*
-import static org.grules.TestScriptEntities.*
-import static org.grules.ast.ASTTestUtils.*
+import static org.codehaus.groovy.syntax.Types.LOGICAL_OR
+import static org.codehaus.groovy.syntax.Types.LOGICAL_AND
+import static org.codehaus.groovy.syntax.Types.LEFT_PARENTHESIS
+import static org.codehaus.groovy.syntax.Types.RIGHT_PARENTHESIS
+import static org.codehaus.groovy.syntax.Types.RIGHT_SHIFT
+import static org.codehaus.groovy.syntax.Types.NOT
+import static org.codehaus.groovy.syntax.Types.BITWISE_NEGATION
+import static org.grules.ast.ASTTestUtils.fetchStatementBlockExpression
+import static org.grules.ast.ASTTestUtils.checkToken
+import static org.grules.ast.ASTTestUtils.checkVariable
 
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.BinaryExpression
@@ -16,28 +23,28 @@ import spock.lang.Specification
 
 class RuleExpressionFormTransformerTest extends Specification {
 
-	GrulesASTTransformationLogger logger
-	RulesAstTransformation astTransformation
-	AstBuilder builder
-	CompilePhase phase
-	Expression complexRuleExpression
+	private GrulesASTTransformationLogger logger
+	private RulesAstTransformation astTransformation
+	private AstBuilder builder
+	private CompilePhase phase
+	private Expression complexRuleExpression
 
-	def a = 'a'
-	def b = 'b'
-	def c = 'c'
-	def d = 'd'
-	def e = 'e'
-	def f = 'f'
-	def g = 'g'
-	def h = 'h'
-	def i = 'i'
-	def j = 'j'
-	def k = 'k'
-	def l = 'l'
+	private final a = 'a'
+	private final b = 'b'
+	private final c = 'c'
+	private final d = 'd'
+	private final e = 'e'
+	private final f = 'f'
+	private final g = 'g'
+	private final h = 'h'
+	private final i = 'i'
+	private final j = 'j'
+	private final k = 'k'
+	private final l = 'l'
 
 	def setup() {
 		logger = Mock()
-		logger.write(_) >> {}
+		logger.write(_) >> { }
 		astTransformation = new RulesAstTransformation()
 		astTransformation.init('test')
 		GrulesLogger.turnOff()
@@ -111,10 +118,10 @@ class RuleExpressionFormTransformerTest extends Specification {
 		expect:
 			checkToken(infixExpression[p++], LEFT_PARENTHESIS)
 			checkVariable(infixExpression[p++], a)
-			checkToken(infixExpression[p++],LOGICAL_OR)
+			checkToken(infixExpression[p++], LOGICAL_OR)
 			checkVariable(infixExpression[p++], b)
-			checkToken(infixExpression[p++],RIGHT_PARENTHESIS)
-			checkToken(infixExpression[p++],LOGICAL_AND)
+			checkToken(infixExpression[p++], RIGHT_PARENTHESIS)
+			checkToken(infixExpression[p++], LOGICAL_AND)
 			checkVariable(infixExpression[p], c)
 	}
 
@@ -174,7 +181,7 @@ class RuleExpressionFormTransformerTest extends Specification {
 	def "infixToPostfixExpression for not and bitwise expression"() {
 		setup:
 			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
-				~!a
+				~(!a)
 			})
 			def infixExpression = RuleExpressionFormTransformer.transformToInfixExpression(ruleExpression)
 			def postfixExpression = RuleExpressionFormTransformer.infixToPostfixExpression(infixExpression)

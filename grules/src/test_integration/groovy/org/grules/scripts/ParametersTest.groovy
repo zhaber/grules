@@ -1,6 +1,10 @@
 package org.grules.scripts
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.PARAMETER_NAME
+import static org.grules.TestScriptEntities.DEFAULT_VALUE
+import static org.grules.TestScriptEntities.PARAMETER_VALUE
+import static org.grules.TestScriptEntities.INVALID_PARAMETER_VALUE
+import static org.grules.TestScriptEntities.PARAMETER_NAME_AUX
 
 import org.grules.GrulesAPI
 import org.grules.GrulesLogger
@@ -30,7 +34,7 @@ class ParametersTest extends Specification {
 
   def "Required but empty parameter is saved as missing required parameter"() {
     setup:
-      RulesScriptResult result = GrulesAPI.applyRules(RequiredGrules, [(PARAMETER_NAME): ''])
+      RulesScriptResult result = GrulesAPI.applyRules(RequiredGrules, [(PARAMETER_NAME):''])
     expect:
       result.missingRequiredParameters == [PARAMETER_NAME] as Set
   }
@@ -38,7 +42,7 @@ class ParametersTest extends Specification {
   def "Capitalized parameter names are processed as lowercase parameters"() {
     setup:
       def parameterName = PARAMETER_NAME.capitalize()
-      RulesScriptResult result = GrulesAPI.applyRules(RequiredGrules, [(parameterName): PARAMETER_VALUE])
+      RulesScriptResult result = GrulesAPI.applyRules(RequiredGrules, [(parameterName):PARAMETER_VALUE])
     expect:
       result.cleanParameters.containsKey(parameterName)
   }
@@ -52,14 +56,14 @@ class ParametersTest extends Specification {
 
   def "Optional parameter for empty value"() {
     setup:
-      RulesScriptResult result = GrulesAPI.applyRules(OptionalParameterGrules, [(PARAMETER_NAME): ''])
+      RulesScriptResult result = GrulesAPI.applyRules(OptionalParameterGrules, [(PARAMETER_NAME):''])
     expect:
       result.cleanParameters[PARAMETER_NAME] == DEFAULT_VALUE
   }
 
   def "If rule dependens on invalid parameter it is saved as with missing dependency"() {
     setup:
-      def parameters = [(PARAMETER_NAME): INVALID_PARAMETER_VALUE, (PARAMETER_NAME_AUX): PARAMETER_VALUE]
+      def parameters = [(PARAMETER_NAME):INVALID_PARAMETER_VALUE, (PARAMETER_NAME_AUX):PARAMETER_VALUE]
       RulesScriptResult result = GrulesAPI.applyRules(InvalidDependencyParameterGrules, parameters)
     expect:
       PARAMETER_NAME_AUX in result.parametersWithMissingDependency
@@ -67,7 +71,7 @@ class ParametersTest extends Specification {
 
   def "If rule dependens on missing clean value it is saved as with missing dependency"() {
     setup:
-      def parameters = [(PARAMETER_NAME_AUX): PARAMETER_VALUE]
+      def parameters = [(PARAMETER_NAME_AUX):PARAMETER_VALUE]
       RulesScriptResult result = GrulesAPI.applyRules(InvalidDependencyParameterGrules, parameters)
     expect:
       PARAMETER_NAME_AUX in result.parametersWithMissingDependency
@@ -75,7 +79,7 @@ class ParametersTest extends Specification {
 
   def "Invalid parameters are saved as invalid"() {
     setup:
-      RulesScriptResult result = GrulesAPI.applyRules(InvalidParameterGrules, [(PARAMETER_NAME): PARAMETER_VALUE])
+      RulesScriptResult result = GrulesAPI.applyRules(InvalidParameterGrules, [(PARAMETER_NAME):PARAMETER_VALUE])
     expect:
       (result.invalidParameters as Map).containsKey(PARAMETER_NAME)
   }

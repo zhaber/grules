@@ -1,6 +1,8 @@
 package org.grules.ast
-import static org.grules.TestScriptEntities.*
-import static org.grules.ast.ASTTestUtils.*
+
+import static org.grules.ast.ASTTestUtils.fetchArguments
+import static org.grules.ast.ASTTestUtils.fetchStatementBlockExpression
+import static org.grules.ast.ASTTestUtils.fetchClosureExpression
 
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.BitwiseNegationExpression
@@ -13,11 +15,11 @@ import spock.lang.Specification
 
 class ClosureWrapperTest extends Specification {
 
-	AstBuilder builder
-	CompilePhase phase
+	private AstBuilder builder
+	private CompilePhase phase
 
-	def a = 'a'
-	def b = 'b'
+	private final a = 'a'
+	private final b = 'b'
 
 	def setup() {
 		builder = new AstBuilder()
@@ -40,7 +42,7 @@ class ClosureWrapperTest extends Specification {
 	def "wrapInClosures for bitwise negation expression"() {
 		setup:
 			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
-				~{a}
+				~ { a }
 			})
 			ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
 			ruleExpression = RulesAstTransformation.liftErrors(ruleExpression)

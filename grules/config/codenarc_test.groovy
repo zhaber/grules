@@ -1,12 +1,16 @@
 ruleset {
-  ruleset('rulesets/basic.xml')
+  ruleset('rulesets/basic.xml') {
+    exclude 'MultipleUnaryOperators'
+  }
   ruleset('rulesets/braces.xml')
   ruleset('rulesets/concurrency.xml')
   ruleset('rulesets/convention.xml')
   ruleset('rulesets/design.xml')
   ruleset('rulesets/dry.xml')
   ruleset('rulesets/exceptions.xml')
-  ruleset('rulesets/formatting.xml')
+  ruleset('rulesets/formatting.xml') {
+    exclude 'ClassJavadoc'
+  }
   ruleset('rulesets/generic.xml')
   ruleset('rulesets/groovyism.xml')
   ruleset('rulesets/imports.xml')

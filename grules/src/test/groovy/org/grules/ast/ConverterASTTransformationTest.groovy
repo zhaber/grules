@@ -1,7 +1,5 @@
 package org.grules.ast
 
-import static org.grules.TestScriptEntities.*
-
 import org.grules.functions.ConverterBooleanResult
 import org.grules.functions.lib.TypeFunctions
 

@@ -1,5 +1,7 @@
 ruleset {
-  ruleset('rulesets/basic.xml')
+  ruleset('rulesets/basic.xml') {
+    exclude 'EmptyClass'
+  }
   ruleset('rulesets/braces.xml')
   ruleset('rulesets/concurrency.xml')
   ruleset('rulesets/convention.xml') {

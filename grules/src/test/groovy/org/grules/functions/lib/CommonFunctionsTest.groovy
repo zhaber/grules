@@ -1,11 +1,15 @@
 package org.grules.functions.lib
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.PARAMETER_VALUE
+import static org.grules.TestScriptEntities.INVALID_PARAMETER_VALUE
+import static org.grules.TestScriptEntities.PARAMETER_VALUE_AUX
+import static org.grules.TestScriptEntities.JOIN_SEPARATOR
+
 import spock.lang.Specification
 
 class CommonFunctionsTest extends Specification {
 
-	CommonFunctions commonFunctions = new CommonFunctions()
+	private final CommonFunctions commonFunctions = new CommonFunctions()
 
   def "areIn"() {
     expect:
@@ -30,7 +34,7 @@ class CommonFunctionsTest extends Specification {
 
 	def "isAny"() {
 		expect:
-			commonFunctions.isAny([PARAMETER_VALUE, INVALID_PARAMETER_VALUE]) {it == PARAMETER_VALUE}
+			commonFunctions.isAny([PARAMETER_VALUE, INVALID_PARAMETER_VALUE]) { it == PARAMETER_VALUE }
       !commonFunctions.isAny([''])
 	}
 
@@ -47,8 +51,8 @@ class CommonFunctionsTest extends Specification {
 
 	def "isEvery"() {
 		expect:
-			commonFunctions.isEvery([PARAMETER_VALUE, PARAMETER_VALUE]) {it == PARAMETER_VALUE}
-		  !commonFunctions.isEvery([PARAMETER_VALUE, INVALID_PARAMETER_VALUE]) {it == PARAMETER_VALUE}
+			commonFunctions.isEvery([PARAMETER_VALUE, PARAMETER_VALUE]) { it == PARAMETER_VALUE }
+		  !commonFunctions.isEvery([PARAMETER_VALUE, INVALID_PARAMETER_VALUE]) { it == PARAMETER_VALUE }
       !commonFunctions.isEvery([1, ''])
 	}
 

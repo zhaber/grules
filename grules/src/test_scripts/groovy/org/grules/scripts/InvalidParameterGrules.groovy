@@ -1,6 +1,5 @@
 package org.grules.scripts
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.PARAMETER_NAME
 
-
-"$PARAMETER_NAME" {false}
+"$PARAMETER_NAME" { false }

@@ -1,7 +1,8 @@
 package org.grules.script.expressions
 
-import static org.grules.TestRuleEntriesFactory.*
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestRuleEntriesFactory.createIsIntegerValidator
+import static org.grules.TestRuleEntriesFactory.createIsEmptyValidator
+import static org.grules.TestScriptEntities.VALID_INTEGER_STRING
 import spock.lang.Specification
 
 class BinaryValidationTermTest extends Specification {
@@ -14,16 +15,16 @@ class BinaryValidationTermTest extends Specification {
 		expect:
 		  term.apply(VALID_INTEGER_STRING)
 	}
-	
+
 	def "Apply AND term to invalid terms"() {
-    setup: 
+    setup:
 			def validatorTermLeft = createIsIntegerValidator()
 		  def validatorTermRight = createIsEmptyValidator()
 		  def term = new AndTerm(validatorTermLeft, validatorTermRight)
 		expect:
 		  !term.apply(VALID_INTEGER_STRING)
 	}
-	
+
 	def "Apply OR term to valid terms"() {
 		setup:
 		  def validatorTermLeft = createIsIntegerValidator()
@@ -32,7 +33,7 @@ class BinaryValidationTermTest extends Specification {
 		expect:
 		  term.apply(VALID_INTEGER_STRING)
 	}
-	
+
 	def "Apply OR term to invalid terms"() {
 		setup:
 		  def validatorTermLeft = createIsEmptyValidator()

@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 class MessageResourceBundleTest extends Specification {
 
-  def grulesConfig = new GrulesConfig([(GrulesConfig.RESOURCE_BUNDLE_PARAMETER_NAME): ''])
+  private final grulesConfig = new GrulesConfig([(GrulesConfig.RESOURCE_BUNDLE_PARAMETER_NAME):''])
 
   def "Resource bundle is read if exists"() {
     setup:

@@ -1,7 +1,17 @@
 package org.grules.script
 
-import static org.grules.TestRuleEntriesFactory.*
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestRuleEntriesFactory.createEmptyRuleClosure
+import static org.grules.TestRuleEntriesFactory.createFailingSubrule
+import static org.grules.TestScriptEntities.TEST_CONFIG
+import static org.grules.TestScriptEntities.PARAMETER_NAME
+import static org.grules.TestScriptEntities.PARAMETER_VALUE
+import static org.grules.TestScriptEntities.GROUP
+import static org.grules.TestScriptEntities.GROUP_AUX
+import static org.grules.TestScriptEntities.PARAMETER_NAME_AUX
+import static org.grules.TestScriptEntities.VARIABLE_NAME_AUX
+import static org.grules.TestScriptEntities.VARIABLE_NAME
+import static org.grules.TestScriptEntities.VARIABLE_VALUE
+import static org.grules.TestScriptEntities.CLEAN_PARAMETER_VALUE
 
 import org.codehaus.groovy.runtime.MethodClosure
 import org.grules.EmptyRulesScript
@@ -12,7 +22,6 @@ import org.grules.ValidationException
 import org.grules.config.DefaultFunctionFactory
 import org.grules.config.GrulesConfig
 import org.grules.functions.lib.StringFunctions
-import org.grules.script.expressions.Subrule
 import org.grules.script.expressions.SubrulesSeq
 import org.grules.script.expressions.SubrulesSeqWrapper
 
@@ -21,7 +30,7 @@ import spock.lang.Specification
 class IncludeTestScript extends Script {
   def run() {
     binding.setProperty(GROUP, binding.getProperty(GROUP) +
-        [(PARAMETER_NAME): PARAMETER_VALUE])
+        [(PARAMETER_NAME):PARAMETER_VALUE])
     binding.setProperty(VARIABLE_NAME, VARIABLE_VALUE)
     (this as RulesScript).missingRequiredParameters.put(GROUP, PARAMETER_NAME_AUX)
   }
@@ -36,9 +45,9 @@ class IncludeTestScriptLastGroup extends Script {
 
 class RulesScriptTest extends Specification {
 
-  RulesScript script
-  GrulesConfig config
-  def MISSING_PROPERTY_NAME = 'missingProperty'
+  private RulesScript script
+  private GrulesConfig config
+  private final static MISSING_PROPERTY_NAME = 'missingProperty'
 
   def setupSpec() {
     GrulesLogger.turnOff()
@@ -50,7 +59,7 @@ class RulesScriptTest extends Specification {
     config.getDefaultGroup() >> TEST_CONFIG.defaultGroup
     script = new RulesScript()
     script.initMain(new EmptyRulesScript(), config, GrulesInjector.ruleEngine,
-        [(GROUP): [(PARAMETER_NAME): PARAMETER_VALUE]], [:])
+        [(GROUP):[(PARAMETER_NAME):PARAMETER_VALUE]], [:])
   }
 
   def "Initializing sets variables for dirty values"() {
@@ -139,7 +148,7 @@ class RulesScriptTest extends Specification {
       def skipFunction = script.skip(trim.method)
       def subrulesSeq = SubrulesSeqWrapper.wrap(skipFunction)
     when:
-      script.applyRule(PARAMETER_NAME, parameterValue) {subrulesSeq}
+      script.applyRule(PARAMETER_NAME, parameterValue) { subrulesSeq }
     then:
       script.variables[PARAMETER_NAME] == parameterValue
   }
@@ -167,7 +176,7 @@ class RulesScriptTest extends Specification {
       (script.variables[GROUP] as Map).put(PARAMETER_NAME, '')
       script.applyRuleToRequiredParameter(PARAMETER_NAME, createEmptyRuleClosure())
     expect:
-      script.missingRequiredParameters == [(GROUP): [PARAMETER_NAME] as Set]
+      script.missingRequiredParameters == [(GROUP):[PARAMETER_NAME] as Set]
   }
 
   def "applyRuleToRequiredParameter saves a parameter as missing if it is required but null"() {
@@ -175,31 +184,31 @@ class RulesScriptTest extends Specification {
       (script.variables[GROUP] as Map).put(PARAMETER_NAME, null)
       script.applyRuleToRequiredParameter(PARAMETER_NAME, createEmptyRuleClosure())
     expect:
-      script.missingRequiredParameters == [(GROUP): [PARAMETER_NAME] as Set]
+      script.missingRequiredParameters == [(GROUP):[PARAMETER_NAME] as Set]
   }
 
   def "applyRuleToRequiredParameter saves a parameter as missing if its value is not available"() {
     setup:
       script.applyRuleToRequiredParameter(PARAMETER_NAME_AUX, createEmptyRuleClosure())
     expect:
-      script.missingRequiredParameters == [(GROUP): [PARAMETER_NAME_AUX] as Set]
+      script.missingRequiredParameters == [(GROUP):[PARAMETER_NAME_AUX] as Set]
   }
 
   def "applyRule saves a parameter with absent dependant parameter as with missing dependency"() {
     setup:
       SubrulesSeq rule = Mock()
-      rule.apply(_) >> {throw new MissingParameterException(GROUP, PARAMETER_NAME_AUX)}
-      script.applyRule(PARAMETER_NAME, PARAMETER_VALUE) {rule}
+      rule.apply(_) >> { throw new MissingParameterException(GROUP, PARAMETER_NAME_AUX) }
+      script.applyRule(PARAMETER_NAME, PARAMETER_VALUE) { rule }
     expect:
-      script.missingRequiredParameters == [(GROUP): [PARAMETER_NAME_AUX] as Set]
-      script.parametersWithMissingDependency == [(GROUP): [PARAMETER_NAME] as Set]
+      script.missingRequiredParameters == [(GROUP):[PARAMETER_NAME_AUX] as Set]
+      script.parametersWithMissingDependency == [(GROUP):[PARAMETER_NAME] as Set]
   }
 
   def "applyRule saves a parameter as invalid if its value is invalid"() {
     setup:
       SubrulesSeq rule = Mock()
-      rule.apply(_) >> {throw new ValidationException()}
-      script.applyRule(PARAMETER_NAME, PARAMETER_VALUE) {rule}
+      rule.apply(_) >> { throw new ValidationException() }
+      script.applyRule(PARAMETER_NAME, PARAMETER_VALUE) { rule }
     expect:
       script.invalidParameters.containsKey(GROUP)
       script.invalidParameters.get(GROUP).containsKey(PARAMETER_NAME)
@@ -207,7 +216,7 @@ class RulesScriptTest extends Specification {
 
   def "propertyMissing throws InvalidDependencyParameterException for invalid value"() {
     when:
-      script.invalidParameters.put(GROUP, [(PARAMETER_NAME): new ValidationErrorProperties()])
+      script.invalidParameters.put(GROUP, [(PARAMETER_NAME):new ValidationErrorProperties()])
       script.propertyMissing(PARAMETER_NAME)
     then:
       thrown(InvalidDependencyValueException)
@@ -282,7 +291,7 @@ class RulesScriptTest extends Specification {
 
   def "fetchNotValidatedParameters does not return invalid parameters"() {
     setup:
-      script.invalidParameters.put(GROUP, [(PARAMETER_NAME): new ValidationErrorProperties()])
+      script.invalidParameters.put(GROUP, [(PARAMETER_NAME):new ValidationErrorProperties()])
     expect:
       script.fetchNotValidatedParameters().isEmpty()
   }
@@ -337,6 +346,6 @@ class RulesScriptTest extends Specification {
       script.variables.put(VARIABLE_NAME, VARIABLE_VALUE)
     then:
       script.fetchCleanParameters().containsKey(GROUP)
-      script.fetchCleanParameters()[GROUP] == [(PARAMETER_NAME): PARAMETER_VALUE]
+      script.fetchCleanParameters()[GROUP] == [(PARAMETER_NAME):PARAMETER_VALUE]
   }
 }

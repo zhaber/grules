@@ -1,6 +1,6 @@
 package org.grules.config
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.TEST_CONFIG
 import spock.lang.Specification
 
 class ConfigFactoryTest extends Specification {

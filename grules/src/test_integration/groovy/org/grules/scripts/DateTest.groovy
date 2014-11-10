@@ -1,6 +1,8 @@
 package org.grules.scripts
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.PARAMETER_NAME_AUX
+import static org.grules.TestScriptEntities.PARAMETER_NAME
+import static org.grules.TestScriptEntities.DATE_FORMAT
 
 import java.text.SimpleDateFormat
 
@@ -18,7 +20,7 @@ class DateTest extends Specification {
       def dateAfter = now.plusDays(1).toDate()
       def dateBefore = now.minusDays(1).toDate()
       def dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.default)
-      def parameters = [(PARAMETER_NAME): dateFormat.format(dateAfter), (PARAMETER_NAME_AUX): dateBefore]
+      def parameters = [(PARAMETER_NAME):dateFormat.format(dateAfter), (PARAMETER_NAME_AUX):dateBefore]
       RulesScriptResult result = GrulesAPI.applyRules(DateGrules, parameters)
     expect:
       dateFormat.format(result.cleanParameters[PARAMETER_NAME]) == dateFormat.format(dateAfter)

@@ -1,6 +1,10 @@
 package org.grules.scripts
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.PARAMETER_NAME_AUX
+import static org.grules.TestScriptEntities.PARAMETER_VALUE_AUX
+import static org.grules.TestScriptEntities.PARAMETER_NAME
+import static org.grules.TestScriptEntities.PARAMETER_VALUE
+import static org.grules.TestScriptEntities.ERROR_ID
 
 import org.grules.GrulesAPI
 import org.grules.script.RulesScriptResult
@@ -11,7 +15,7 @@ class ErrorsTest extends Specification {
 
   def "Error id is reported if a request parameter is invalid"() {
     setup:
-      def parameters = [(PARAMETER_NAME): PARAMETER_VALUE, (PARAMETER_NAME_AUX): PARAMETER_VALUE_AUX]
+      def parameters = [(PARAMETER_NAME):PARAMETER_VALUE, (PARAMETER_NAME_AUX):PARAMETER_VALUE_AUX]
       RulesScriptResult result = GrulesAPI.applyRules(ErrorsGrules, parameters)
     expect:
       result.invalidParameters.containsKey(PARAMETER_NAME)

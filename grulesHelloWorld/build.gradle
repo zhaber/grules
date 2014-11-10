@@ -11,7 +11,6 @@ repositories {
 mainClassName = "test.Test"
 
 dependencies {
-  groovy 'org.codehaus.groovy:groovy:2.3.7' exclude group: 'asm', module: 'asm' 
   compile 'org.grules:grules:0.2.0.8' exclude group: 'asm', module: 'asm' 
 }
 

@@ -1,6 +1,9 @@
 package org.grules.scripts
 
-import static org.grules.TestScriptEntities.*
+import static org.grules.TestScriptEntities.PARAMETER_NAME
+import static org.grules.TestScriptEntities.PARAMETER_VALUE
+import static org.grules.TestScriptEntities.FUNCTION_FOR_LIST
+import static org.grules.TestScriptEntities.DEFAULT_VALUE
 
 import org.grules.Grules
 import org.grules.GrulesAPI
@@ -12,7 +15,7 @@ class ListParametersTest extends Specification {
 
   def "List parameters"() {
     setup:
-      RulesScriptResult result = GrulesAPI.applyRules(ListParametersGrules, [(PARAMETER_NAME): PARAMETER_VALUE])
+      RulesScriptResult result = GrulesAPI.applyRules(ListParametersGrules, [(PARAMETER_NAME):PARAMETER_VALUE])
       def ruleName = 'PARAMETER_NAME' + Grules.COMBINED_PARAMETERS_SEPARATOR + 'PARAMETER_NAME_AUX'
     expect:
       result.cleanParameters.containsKey(ruleName)

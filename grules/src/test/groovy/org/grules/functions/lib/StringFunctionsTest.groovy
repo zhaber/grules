@@ -4,17 +4,17 @@ import spock.lang.Specification
 
 class StringFunctionsTest extends Specification {
 
-	static final String LOWERCASE_STRING = 'a'
-	static final String UPPERCASE_STRING = LOWERCASE_STRING.toUpperCase()
-	static final String SUFFIX = 's'
-	static final String PREFIX = 'p'
-	static final String STRING = PREFIX + SUFFIX
-	static final String ALPHA_STRING = STRING
-	static final String INTEGER_STRING = '1'
-	static final String ALPHANUM_STRING = STRING + INTEGER_STRING
-	static final String SUB_STRING = SUFFIX
+	private static final String LOWERCASE_STRING = 'a'
+	private static final String UPPERCASE_STRING = LOWERCASE_STRING.toUpperCase()
+	private static final String SUFFIX = 's'
+	private static final String PREFIX = 'p'
+	private static final String STRING = PREFIX + SUFFIX
+	private static final String ALPHA_STRING = STRING
+	private static final String INTEGER_STRING = '1'
+	private static final String ALPHANUM_STRING = STRING + INTEGER_STRING
+	private static final String SUB_STRING = SUFFIX
 
-	StringFunctions stringFunctions = new StringFunctions()
+	private final StringFunctions stringFunctions = new StringFunctions()
 
 	def "capitalize"() {
 		expect:

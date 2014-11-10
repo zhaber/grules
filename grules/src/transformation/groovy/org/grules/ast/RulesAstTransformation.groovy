@@ -63,7 +63,7 @@ class RulesAstTransformation extends GrulesAstTransformation {
   private static final List<Class> IMPORT_CLASSES = [CommonFunctions, DateFunctions, StringFunctions, TypeFunctions,
       UserFunctions, MathFunctions, SecurityFunctions]
   private static final String DEFAULT_RULES_FILE_SUFFIX = 'Grules'
-  private String rulesFileSufix
+  private final String rulesFileSufix
 
   RulesAstTransformation() {
     this(DEFAULT_RULES_FILE_SUFFIX)
@@ -122,7 +122,7 @@ class RulesAstTransformation extends GrulesAstTransformation {
   }
 
   private void visitStatement(BlockStatement blockStatement) {
-    blockStatement.statements.each {Statement statement ->
+    blockStatement.statements.each { Statement statement ->
       visitStatement(statement)
     }
   }
@@ -147,7 +147,7 @@ class RulesAstTransformation extends GrulesAstTransformation {
         } else {
           ExpressionFactory.createItVariable()
         }
-      }()
+      } ()
       List<Expression> arguments = [parameter]
       ruleStatement.expression = ExpressionFactory.createMethodCall(ruleExpression, SubrulesSeq.&apply, arguments)
       declarationExpression
@@ -209,11 +209,11 @@ class RulesAstTransformation extends GrulesAstTransformation {
    * @return converted rule expression
    */
   static Expression convertToRuleExpression(Expression ruleExpression) {
-    ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
-    ruleExpression = liftErrors(ruleExpression)
-    ruleExpression = convertToRuleOperators(ruleExpression)
-    ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
-    addSequenceWrapper(ruleExpression)
+    Expression ruleExpressionConvertedPrecedences = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
+    Expression ruleExpressionLiftedErrors = liftErrors(ruleExpressionConvertedPrecedences)
+    Expression ruleExpressionConvertedToRuleOperators = convertToRuleOperators(ruleExpressionLiftedErrors)
+    Expression ruleExpressionWrappedInClosures = ClosureWrapper.wrapInClosures(ruleExpressionConvertedToRuleOperators)
+    addSequenceWrapper(ruleExpressionWrappedInClosures)
   }
 
   /**
@@ -276,9 +276,9 @@ class RulesAstTransformation extends GrulesAstTransformation {
       (expression as BinaryExpression).rightExpression
     } else if (expression instanceof BinaryExpression) {
       fetchError((expression as BinaryExpression).rightExpression)
-    } else if (expression instanceof NotExpression){
+    } else if (expression instanceof NotExpression) {
       fetchError((expression as NotExpression).expression)
-    } else if (expression instanceof BitwiseNegationExpression){
+    } else if (expression instanceof BitwiseNegationExpression) {
       fetchError((expression as BitwiseNegationExpression).expression)
     } else {
       throw new IllegalStateException('No error found for expression ' + expression)
@@ -368,19 +368,20 @@ class RulesAstTransformation extends GrulesAstTransformation {
       List<String> parametersNames = []
       List<Expression> requiredParameters = []
       Map<Expression, Expression> optionalParameters = [:]
-      listExpression.expressions.each {Expression expression ->
+      listExpression.expressions.each { Expression expression ->
         if (AstUtils.isArrayItemExpression(expression)) {
           BinaryExpression binaryExpression = expression
           Expression parameterNameExpression = binaryExpression.leftExpression
           parametersNames << fetchParameterName(parameterNameExpression)
-          optionalParameters << [(parameterNameExpression): binaryExpression.rightExpression]
+          optionalParameters << [(parameterNameExpression):binaryExpression.rightExpression]
         } else {
           parametersNames << fetchParameterName(expression)
           requiredParameters << expression
         }
       }
       Expression ruleNameExpression = new ConstantExpression(parametersNames.join(Grules.COMBINED_PARAMETERS_SEPARATOR))
-      List<Expression> requiredParametersExpressions = requiredParameters.collect {Expression parameterNameExpression ->
+      List<Expression> requiredParametersExpressions =
+          requiredParameters.collect { Expression parameterNameExpression ->
         if (parameterNameExpression instanceof VariableExpression) {
           new ConstantExpression((parameterNameExpression as VariableExpression).name)
         } else if (parameterNameExpression instanceof GStringExpression) {
