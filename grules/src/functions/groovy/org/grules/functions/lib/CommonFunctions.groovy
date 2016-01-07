@@ -142,7 +142,7 @@ class CommonFunctions {
 
   /**
    * Returns the passed value.
-s   */
+   */
   def nop(value) {
     value
   }
@@ -157,7 +157,7 @@ s   */
   /**
    * @see DefaultGroovyMethods#join(java.util.Collection, String)
    */
-  def join(Collection<Object> values, String separator) {
+  String join(Collection<Object> values, String separator) {
     values.join(separator)
   }
 }

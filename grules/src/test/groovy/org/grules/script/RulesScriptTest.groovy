@@ -14,7 +14,7 @@ import static org.grules.TestScriptEntities.VARIABLE_VALUE
 import static org.grules.TestScriptEntities.CLEAN_PARAMETER_VALUE
 
 import org.codehaus.groovy.runtime.MethodClosure
-import org.grules.EmptyRulesScript
+import org.grules.EmptyRulesScriptGrules
 import org.grules.GrulesInjector
 import org.grules.GrulesLogger
 import org.grules.ValidationErrorProperties
@@ -58,7 +58,7 @@ class RulesScriptTest extends Specification {
     config.getGroups() >> TEST_CONFIG.groups
     config.getDefaultGroup() >> TEST_CONFIG.defaultGroup
     script = new RulesScript()
-    script.initMain(new EmptyRulesScript(), config, GrulesInjector.ruleEngine,
+    script.initMain(new EmptyRulesScriptGrules(), config, GrulesInjector.ruleEngine,
         [(GROUP):[(PARAMETER_NAME):PARAMETER_VALUE]], [:])
   }
 

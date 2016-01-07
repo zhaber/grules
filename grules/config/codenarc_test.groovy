@@ -4,8 +4,12 @@ ruleset {
   }
   ruleset('rulesets/braces.xml')
   ruleset('rulesets/concurrency.xml')
-  ruleset('rulesets/convention.xml')
-  ruleset('rulesets/design.xml')
+  ruleset('rulesets/convention.xml') {
+    exclude 'NoDef'
+  }
+  ruleset('rulesets/design.xml') {
+    exclude 'Instanceof'
+  }
   ruleset('rulesets/dry.xml')
   ruleset('rulesets/exceptions.xml')
   ruleset('rulesets/formatting.xml') {

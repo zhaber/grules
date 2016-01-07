@@ -6,8 +6,11 @@ ruleset {
   ruleset('rulesets/concurrency.xml')
   ruleset('rulesets/convention.xml') {
     exclude 'InvertedIfElse'
+    exclude 'NoDef'
   }
-  ruleset('rulesets/design.xml')
+  ruleset('rulesets/design.xml') {
+    exclude 'Instanceof'
+  }
   ruleset('rulesets/dry.xml')
   ruleset('rulesets/exceptions.xml') {
     exclude 'CatchThrowable'
@@ -26,7 +29,9 @@ ruleset {
   ruleset('rulesets/serialization.xml') {
     exclude 'SerialVersionUID'
   }
-  ruleset('rulesets/size.xml')
+  ruleset('rulesets/size.xml') {
+    exclude 'ParameterCount'
+  }
   ruleset('rulesets/unnecessary.xml') {
     exclude 'UnnecessaryPackageReference'
     exclude 'UnnecessaryGetter'

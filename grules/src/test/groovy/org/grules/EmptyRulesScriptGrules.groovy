@@ -5,9 +5,9 @@ import org.grules.script.RulesBinding
 /**
  * Script without any rules.
  */
-class EmptyRulesScript extends Script {
+class EmptyRulesScriptGrules extends Script {
 
-  EmptyRulesScript() {
+  EmptyRulesScriptGrules() {
     super(new RulesBinding())
   }
 

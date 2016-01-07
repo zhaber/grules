@@ -21,6 +21,7 @@ class RuleEngine {
 
   private final GrulesConfig config
   private final RulesScriptFactory rulesScriptFactory
+  public static final String RULES_FILE_SUFFIX = 'Grules'
 
   @Inject
   RuleEngine(GrulesConfig config, RulesScriptFactory rulesScriptFactory) {
@@ -67,6 +68,9 @@ class RuleEngine {
    */
   private RulesScript runMainScript(Class<? extends Script> scriptClass,
       Map<String, Map<String,Object>> parameters, Map<String, Object> environment) {
+	if (!scriptClass.getName().endsWith(RULES_FILE_SUFFIX)) {
+		throw new InvalidScriptException('Rules script should end with the suffix Grules')
+	}
     RulesScript script = rulesScriptFactory.newInstanceMain(scriptClass, parameters, environment)
     if (config.isMultithreadingEnabled()) {
       try {

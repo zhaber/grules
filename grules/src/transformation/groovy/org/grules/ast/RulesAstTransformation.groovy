@@ -41,6 +41,7 @@ import org.grules.functions.lib.TypeFunctions
 import org.grules.functions.lib.UserFunctions
 import org.grules.script.Parameter
 import org.grules.script.Rule
+import org.grules.script.RuleEngine
 import org.grules.script.RulesScriptAPI
 import org.grules.script.expressions.SubrulesSeq
 import org.grules.script.expressions.SubrulesSeqWrapper
@@ -62,16 +63,6 @@ class RulesAstTransformation extends GrulesAstTransformation {
 
   private static final List<Class> IMPORT_CLASSES = [CommonFunctions, DateFunctions, StringFunctions, TypeFunctions,
       UserFunctions, MathFunctions, SecurityFunctions]
-  private static final String DEFAULT_RULES_FILE_SUFFIX = 'Grules'
-  private final String rulesFileSufix
-
-  RulesAstTransformation() {
-    this(DEFAULT_RULES_FILE_SUFFIX)
-  }
-
-  RulesAstTransformation(String rulesFileSufix) {
-    this.rulesFileSufix = rulesFileSufix
-  }
 
   /**
    * Visits a rules script class and applies appropriate transformations.
@@ -83,7 +74,7 @@ class RulesAstTransformation extends GrulesAstTransformation {
       return
     }
     String scriptName = (moduleNode.classes[0].name.split(/\\./) as List).last()
-    if (scriptName.endsWith(rulesFileSufix)) {
+    if (scriptName.endsWith(RuleEngine.RULES_FILE_SUFFIX)) {
       IMPORT_CLASSES.each {
         Class importClass ->
         moduleNode.addStaticStarImport(importClass.name, ClassHelper.make(importClass))
