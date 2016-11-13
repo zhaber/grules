@@ -4,10 +4,10 @@ import spock.lang.Specification
 
 class ValidationExceptionTest extends Specification {
 
-	def "ValidationException with nulls"() {
+  def "ValidationException with nulls"() {
     when:
       def validationException = new ValidationException([(ValidationErrorProperties.ERROR_ID):null])
-		then:
-		  !validationException.hasProperty(ValidationErrorProperties.ERROR_ID)
-	}
+    then:
+      !validationException.hasProperty(ValidationErrorProperties.ERROR_ID)
+  }
 }

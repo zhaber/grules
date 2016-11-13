@@ -1,19 +1,20 @@
 ruleset {
   ruleset('rulesets/basic.xml') {
-    exclude 'EmptyClass'
+    exclude 'EmptyClass' // Used for marker classes
   }
   ruleset('rulesets/braces.xml')
   ruleset('rulesets/concurrency.xml')
   ruleset('rulesets/convention.xml') {
-    exclude 'InvertedIfElse'
-    exclude 'NoDef'
+    exclude 'NoDef' // Using def instead of objectas a shorter version
+    exclude 'TrailingComma' // Triggers on lists split into two lines
   }
   ruleset('rulesets/design.xml') {
-    exclude 'Instanceof'
+    exclude 'Instanceof' // Downcasting required in AST tranformations
   }
   ruleset('rulesets/dry.xml')
+  // ruleset('rulesets/enhanced.xml') // Generates noisy compilation warnings
   ruleset('rulesets/exceptions.xml') {
-    exclude 'CatchThrowable'
+    exclude 'CatchThrowable' // Any exception can be thrown during transformation
   }
   ruleset('rulesets/formatting.xml')
   ruleset('rulesets/generic.xml')
@@ -21,20 +22,20 @@ ruleset {
   ruleset('rulesets/imports.xml')
   ruleset('rulesets/logging.xml')
   ruleset('rulesets/naming.xml') {
-    exclude 'FactoryMethodName'
+    exclude 'FactoryMethodName' // Methods that create AST nodes use createX name pattern
   }
   ruleset('rulesets/security.xml') {
-    exclude 'JavaIoPackageAccess'
+    exclude 'JavaIoPackageAccess' // Not EJB project
   }
   ruleset('rulesets/serialization.xml') {
-    exclude 'SerialVersionUID'
+    exclude 'SerializableClassMustDefineSerialVersionUID' // Rule is triggered on enums
   }
   ruleset('rulesets/size.xml') {
-    exclude 'ParameterCount'
+    exclude 'CrapMetric' // Generates noisy warnings
+    exclude 'ParameterCount' // Required for parameterization of scripts
   }
   ruleset('rulesets/unnecessary.xml') {
-    exclude 'UnnecessaryPackageReference'
-    exclude 'UnnecessaryGetter'
+    exclude 'UnnecessaryGetter' // A getter method may have implementation
   }
   ruleset('rulesets/unused.xml')
 }

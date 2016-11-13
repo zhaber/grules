@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class CommonFunctionsTest extends Specification {
 
-	private final CommonFunctions commonFunctions = new CommonFunctions()
+  private final CommonFunctions commonFunctions = new CommonFunctions()
 
   def "areIn"() {
     expect:
@@ -22,44 +22,44 @@ class CommonFunctionsTest extends Specification {
       commonFunctions.decimalFormat(1, '0.0') == '1.0'
   }
 
-	def "eq"() {
-		expect:
-			commonFunctions.isEqual(PARAMETER_VALUE, PARAMETER_VALUE)
-	}
+  def "eq"() {
+    expect:
+      commonFunctions.isEqual(PARAMETER_VALUE, PARAMETER_VALUE)
+  }
 
-	def "inverse"() {
-		expect:
-			commonFunctions.inverse(false)
-	}
+  def "inverse"() {
+    expect:
+      commonFunctions.inverse(false)
+  }
 
-	def "isAny"() {
-		expect:
-			commonFunctions.isAny([PARAMETER_VALUE, INVALID_PARAMETER_VALUE]) { it == PARAMETER_VALUE }
+  def "isAny"() {
+    expect:
+      commonFunctions.isAny([PARAMETER_VALUE, INVALID_PARAMETER_VALUE]) { it == PARAMETER_VALUE }
       !commonFunctions.isAny([''])
-	}
+  }
 
-	def "isEmpty"() {
-		expect:
-			commonFunctions.isEmpty('')
-			commonFunctions.isEmpty([])
-	}
+  def "isEmpty"() {
+    expect:
+      commonFunctions.isEmpty('')
+      commonFunctions.isEmpty([])
+  }
 
   def "isFalse"() {
     expect:
       commonFunctions.isFalse('')
   }
 
-	def "isEvery"() {
-		expect:
-			commonFunctions.isEvery([PARAMETER_VALUE, PARAMETER_VALUE]) { it == PARAMETER_VALUE }
-		  !commonFunctions.isEvery([PARAMETER_VALUE, INVALID_PARAMETER_VALUE]) { it == PARAMETER_VALUE }
+  def "isEvery"() {
+    expect:
+      commonFunctions.isEvery([PARAMETER_VALUE, PARAMETER_VALUE]) { it == PARAMETER_VALUE }
+      !commonFunctions.isEvery([PARAMETER_VALUE, INVALID_PARAMETER_VALUE]) { it == PARAMETER_VALUE }
       !commonFunctions.isEvery([1, ''])
-	}
+  }
 
-	def "isIn"() {
-		expect:
-			commonFunctions.isIn(PARAMETER_VALUE, [PARAMETER_VALUE, INVALID_PARAMETER_VALUE])
-	}
+  def "isIn"() {
+    expect:
+      commonFunctions.isIn(PARAMETER_VALUE, [PARAMETER_VALUE, INVALID_PARAMETER_VALUE])
+  }
 
   def "join"() {
     setup:
@@ -68,10 +68,10 @@ class CommonFunctionsTest extends Specification {
       commonFunctions.join([PARAMETER_VALUE, PARAMETER_VALUE_AUX], JOIN_SEPARATOR) == joinResult
   }
 
-	def "nop"() {
-		expect:
-			commonFunctions.nop(PARAMETER_VALUE) == PARAMETER_VALUE
-	}
+  def "nop"() {
+    expect:
+      commonFunctions.nop(PARAMETER_VALUE) == PARAMETER_VALUE
+  }
 
   def "isTrue"() {
     expect:

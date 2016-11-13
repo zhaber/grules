@@ -68,9 +68,9 @@ class RuleEngine {
    */
   private RulesScript runMainScript(Class<? extends Script> scriptClass,
       Map<String, Map<String,Object>> parameters, Map<String, Object> environment) {
-	if (!scriptClass.getName().endsWith(RULES_FILE_SUFFIX)) {
-		throw new InvalidScriptException('Rules script should end with the suffix Grules')
-	}
+    if (!scriptClass.getName().endsWith(RULES_FILE_SUFFIX)) {
+       throw new InvalidScriptException('Rules script should end with the suffix Grules')
+    }
     RulesScript script = rulesScriptFactory.newInstanceMain(scriptClass, parameters, environment)
     if (config.isMultithreadingEnabled()) {
       try {
@@ -90,7 +90,8 @@ class RuleEngine {
    * Runs an included rules script.
    */
   protected void runIncludedScript(Class<? extends Script> scriptClass,
-      List<Class<? extends Script>> scriptsChain, Binding binding,
+      List<Class<? extends Script>> scriptsChain,
+      Binding binding,
       Map<String, Set<String>> missingRequiredParameters,
       Map<String, Map<String, ValidationErrorProperties>> invalidParameters,
       Map<String, Set<String>> parametersWithMissingDependency,

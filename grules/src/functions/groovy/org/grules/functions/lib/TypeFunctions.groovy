@@ -19,8 +19,7 @@ class TypeFunctions {
   static final String NOT_POSITIVE_ERROR_ID = 'Value is not positive'
 
   private static Exception createValidationException(Exception e) {
-    new ValidationException([(ValidationErrorProperties.MESSAGE):e.message,
-      (ValidationErrorProperties.EXCEPTION):e])
+    new ValidationException([(ValidationErrorProperties.MESSAGE):e.message, (ValidationErrorProperties.EXCEPTION):e])
   }
 
   /**

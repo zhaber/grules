@@ -7,12 +7,12 @@ import spock.lang.Specification
 
 class ConverterASTTransformationTest extends Specification {
 
-	def "Boolean coverter returns boolean"() {
+  def "Boolean coverter returns boolean"() {
     setup:
       def booleanResult = (new TypeFunctions()).toBoolean(true)
-		expect:
-		   booleanResult instanceof Boolean
-	}
+    expect:
+       booleanResult instanceof Boolean
+  }
 
   def "ConverterBooleanResult is mixed in with ConverterBooleanResult"() {
     setup:

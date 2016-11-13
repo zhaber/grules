@@ -18,7 +18,7 @@ defaultTasks 'build'
 
 buildDir = 'bin'
 group = 'org.grules'
-version = '0.2.3.7.2'
+version = '0.2.3.7.3'
 
 project.ext {
   releaseDir = 'release'
@@ -71,7 +71,6 @@ dependencies {
   test_scriptsCompile commonArtifacts
 }
 
-// jar {...} causes a bug with duplicated files
 task jar(type: Jar, overwrite: true, dependsOn: classesJar) {}
 
 task zipAll(type: Zip, dependsOn: jar) {

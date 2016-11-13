@@ -31,7 +31,7 @@ class ExpressionFactory {
    * @param arguments
    * @return method call expression
    */
-  static MethodCallExpression createMethodCall(MethodClosure methodClosure,	 List<Expression> arguments) {
+  static MethodCallExpression createMethodCall(MethodClosure methodClosure, List<Expression> arguments) {
     createMethodCall(new ConstantExpression(methodClosure.method), arguments)
   }
 
@@ -42,7 +42,7 @@ class ExpressionFactory {
    * @param arguments
    * @return method call expression
    */
-  static MethodCallExpression createMethodCall(String methodName,	 List<Expression> arguments) {
+  static MethodCallExpression createMethodCall(String methodName, List<Expression> arguments) {
     createMethodCall(new ConstantExpression(methodName), arguments)
   }
 
@@ -53,7 +53,7 @@ class ExpressionFactory {
    * @param arguments
    * @return method call expression
    */
-  static MethodCallExpression createMethodCall(Expression methodExpression,	 List<Expression> arguments) {
+  static MethodCallExpression createMethodCall(Expression methodExpression, List<Expression> arguments) {
     Expression argumentsExpression = new ArgumentListExpression(arguments)
     new MethodCallExpression(VariableExpression.THIS_EXPRESSION, methodExpression, argumentsExpression)
   }
@@ -84,7 +84,7 @@ class ExpressionFactory {
       List<Expression> arguments) {
     Expression argumentsExpression = new ArgumentListExpression(arguments)
     Expression methodExpression = new ConstantExpression(methodClosure.method)
-    new MethodCallExpression (new ClassExpression(ClassHelper.make(clazz)), methodExpression,	 argumentsExpression)
+    new MethodCallExpression (new ClassExpression(ClassHelper.make(clazz)), methodExpression, argumentsExpression)
   }
 
   /**
@@ -116,7 +116,7 @@ class ExpressionFactory {
    * @param blockStatement a block statement that has to be wrapped in closure
    * @return closure expression that wraps the specified block statement
    */
-  static 	ClosureExpression createClosureExpression(BlockStatement blockStatement) {
+  static ClosureExpression createClosureExpression(BlockStatement blockStatement) {
     VariableScope closureVariableScope = blockStatement.scope.copy()
     closureVariableScope.parent = blockStatement.scope
     List<Statement> statements = blockStatement.statements
@@ -133,7 +133,7 @@ class ExpressionFactory {
    *
    * @return variable "it" expression
    */
-  static 	VariableExpression createItVariable() {
+  static VariableExpression createItVariable() {
     new VariableExpression(IT_NAME)
   }
 }

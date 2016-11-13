@@ -12,34 +12,34 @@ import org.codehaus.groovy.syntax.Token
 
 class ASTTestUtils {
 
-	static List<Expression> fetchArguments(MethodCallExpression methodCallExpression) {
-		(methodCallExpression.arguments as ArgumentListExpression).expressions
-	}
+  static List<Expression> fetchArguments(MethodCallExpression methodCallExpression) {
+    (methodCallExpression.arguments as ArgumentListExpression).expressions
+  }
 
-	static List<Expression> fetchArguments(ConstructorCallExpression constructorCallExpression) {
-		(constructorCallExpression.arguments as ArgumentListExpression).expressions
-	}
+  static List<Expression> fetchArguments(ConstructorCallExpression constructorCallExpression) {
+    (constructorCallExpression.arguments as ArgumentListExpression).expressions
+  }
 
-	static Expression fetchClosureExpression(ClosureExpression closureExpression) {
-		((closureExpression.code as BlockStatement).statements[0] as ExpressionStatement).expression
-	}
+  static Expression fetchClosureExpression(ClosureExpression closureExpression) {
+    ((closureExpression.code as BlockStatement).statements[0] as ExpressionStatement).expression
+  }
 
-	static boolean checkToken(originalValue, Integer type) {
-		if (!(originalValue instanceof Token)) {
-			return false
-		}
-		(originalValue as Token).type == type
-	}
+  static boolean checkToken(originalValue, Integer type) {
+    if (!(originalValue instanceof Token)) {
+      return false
+    }
+    (originalValue as Token).type == type
+  }
 
-	static boolean checkVariable(originalValue, variableName) {
-		if (!(originalValue instanceof VariableExpression)) {
-			return false
-		}
-		(originalValue as VariableExpression).name == variableName
-	}
+  static boolean checkVariable(originalValue, variableName) {
+    if (!(originalValue instanceof VariableExpression)) {
+      return false
+    }
+    (originalValue as VariableExpression).name == variableName
+  }
 
-	static Expression fetchStatementBlockExpression(List<BlockStatement> statementBlocks) {
-		(statementBlocks[0].statements[0] as ExpressionStatement).expression
-	}
+  static Expression fetchStatementBlockExpression(List<BlockStatement> statementBlocks) {
+    (statementBlocks[0].statements[0] as ExpressionStatement).expression
+  }
 
 }

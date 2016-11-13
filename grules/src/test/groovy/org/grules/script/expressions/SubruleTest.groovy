@@ -17,72 +17,72 @@ import spock.lang.Specification
 
 class SubruleTest extends Specification {
 
-	def "Apply validation subrule to valid term"() {
-		setup:
-		  def validatorTerm = createIsIntegerValidator()
-		  def subrule = SubruleFactory.create(validatorTerm)
-		when:
-		  subrule.apply(VALID_INTEGER_STRING)
-		then:
-		  notThrown(ValidationException)
-	}
+  def "Apply validation subrule to valid term"() {
+    setup:
+      def validatorTerm = createIsIntegerValidator()
+      def subrule = SubruleFactory.create(validatorTerm)
+    when:
+      subrule.apply(VALID_INTEGER_STRING)
+    then:
+      notThrown(ValidationException)
+  }
 
-	def "When internal validator fails subrule application throws validation exception"() {
-		setup:
-		  def failValidatorTerm = createFailValidationTerm()
-		  def subrule = SubruleFactory.create(failValidatorTerm, new ValidationErrorProperties())
-		when:
-		  subrule.apply(PARAMETER_VALUE)
-		then:
-		  thrown(ValidationException)
-	}
+  def "When internal validator fails subrule application throws validation exception"() {
+    setup:
+      def failValidatorTerm = createFailValidationTerm()
+      def subrule = SubruleFactory.create(failValidatorTerm, new ValidationErrorProperties())
+    when:
+      subrule.apply(PARAMETER_VALUE)
+    then:
+      thrown(ValidationException)
+  }
 
-	def "Apply conversion subrule to valid value"() {
-		setup:
-		  def conversionTerm = createTrimConverter()
-		  def subrule = SubruleFactory.create(conversionTerm)
-		when:
-		  subrule.apply(DEFAULT_VALUE)
-		then:
-		  notThrown(ValidationException)
-	}
+  def "Apply conversion subrule to valid value"() {
+    setup:
+      def conversionTerm = createTrimConverter()
+      def subrule = SubruleFactory.create(conversionTerm)
+    when:
+      subrule.apply(DEFAULT_VALUE)
+    then:
+      notThrown(ValidationException)
+  }
 
-	def "Apply conversion subrule to invalid value"() {
-		setup:
-		  def converterTerm = createToIntConverter()
-		  def subrule = SubruleFactory.create(converterTerm, new ValidationErrorProperties())
-		when:
-		  subrule.apply(INVALID_PARAMETER_VALUE)
-		then:
-		  thrown(ValidationException)
-	}
+  def "Apply conversion subrule to invalid value"() {
+    setup:
+      def converterTerm = createToIntConverter()
+      def subrule = SubruleFactory.create(converterTerm, new ValidationErrorProperties())
+    when:
+      subrule.apply(INVALID_PARAMETER_VALUE)
+    then:
+      thrown(ValidationException)
+  }
 
-	def "create for term"() {
-		setup:
-		  def subrule = SubruleFactory.create(createValidationTerm())
-		expect:
-		  subrule.term instanceof Term
-	}
+  def "create for term"() {
+    setup:
+      def subrule = SubruleFactory.create(createValidationTerm())
+    expect:
+      subrule.term instanceof Term
+  }
 
-	def "create for closure"() {
-		setup:
-		  def closure = { }
-		  def subrule = SubruleFactory.create(closure)
-		expect:
-		  (subrule.term as ClosureTerm).closure == closure
-	}
+  def "create for closure"() {
+    setup:
+      def closure = { }
+      def subrule = SubruleFactory.create(closure)
+    expect:
+      (subrule.term as ClosureTerm).closure == closure
+  }
 
-	def "create for null"() {
-		when:
-		  SubruleFactory.create(null)
-		then:
-		  thrown(InvalidSubruleException)
-	}
+  def "create for null"() {
+    when:
+      SubruleFactory.create(null)
+    then:
+      thrown(InvalidSubruleException)
+  }
 
-	def "create for invalid subrule"() {
-		when:
-		  SubruleFactory.create(0)
-		then:
-		  thrown(InvalidSubruleException)
-	}
+  def "create for invalid subrule"() {
+    when:
+      SubruleFactory.create(0)
+    then:
+      thrown(InvalidSubruleException)
+  }
 }

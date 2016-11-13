@@ -15,40 +15,40 @@ import spock.lang.Specification
 
 class ClosureWrapperTest extends Specification {
 
-	private AstBuilder builder
-	private CompilePhase phase
+  private AstBuilder builder
+  private CompilePhase phase
 
-	private final a = 'a'
-	private final b = 'b'
+  private final a = 'a'
+  private final b = 'b'
 
-	def setup() {
-		builder = new AstBuilder()
-		phase = CompilePhase.CONVERSION
-	}
+  def setup() {
+    builder = new AstBuilder()
+    phase = CompilePhase.CONVERSION
+  }
 
-	def "wrapInClosures for method"() {
-		def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
-			a(b)
-		})
-		ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
-	expect:
-		ruleExpression instanceof ConstructorCallExpression
-		fetchArguments(ruleExpression).size == 2
-		fetchArguments(ruleExpression)[0] instanceof ClosureExpression
-		fetchClosureExpression(fetchArguments(ruleExpression)[0]) instanceof MethodCallExpression
-		fetchArguments(fetchClosureExpression(fetchArguments(ruleExpression)[0])).size == 2
-	}
+  def "wrapInClosures for method"() {
+    def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
+      a(b)
+    })
+    ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
+  expect:
+    ruleExpression instanceof ConstructorCallExpression
+    fetchArguments(ruleExpression).size == 2
+    fetchArguments(ruleExpression)[0] instanceof ClosureExpression
+    fetchClosureExpression(fetchArguments(ruleExpression)[0]) instanceof MethodCallExpression
+    fetchArguments(fetchClosureExpression(fetchArguments(ruleExpression)[0])).size == 2
+  }
 
-	def "wrapInClosures for bitwise negation expression"() {
-		setup:
-			def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
-				~ { a }
-			})
-			ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
-			ruleExpression = RulesAstTransformation.liftErrors(ruleExpression)
-			ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
-		expect:
-			ruleExpression instanceof BitwiseNegationExpression
-			(ruleExpression as BitwiseNegationExpression).expression instanceof ClosureExpression
-	}
+  def "wrapInClosures for bitwise negation expression"() {
+    setup:
+      def ruleExpression = fetchStatementBlockExpression(builder.buildFromCode(phase) {
+        ~ { a }
+      })
+      ruleExpression = RuleExpressionFormTransformer.convertPrecedences(ruleExpression)
+      ruleExpression = RulesAstTransformation.liftErrors(ruleExpression)
+      ruleExpression = ClosureWrapper.wrapInClosures(ruleExpression)
+    expect:
+      ruleExpression instanceof BitwiseNegationExpression
+      (ruleExpression as BitwiseNegationExpression).expression instanceof ClosureExpression
+  }
 }

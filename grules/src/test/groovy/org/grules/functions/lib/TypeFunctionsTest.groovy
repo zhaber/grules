@@ -8,36 +8,36 @@ import org.joda.time.DateTime
 import spock.lang.Specification
 
 enum TestEnum {
-	ELEMENT
+  ELEMENT
 }
 
 class TypeFunctionsTest extends Specification {
 
-	private final TypeFunctions typeFunctions = new TypeFunctions()
+  private final TypeFunctions typeFunctions = new TypeFunctions()
 
-	private final DateTime nowDateTime = DateTime.now()
-	private static final POSITIVE_LONG = Long.MAX_VALUE
-	private static final POSITIVE_BIGDECIMAL = 1.1
-	private static final POSITIVE_BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL.toString()
-	private static final BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL_STRING
-	private static final INTEGER = VALID_INTEGER
-	private static final LONG = POSITIVE_LONG
-	private static final INTEGER_STRING = INTEGER.toString()
+  private final DateTime nowDateTime = DateTime.now()
+  private static final POSITIVE_LONG = Long.MAX_VALUE
+  private static final POSITIVE_BIGDECIMAL = 1.1
+  private static final POSITIVE_BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL.toString()
+  private static final BIGDECIMAL_STRING = POSITIVE_BIGDECIMAL_STRING
+  private static final INTEGER = VALID_INTEGER
+  private static final LONG = POSITIVE_LONG
+  private static final INTEGER_STRING = INTEGER.toString()
   private static final INVALID_INTEGER_STRING = INTEGER_STRING + '?'
-	private static final POSITIVE_INTEGER_STRING = INTEGER_STRING
-	private static final NEGATIVE_INTEGER_STRING = '-' + POSITIVE_INTEGER_STRING
-	private static final NEGATIVE_BIGDECIMAL_STRING = '-' + POSITIVE_BIGDECIMAL_STRING
-	private static final POSITIVE_LONG_STRING = POSITIVE_LONG.toString()
-	private static final NEGATIVE_LONG_STRING = NEGATIVE_LONG.toString()
-	private static final NEGATIVE_LONG = Long.MIN_VALUE
-	private static final LONG_STRING = POSITIVE_LONG_STRING
-	private static final ZERO_STRING = '0'
-	private static final BigDecimal BIGDECIMAL = POSITIVE_BIGDECIMAL
+  private static final POSITIVE_INTEGER_STRING = INTEGER_STRING
+  private static final NEGATIVE_INTEGER_STRING = '-' + POSITIVE_INTEGER_STRING
+  private static final NEGATIVE_BIGDECIMAL_STRING = '-' + POSITIVE_BIGDECIMAL_STRING
+  private static final POSITIVE_LONG_STRING = POSITIVE_LONG.toString()
+  private static final NEGATIVE_LONG_STRING = NEGATIVE_LONG.toString()
+  private static final NEGATIVE_LONG = Long.MIN_VALUE
+  private static final LONG_STRING = POSITIVE_LONG_STRING
+  private static final ZERO_STRING = '0'
+  private static final BigDecimal BIGDECIMAL = POSITIVE_BIGDECIMAL
 
-	def "toBigDecimal"() {
-		expect:
-			typeFunctions.toBigDecimal(BIGDECIMAL_STRING) == BIGDECIMAL
-	}
+  def "toBigDecimal"() {
+    expect:
+      typeFunctions.toBigDecimal(BIGDECIMAL_STRING) == BIGDECIMAL
+  }
 
   def "Validation exception internal error"() {
     when:
@@ -48,12 +48,12 @@ class TypeFunctionsTest extends Specification {
       e.errorProperties.exception instanceof NumberFormatException
   }
 
-	def "toBoolean"() {
-		expect:
-			!typeFunctions.toBoolean('')
-			typeFunctions.toBoolean(ZERO_STRING)
-			!typeFunctions.toBoolean(0)
-	}
+  def "toBoolean"() {
+    expect:
+      !typeFunctions.toBoolean('')
+      typeFunctions.toBoolean(ZERO_STRING)
+      !typeFunctions.toBoolean(0)
+  }
 
   def "toBooleanList"() {
     setup:
@@ -94,11 +94,11 @@ class TypeFunctionsTest extends Specification {
       thrown(ValidationException)
   }
 
-	def "toDouble"() {
-		expect:
+  def "toDouble"() {
+    expect:
       typeFunctions.toDouble(BIGDECIMAL_STRING) instanceof Double
-			typeFunctions.toDouble(BIGDECIMAL_STRING) == BIGDECIMAL.doubleValue()
-	}
+      typeFunctions.toDouble(BIGDECIMAL_STRING) == BIGDECIMAL.doubleValue()
+  }
 
   def "toDoubleList"() {
     expect:
@@ -106,17 +106,17 @@ class TypeFunctionsTest extends Specification {
       typeFunctions.toDoubleList([BIGDECIMAL_STRING]) == [BIGDECIMAL.doubleValue()]
   }
 
-	def "toEnum"() {
-		expect:
-		  typeFunctions.toEnum(TestEnum.ELEMENT.name(), TestEnum) == TestEnum.ELEMENT
-	}
+  def "toEnum"() {
+    expect:
+      typeFunctions.toEnum(TestEnum.ELEMENT.name(), TestEnum) == TestEnum.ELEMENT
+  }
 
-	def "toEnum invalid value"() {
-		when:
-			typeFunctions.toEnum('invalidElement', TestEnum)
-		then:
-		  thrown(ValidationException)
-	}
+  def "toEnum invalid value"() {
+    when:
+      typeFunctions.toEnum('invalidElement', TestEnum)
+    then:
+      thrown(ValidationException)
+  }
 
   def "toFloat"() {
     expect:
@@ -130,19 +130,19 @@ class TypeFunctionsTest extends Specification {
       typeFunctions.toFloatList([BIGDECIMAL_STRING]) == [BIGDECIMAL.floatValue()]
   }
 
-	def "toNonnegativeBigDecimal"() {
-		when:
-			typeFunctions.toNonnegativeBigDecimal(NEGATIVE_BIGDECIMAL_STRING)
-		then:
-		  thrown(ValidationException)
-	}
+  def "toNonnegativeBigDecimal"() {
+    when:
+      typeFunctions.toNonnegativeBigDecimal(NEGATIVE_BIGDECIMAL_STRING)
+    then:
+      thrown(ValidationException)
+  }
 
-	def "toNonnegativeBigDecimal for zero"() {
-		when:
-			typeFunctions.toNonnegativeBigDecimal(ZERO_STRING)
-		then:
-			notThrown(ValidationException)
-	}
+  def "toNonnegativeBigDecimal for zero"() {
+    when:
+      typeFunctions.toNonnegativeBigDecimal(ZERO_STRING)
+    then:
+      notThrown(ValidationException)
+  }
 
   def "toNonnegativeDouble"() {
     when:
@@ -158,12 +158,12 @@ class TypeFunctionsTest extends Specification {
       thrown(ValidationException)
   }
 
-	def "toPositiveBigDecimal"() {
-		when:
-			typeFunctions.toPositiveBigDecimal(ZERO_STRING)
-		then:
-		  thrown(ValidationException)
-	}
+  def "toPositiveBigDecimal"() {
+    when:
+      typeFunctions.toPositiveBigDecimal(ZERO_STRING)
+    then:
+      thrown(ValidationException)
+  }
 
   def "toPositiveDouble"() {
     when:
@@ -179,11 +179,11 @@ class TypeFunctionsTest extends Specification {
       thrown(ValidationException)
   }
 
-	def "toLong"() {
-		expect:
+  def "toLong"() {
+    expect:
       typeFunctions.toLong(LONG_STRING) instanceof Long
-			typeFunctions.toLong(LONG_STRING) == LONG
-	}
+      typeFunctions.toLong(LONG_STRING) == LONG
+  }
 
   def "toLongList"() {
     expect:
@@ -191,32 +191,32 @@ class TypeFunctionsTest extends Specification {
       typeFunctions.toLongList([LONG_STRING]) == [LONG]
   }
 
-	def "toNaturalLong"() {
-		when:
-			typeFunctions.toNaturalLong(NEGATIVE_LONG_STRING)
-		then:
-		  thrown(ValidationException)
-	}
+  def "toNaturalLong"() {
+    when:
+      typeFunctions.toNaturalLong(NEGATIVE_LONG_STRING)
+    then:
+      thrown(ValidationException)
+  }
 
-	def "toNaturalLong for zero"() {
-		when:
-			typeFunctions.toNaturalLong(ZERO_STRING)
-		then:
-			notThrown(ValidationException)
-	}
+  def "toNaturalLong for zero"() {
+    when:
+      typeFunctions.toNaturalLong(ZERO_STRING)
+    then:
+      notThrown(ValidationException)
+  }
 
-	def "toPositiveLong"() {
-		when:
-			typeFunctions.toPositiveLong(ZERO_STRING)
-		then:
-		  thrown(ValidationException)
-	}
+  def "toPositiveLong"() {
+    when:
+      typeFunctions.toPositiveLong(ZERO_STRING)
+    then:
+      thrown(ValidationException)
+  }
 
-	def "toInt"() {
-		expect:
+  def "toInt"() {
+    expect:
       typeFunctions.toInt(INTEGER_STRING) instanceof Integer
-			typeFunctions.toInt(INTEGER_STRING) == INTEGER
-	}
+      typeFunctions.toInt(INTEGER_STRING) == INTEGER
+  }
 
   def "toIntList"() {
     expect:
@@ -224,25 +224,25 @@ class TypeFunctionsTest extends Specification {
       typeFunctions.toIntList([INTEGER_STRING]) == [INTEGER]
   }
 
-	def "toNaturalInt"() {
-		when:
-			typeFunctions.toNaturalInt(NEGATIVE_INTEGER_STRING)
-		then:
-			thrown(ValidationException)
-	}
+  def "toNaturalInt"() {
+    when:
+      typeFunctions.toNaturalInt(NEGATIVE_INTEGER_STRING)
+    then:
+      thrown(ValidationException)
+  }
 
-	def "toNaturalInt for zero"() {
-		when:
-			typeFunctions.toNaturalInt(ZERO_STRING)
-		then:
-			notThrown(ValidationException)
-	}
+  def "toNaturalInt for zero"() {
+    when:
+      typeFunctions.toNaturalInt(ZERO_STRING)
+    then:
+      notThrown(ValidationException)
+  }
 
-	def "toPositiveInt"() {
-		when:
-			typeFunctions.toPositiveInt(ZERO_STRING)
-		then:
-			thrown(ValidationException)
-	}
+  def "toPositiveInt"() {
+    when:
+      typeFunctions.toPositiveInt(ZERO_STRING)
+    then:
+      thrown(ValidationException)
+  }
 
 }
