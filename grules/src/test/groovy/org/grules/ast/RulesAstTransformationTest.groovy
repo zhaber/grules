@@ -1,15 +1,15 @@
 package org.grules.ast
 
-import static org.codehaus.groovy.syntax.Types.BITWISE_OR
 import static org.codehaus.groovy.syntax.Types.BITWISE_AND
-import static org.codehaus.groovy.syntax.Types.RIGHT_SHIFT
+import static org.codehaus.groovy.syntax.Types.BITWISE_OR
 import static org.codehaus.groovy.syntax.Types.LEFT_SQUARE_BRACKET
-import static org.grules.ast.ASTTestUtils.fetchStatementBlockExpression
-import static org.grules.ast.ASTTestUtils.fetchClosureExpression
+import static org.codehaus.groovy.syntax.Types.RIGHT_SHIFT
+import static org.grules.TestScriptEntities.DEFAULT_VALUE
+import static org.grules.TestScriptEntities.PARAMETER_NAME
 import static org.grules.ast.ASTTestUtils.checkVariable
 import static org.grules.ast.ASTTestUtils.fetchArguments
-import static org.grules.TestScriptEntities.PARAMETER_NAME
-import static org.grules.TestScriptEntities.DEFAULT_VALUE
+import static org.grules.ast.ASTTestUtils.fetchClosureExpression
+import static org.grules.ast.ASTTestUtils.fetchStatementBlockExpression
 
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.ModuleNode
@@ -40,7 +40,7 @@ import org.grules.script.expressions.SubrulesSeqWrapper
 
 import spock.lang.Specification
 
-class RulesASTTransformationTest extends Specification {
+class RulesAstTransformationTest extends Specification {
 
   private GrulesASTTransformationLogger logger
   private RulesAstTransformation astTransformation
@@ -63,11 +63,35 @@ class RulesASTTransformationTest extends Specification {
     phase = CompilePhase.CONVERSION
   }
 
+  /*
+   * Checks if rule transformation was applied
+   */
   def isTransformed(List<BlockStatement> statementBlocks) {
     ExpressionStatement statement = statementBlocks[0].statements[0]
     def expression = statement.expression
     astTransformation.visitStatement(statement)
-    expression != statement.expression
+    expression != statement.expression && statement.expression instanceof MethodCallExpression
+  }
+
+  def "Simple rule"() {
+    expect:
+      isTransformed((new AstBuilder()).buildFromCode(phase) {
+        a b
+      })
+  }
+
+  def "Closure rule"() {
+    expect:
+      isTransformed((new AstBuilder()).buildFromCode(phase) {
+        a { }
+      })
+  }
+
+  def "Method closure rule"() {
+    expect:
+      isTransformed((new AstBuilder()).buildFromCode(phase) {
+        a b.&c
+      })
   }
 
   def "Object method calls are not included in rules"() {

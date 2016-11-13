@@ -13,6 +13,7 @@ import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.GStringExpression;
 import org.codehaus.groovy.ast.expr.ListExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
+import org.codehaus.groovy.ast.expr.MethodPointerExpression;
 import org.codehaus.groovy.ast.expr.NotExpression;
 import org.codehaus.groovy.ast.expr.TernaryExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
@@ -148,7 +149,8 @@ class RuleExpressionVerifier {
           VariableExpression.class,
           ClosureExpression.class,
           MethodCallExpression.class,
-          GStringExpression.class);
+          GStringExpression.class,
+          MethodPointerExpression.class);
       for (Class<?> ruleExpressionClass : ruleExpressionClasses) {
         if (ruleExpressionClass.isInstance(expression)) {
           return true;

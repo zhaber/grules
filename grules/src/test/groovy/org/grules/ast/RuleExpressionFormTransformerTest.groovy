@@ -21,6 +21,9 @@ import org.grules.GrulesLogger
 
 import spock.lang.Specification
 
+/**
+ * Tests transformation from block of code to infix expression.
+ */
 class RuleExpressionFormTransformerTest extends Specification {
 
   private GrulesASTTransformationLogger logger

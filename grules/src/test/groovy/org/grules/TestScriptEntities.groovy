@@ -33,6 +33,7 @@ class TestScriptEntities {
   static final String VALID_INTEGER_STRING = VALID_INTEGER
   static final String FUNCTION_ARGUMENT = VALID_INTEGER_STRING
   static final String FUNCTION_NAME = 'functionName'
+  static final String METHOD_NAME = 'methodName'
   static final String VALID_PARAMETER = VALID_INTEGER_STRING
   static final String INVALID_PARAMETER_VALUE = '1a'
   static final String SUBRULES_SEQ_NAME = 'subrulesSeqName'

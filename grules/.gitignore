@@ -7,4 +7,5 @@
 /.externalToolBuilders
 /.settings
 /release
-grules.log
+grules.log*
+/target/

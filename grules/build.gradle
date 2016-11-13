@@ -1,4 +1,4 @@
-def groovyArtifacts = ['org.codehaus.groovy:groovy-all:2.3.7']
+def groovyArtifacts = ['org.codehaus.groovy:groovy-all:2.3.11']
 def commonArtifacts = [
     'joda-time:joda-time:2.1+',
     'com.google.inject:guice:3.0',
@@ -18,7 +18,7 @@ defaultTasks 'build'
 
 buildDir = 'bin'
 group = 'org.grules'
-version = '0.2.3.7.3'
+version = '1.0'
 
 project.ext {
   releaseDir = 'release'

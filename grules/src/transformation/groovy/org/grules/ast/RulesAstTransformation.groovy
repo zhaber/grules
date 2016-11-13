@@ -17,6 +17,7 @@ import org.codehaus.groovy.ast.expr.ListExpression
 import org.codehaus.groovy.ast.expr.MapEntryExpression
 import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
+import org.codehaus.groovy.ast.expr.MethodPointerExpression
 import org.codehaus.groovy.ast.expr.NotExpression
 import org.codehaus.groovy.ast.expr.TernaryExpression
 import org.codehaus.groovy.ast.expr.UnaryMinusExpression
@@ -151,6 +152,7 @@ class RulesAstTransformation extends GrulesAstTransformation {
     Expression methodExpression = methodCallExpression.method
     String nolog = (RulesScriptAPI.&nolog as MethodClosure).method
     if (methodExpression instanceof ConstantExpression && (methodExpression as ConstantExpression).value == nolog) {
+      // See https://github.com/zhaber/grules/wiki/Not-logged-rules
       List<Expression> expressions = (methodCallExpression.arguments as ArgumentListExpression).expressions
       for (int i = 0; i < expressions.size; i++) {
         expressions[i] = new ConstantExpression((expressions[i] as VariableExpression).name)
@@ -161,6 +163,11 @@ class RulesAstTransformation extends GrulesAstTransformation {
       return methodCallExpression
     }
     convertToRuleApplicationExpression(methodCallExpression)
+  }
+
+  private Expression transformExpression(MethodPointerExpression methodPointerExpression) {
+    log('Wrapping method pointer expression', methodPointerExpression.methodName)
+    methodPointerExpression
   }
 
   private Expression transformExpression(BinaryExpression binaryExpression) {
